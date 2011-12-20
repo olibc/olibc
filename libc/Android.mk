@@ -382,12 +382,17 @@ libc_common_src_files += \
 	arch-arm/bionic/sigsetjmp.S \
 	arch-arm/bionic/strcmp.S \
 	arch-arm/bionic/strcpy.S \
-	arch-arm/bionic/strlen.c.arm \
 	arch-arm/bionic/syscall.S \
 	arch-arm/bionic/tgkill.S \
 	arch-arm/bionic/tkill.S \
 	bionic/socketcalls.c \
 	string/strncmp.c \
+
+ifeq ($(ARCH_ARM_HAVE_ARMV7A),false)
+libc_common_src_files += arch-arm/bionic/strlen-armv7.S
+else
+libc_common_src_files += arch-arm/bionic/strlen.c.arm
+endif
 
 # Check if we want a neonized version of memmove instead of the
 # current ARM version
