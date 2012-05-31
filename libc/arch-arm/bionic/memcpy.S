@@ -30,6 +30,396 @@
 #include <machine/asm.h>
 
 #if defined(__ARM_NEON__) && !defined(ARCH_ARM_USE_NON_NEON_MEMCPY)
+#if defined(KRAIT_NEON_OPTIMIZATION)
+	/*
+	 * These can be overridden in:
+	 *   device/<vendor>/<board>/BoardConfig.mk
+         * by setting the following:
+	 *   TARGET_USE_KRAIT_BIONIC_OPTIMIZATION := true
+	 *   TARGET_USE_KRAIT_PLD_SET := true
+	 *   TARGET_KRAIT_BIONIC_PLDOFFS := <pldoffset>
+	 *   TARGET_KRAIT_BIONIC_PLDSIZE := <pldsize>
+	 *   TARGET_KRAIT_BIONIC_PLDTHRESH := <pldthreshold>
+	 *   TARGET_KRAIT_BIONIC_BBTHRESH := <bbthreshold>
+	 */
+#ifndef PLDOFFS
+#define PLDOFFS	(10)
+#endif
+#ifndef PLDTHRESH
+#define PLDTHRESH (PLDOFFS)
+#endif
+#ifndef BBTHRESH
+#define BBTHRESH (4096/64)
+#endif
+#if (PLDOFFS < 1)
+#error Routine does not support offsets less than 1
+#endif
+#if (PLDTHRESH < PLDOFFS)
+#error PLD threshold must be greater than or equal to the PLD offset
+#endif
+#ifndef PLDSIZE
+#define PLDSIZE	(64)
+#endif
+#define NOP_OPCODE       (0xe320f000)
+
+        .text
+        .fpu    neon
+	.global memcpy
+	.type memcpy, %function
+	.align 5
+memcpy:
+	stmfd	sp!, {r0, r9, r10, lr}
+	cmp	r2, #4
+	blt	.Lneon_lt4
+	cmp	r2, #16
+	blt	.Lneon_lt16
+	cmp	r2, #32
+	blt	.Lneon_16
+	cmp	r2, #64
+	blt	.Lneon_copy_32_a
+
+	mov	r12, r2, lsr #6
+	cmp	r12, #PLDTHRESH
+	ble	.Lneon_copy_64_loop_nopld
+
+	cmp	r12, #BBTHRESH
+	ble	.Lneon_prime_pump
+
+	add	lr, r0, #0x400
+	add	r9, r1, #(PLDOFFS*PLDSIZE)
+	sub	lr, lr, r9
+	lsl	lr, lr, #21
+	lsr	lr, lr, #21
+	add	lr, lr, #(PLDOFFS*PLDSIZE)
+	cmp	r12, lr, lsr #6
+	movle	lr, #(PLDOFFS*PLDSIZE)
+
+	movgt	r9, #(PLDOFFS)
+	rsbgts	r9, r9, lr, lsr #6
+	ble	.Lneon_prime_pump
+
+	add	r10, r1, lr
+	bic	r10, #0x3F
+
+	sub	r12, lr, lsr #6
+	cmp	r9, r12
+	suble	r12, r12, r9
+	movgt	r9, r12
+	movgt	r12, #0
+
+	pld	[r1, #((PLDOFFS-1)*PLDSIZE)]
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_copy_64_loop_outer_doublepld:
+	pld	[r1, #((PLDOFFS)*PLDSIZE)]
+	vld1.32	{q0, q1}, [r1]!
+	vld1.32	{q2, q3}, [r1]!
+	ldr	r3, [r10]
+	subs	r9, r9, #1
+	vst1.32	{q0, q1}, [r0]!
+	vst1.32	{q2, q3}, [r0]!
+	add	r10, #64
+	bne	.Lneon_copy_64_loop_outer_doublepld
+	cmp	r12, #0
+	bne	.Lneon_copy_64_loop_outer
+	mov	r12, lr, lsr #6
+	b	.Lneon_copy_64_loop_nopld
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_prime_pump:
+	mov	lr, #(PLDOFFS*PLDSIZE)
+	add	r10, r1, #(PLDOFFS*PLDSIZE)
+	bic	r10, #0x3F
+	sub	r12, r12, #PLDOFFS
+	pld	[r10, #(-1*PLDSIZE)]
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_copy_64_loop_outer:
+	vld1.32	{q0, q1}, [r1]!
+	vld1.32	{q2, q3}, [r1]!
+	ldr	r3, [r10]
+	subs	r12, r12, #1
+	vst1.32	{q0, q1}, [r0]!
+	vst1.32	{q2, q3}, [r0]!
+	add	r10, #64
+	bne	.Lneon_copy_64_loop_outer
+	mov	r12, lr, lsr #6
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_copy_64_loop_nopld:
+	vld1.32	{q8, q9}, [r1]!
+	vld1.32	{q10, q11}, [r1]!
+	subs	r12, r12, #1
+	vst1.32	{q8, q9}, [r0]!
+	vst1.32	{q10, q11}, [r0]!
+	bne	.Lneon_copy_64_loop_nopld
+	ands	r2, r2, #0x3f
+	beq	.Lneon_exit
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_copy_32_a:
+	movs	r12, r2, lsl #27
+	bcc	.Lneon_16
+	vld1.32	{q0,q1}, [r1]!
+	vst1.32	{q0,q1}, [r0]!
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_16:
+	bpl	.Lneon_lt16
+	vld1.32	{q8}, [r1]!
+	vst1.32	{q8}, [r0]!
+	ands	r2, r2, #0x0f
+	beq	.Lneon_exit
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_lt16:
+	movs	r12, r2, lsl #29
+	ldrcs	r3, [r1], #4
+	ldrcs	r12, [r1], #4
+	strcs	r3, [r0], #4
+	strcs	r12, [r0], #4
+	ldrmi	r3, [r1], #4
+	strmi	r3, [r0], #4
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_lt4:
+	movs	r2, r2, lsl #31
+	ldrcsh	r3, [r1], #2
+	strcsh	r3, [r0], #2
+	ldrmib	r12, [r1]
+	strmib	r12, [r0]
+	.balignl 64, NOP_OPCODE, 4*2
+.Lneon_exit:
+	ldmfd	sp!, {r0, r9, r10, lr}
+	bx	lr
+	.end
+#elif defined(SCORPION_NEON_OPTIMIZATION)
+	/*
+	 * These can be overridden in:
+	 *   device/<vendor>/<board>/BoardConfig.mk
+         * by setting the following:
+	 *   TARGET_USE_SCORPION_BIONIC_OPTIMIZATION := true
+	 *   TARGET_USE_SCORPION_PLD_SET := true
+	 *   TARGET_SCORPION_BIONIC_PLDOFFS := <pldoffset>
+	 *   TARGET_SCORPION_BIONIC_PLDSIZE := <pldsize>
+	 */
+#ifndef PLDOFFS
+#define PLDOFFS	(6)
+#endif
+#ifndef PLDSIZE
+#define PLDSIZE	(128)	/* L2 cache line size */
+#endif
+        .code 32
+        .align 5
+        .globl memcpy
+        .func
+memcpy:
+	push            {r0}
+	cmp             r2, #4
+	blt             .Lneon_lt4
+	cmp             r2, #16
+	blt             .Lneon_lt16
+	cmp             r2, #32
+	blt             .Lneon_16
+	cmp              r2, #128
+	blt              .Lneon_copy_32_a
+	/* Copy blocks of 128-bytes (word-aligned) at a time*/
+	/* Code below is optimized for PLDSIZE=128 only */
+	mov             r12, r2, lsr #7
+	cmp             r12, #PLDOFFS
+	ble             .Lneon_copy_128_loop_nopld
+	sub             r12, #PLDOFFS
+	pld             [r1, #(PLDOFFS-1)*PLDSIZE]
+.Lneon_copy_128_loop_outer:
+	pld             [r1, #(PLDOFFS*PLDSIZE)]
+	vld1.32         {q0, q1}, [r1]!
+	vld1.32         {q2, q3}, [r1]!
+	vld1.32         {q8, q9}, [r1]!
+	vld1.32         {q10, q11}, [r1]!
+	subs            r12, r12, #1
+	vst1.32	        {q0, q1}, [r0]!
+	vst1.32         {q2, q3}, [r0]!
+	vst1.32         {q8, q9}, [r0]!
+	vst1.32         {q10, q11}, [r0]!
+	bne             .Lneon_copy_128_loop_outer
+	mov             r12, #PLDOFFS
+.Lneon_copy_128_loop_nopld:
+	vld1.32         {q0, q1}, [r1]!
+	vld1.32         {q2, q3}, [r1]!
+	vld1.32         {q8, q9}, [r1]!
+	vld1.32         {q10, q11}, [r1]!
+	subs            r12, r12, #1
+	vst1.32         {q0, q1}, [r0]!
+	vst1.32         {q2, q3}, [r0]!
+	vst1.32         {q8, q9}, [r0]!
+	vst1.32         {q10, q11}, [r0]!
+	bne             .Lneon_copy_128_loop_nopld
+	ands            r2, r2, #0x7f
+	beq             .Lneon_exit
+	cmp             r2, #32
+	blt             .Lneon_16
+	nop
+	/* Copy blocks of 32-bytes (word aligned) at a time*/
+.Lneon_copy_32_a:
+	mov             r12, r2, lsr #5
+.Lneon_copy_32_loop_a:
+	vld1.32         {q0,q1}, [r1]!
+	subs            r12, r12, #1
+	vst1.32         {q0,q1}, [r0]!
+	bne             .Lneon_copy_32_loop_a
+	ands            r2, r2, #0x1f
+	beq             .Lneon_exit
+.Lneon_16:
+	subs            r2, r2, #16
+	blt             .Lneon_lt16
+	vld1.32         {q8}, [r1]!
+	vst1.32         {q8}, [r0]!
+	beq             .Lneon_exit
+.Lneon_lt16:
+	movs            r12, r2, lsl #29
+	bcc             .Lneon_skip8
+	ldr             r3, [r1], #4
+	ldr             r12, [r1], #4
+	str             r3, [r0], #4
+	str             r12, [r0], #4
+.Lneon_skip8:
+	bpl             .Lneon_lt4
+	ldr             r3, [r1], #4
+	str             r3, [r0], #4
+.Lneon_lt4:
+	movs            r2, r2, lsl #31
+	bcc             .Lneon_lt2
+	ldrh            r3, [r1], #2
+	strh            r3, [r0], #2
+.Lneon_lt2:
+	bpl             .Lneon_exit
+	ldrb            r12, [r1]
+	strb            r12, [r0]
+.Lneon_exit:
+	pop             {r0}
+	bx              lr
+	.endfunc
+	.end
+#else /* !SCORPION_NEON_OPTIMIZATION */
+#if defined(HAVE_32_BYTE_CACHE_LINES)
+	/*
+	   *This can be enabled by setting flag
+	   *HAVE_32_BYTE_CACHE_LINES in
+	   *device/<vendor>/<board>/BoardConfig.mk
+	*/
+        .text
+        .fpu    neon
+
+        .global memcpy
+        .type memcpy, %function
+        .align 4
+
+/* a prefetch distance of 4 cache-lines works best experimentally */
+#define CACHE_LINE_SIZE     32
+memcpy:
+        .fnstart
+        .save       {r0, lr}
+        stmfd       sp!, {r0, lr}
+
+        /* start preloading as early as possible */
+        pld         [r1, #(CACHE_LINE_SIZE*0)]
+        pld         [r1, #(CACHE_LINE_SIZE*1)]
+
+        /* do we have at least 16-bytes to copy (needed for alignment below) */
+        cmp         r2, #16
+        blo         5f
+
+        /* align destination to half cache-line for the write-buffer */
+        rsb         r3, r0, #0
+        ands        r3, r3, #0xF
+        beq         0f
+
+        /* copy up to 15-bytes (count in r3) */
+        sub         r2, r2, r3
+        movs        ip, r3, lsl #31
+        ldrmib      lr, [r1], #1
+        strmib      lr, [r0], #1
+        ldrcsb      ip, [r1], #1
+        ldrcsb      lr, [r1], #1
+        strcsb      ip, [r0], #1
+        strcsb      lr, [r0], #1
+        movs        ip, r3, lsl #29
+        bge         1f
+        // copies 4 bytes, destination 32-bits aligned
+        vld4.8      {d0[0], d1[0], d2[0], d3[0]}, [r1]!
+        vst4.8      {d0[0], d1[0], d2[0], d3[0]}, [r0, :32]!
+1:      bcc         2f
+        // copies 8 bytes, destination 64-bits aligned
+        vld1.8      {d0}, [r1]!
+        vst1.8      {d0}, [r0, :64]!
+2:
+
+0:      /* preload immediately the next cache line, which we may need */
+        pld         [r1, #(CACHE_LINE_SIZE*0)]
+        pld         [r1, #(CACHE_LINE_SIZE*1)]
+
+        /* make sure we have at least 128 bytes to copy */
+        subs        r2, r2, #128
+        blo         2f
+
+        /* preload all the cache lines we need.
+         * NOTE: the number of pld below depends on PREFETCH_DISTANCE,
+         * ideally would would increase the distance in the main loop to
+         * avoid the goofy code below. In practice this doesn't seem to make
+         * a big difference.
+         */
+        pld         [r1, #(CACHE_LINE_SIZE*2)]
+        pld         [r1, #(CACHE_LINE_SIZE*3)]
+        pld         [r1, #(CACHE_LINE_SIZE*4)]
+
+	.align 3
+1:      /* The main loop copies 128 bytes at a time */
+	subs        r2, r2, #128
+        vld1.8      {d0  - d3},   [r1]!
+        vld1.8      {d4  - d7},   [r1]!
+        pld         [r1, #(CACHE_LINE_SIZE*1)]
+        pld         [r1, #(CACHE_LINE_SIZE*2)]
+	vld1.8	    {d16 - d19},   [r1]!
+	vld1.8	    {d20 - d23},   [r1]!
+        pld         [r1, #(CACHE_LINE_SIZE*1)]
+        pld         [r1, #(CACHE_LINE_SIZE*2)]
+        vst1.8      {d0  - d3},   [r0, :128]!
+        vst1.8      {d4  - d7},   [r0, :128]!
+        vst1.8      {d16  - d19},   [r0, :128]!
+        vst1.8      {d20  - d23},   [r0, :128]!
+        bhs         1b
+
+2:      /* fix-up the remaining count and make sure we have >= 32 bytes left */
+        add         r2, r2, #128
+        subs        r2, r2, #32
+        blo         4f
+
+3:      /* 32 bytes at a time. These cache lines were already preloaded */
+        vld1.8      {d0 - d3},  [r1]!
+        subs        r2, r2, #32
+        vst1.8      {d0 - d3},  [r0, :128]!
+        bhs         3b
+
+4:      /* less than 32 left */
+        add         r2, r2, #32
+        tst         r2, #0x10
+        beq         5f
+        // copies 16 bytes, 128-bits aligned
+        vld1.8      {d0, d1}, [r1]!
+        vst1.8      {d0, d1}, [r0, :128]!
+
+5:      /* copy up to 15-bytes (count in r2) */
+        movs        ip, r2, lsl #29
+        bcc         1f
+        vld1.8      {d0}, [r1]!
+        vst1.8      {d0}, [r0]!
+1:      bge         2f
+        vld4.8      {d0[0], d1[0], d2[0], d3[0]}, [r1]!
+        vst4.8      {d0[0], d1[0], d2[0], d3[0]}, [r0]!
+2:      movs        ip, r2, lsl #31
+        ldrmib      r3, [r1], #1
+        ldrcsb      ip, [r1], #1
+        ldrcsb      lr, [r1], #1
+        strmib      r3, [r0], #1
+        strcsb      ip, [r0], #1
+        strcsb      lr, [r0], #1
+
+        ldmfd       sp!, {r0, lr}
+        bx          lr
+        .fnend
+#else /* !HAVE_32_BYTE_CACHE_LINES */
 
         .text
         .fpu    neon
@@ -328,7 +718,8 @@ ENTRY(memcpy)
         ldmfd       sp!, {r0, pc}
 END(memcpy)
 
-
+#endif /* !HAVE_32_BYTE_CACHE_LINES */
+#endif /* SCORPION_NEON_OPTIMIZATION */
 #else   /* __ARM_ARCH__ < 7 */
 
 
