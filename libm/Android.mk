@@ -222,6 +222,11 @@ libm_common_includes := $(LOCAL_PATH)/upstream-freebsd/lib/msun/src/
 
 libm_arm_includes := $(LOCAL_PATH)/arm
 libm_arm_src_files := arm/fenv.c
+ifeq ($(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION),true)
+libm_arm_cflags += -DKRAIT_NEON_OPTIMIZATION
+libm_arm_src_files += \
+    arm/e_pow.S
+endif
 
 libm_x86_includes := $(LOCAL_PATH)/i386 $(LOCAL_PATH)/i387
 libm_x86_src_files := i387/fenv.c
