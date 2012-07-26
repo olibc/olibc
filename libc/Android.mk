@@ -386,7 +386,7 @@ ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
 libc_common_src_files += \
 	arch-arm/bionic/memmove.S
 else
- ifeq ($(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION),true)
+ifneq (, $(filter true,$(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION) $(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION)))
  libc_common_src_files += \
 	arch-arm/bionic/memmove.S
  else # Other ARM
@@ -571,6 +571,9 @@ ifeq ($(TARGET_ARCH),arm)
       libc_common_cflags += -DPLDSIZE=$(TARGET_KRAIT_BIONIC_PLDSIZE)
       libc_common_cflags += -DBBTHRESH=$(TARGET_KRAIT_BIONIC_BBTHRESH)
     endif
+  endif
+  ifeq ($(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION),true)
+    libc_common_cflags += -DSPARROW_NEON_OPTIMIZATION
   endif
 endif # !arm
 

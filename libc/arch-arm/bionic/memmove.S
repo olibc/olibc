@@ -37,7 +37,7 @@
 
 #include <machine/cpu-features.h>
 
-#if defined(KRAIT_NEON_OPTIMIZATION)
+#if defined(KRAIT_NEON_OPTIMIZATION) || defined(SPARROW_NEON_OPTIMIZATION)
 	/*
 	 * These can be overridden in:
 	 *   device/<vendor>/<board>/BoardConfig.mk
