@@ -232,6 +232,11 @@ libm_arm_cflags += -DKRAIT_NEON_OPTIMIZATION
 libm_arm_src_files += \
     arm/e_pow.S
 endif
+ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
+libm_common_src_files += \
+    arm/e_pow.S
+libm_common_cflags += -DSCORPION_NEON_OPTIMIZATION
+endif
 
 libm_x86_includes := $(LOCAL_PATH)/i386 $(LOCAL_PATH)/i387
 libm_x86_src_files := i387/fenv.c

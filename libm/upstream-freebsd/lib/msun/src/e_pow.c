@@ -12,7 +12,7 @@
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD$");
 
-#if defined(KRAIT_NEON_OPTIMIZATION) || defined(SPARROW_NEON_OPTIMIZATION)
+#if defined(KRAIT_NEON_OPTIMIZATION) || defined(SPARROW_NEON_OPTIMIZATION) || defined(SCORPION_NEON_OPTIMIZATION)
 double pow_neon(double x, double y);
 #endif
 
@@ -207,7 +207,7 @@ __ieee754_pow(double x, double y)
 	    t1 = u+v;
 	    SET_LOW_WORD(t1,0);
 	    t2 = v-(t1-u);
-#if defined(KRAIT_NEON_OPTIMIZATION) || defined(SPARROW_NEON_OPTIMIZATION)
+#if defined(KRAIT_NEON_OPTIMIZATION) || defined(SPARROW_NEON_OPTIMIZATION) || defined(SCORPION_NEON_OPTIMIZATION)
 	} else if (ix <= 0x40100000 && iy <= 0x40100000 && hy > 0 && hx > 0) {
 		return pow_neon(x,y);
 #endif
