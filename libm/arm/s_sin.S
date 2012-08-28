@@ -53,8 +53,9 @@
 ENTRY(sin)
     push            {r4, r6, r7, lr}
     vmov            d0, r0, r1
+    mov             r2, r0
+    mov             r3, r1
     movw            r1, #0x21fb
-    vmov            r2, r3, d0
     movt            r1, #0x3fe9
     mov             r4, r3
     bic             r3, r3, #0x80000000
