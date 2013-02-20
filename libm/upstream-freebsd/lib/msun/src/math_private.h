@@ -432,15 +432,30 @@ irintl(long double x)
 #define	__ieee754_scalbf scalbf
 
 /* fdlibm kernel function */
+#if defined(KRAIT_NEON_OPTIMIZATION)
+int	__kernel_rem_pio2(double*,double*,int,int,int) __attribute__((pcs("aapcs-vfp")));
+#else
 int	__kernel_rem_pio2(double*,double*,int,int,int);
+#endif
 
 /* double precision kernel functions */
 #ifndef INLINE_REM_PIO2
+#if defined(KRAIT_NEON_OPTIMIZATION)
+int	__ieee754_rem_pio2(double,double*) __attribute__((pcs("aapcs-vfp")));
+#else
 int	__ieee754_rem_pio2(double,double*);
 #endif
+#endif
+
+#ifndef INLINE_REM_PIO2
+double	__kernel_sin(double,double,int) __attribute__((pcs("aapcs-vfp")));
+double	__kernel_cos(double,double) __attribute__((pcs("aapcs-vfp")));
+double	__kernel_tan(double,double,int) __attribute__((pcs("aapcs-vfp")));
+#else
 double	__kernel_sin(double,double,int);
 double	__kernel_cos(double,double);
 double	__kernel_tan(double,double,int);
+#endif
 double	__ldexp_exp(double,int);
 #ifdef _COMPLEX_H
 double complex __ldexp_cexp(double complex,int);
