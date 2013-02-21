@@ -942,13 +942,13 @@ LOCAL_SYSTEM_SHARED_LIBRARIES :=
 include $(BUILD_SHARED_LIBRARY)
 
 
-# For all builds, except for the -user build we will enable memory
-# allocation checking (including memory leaks, buffer overwrites, etc.)
+# Extension: enable memory allocation checking (including memory leaks,
+# buffer overwrites, etc.)
 # Note that all these checks are also controlled by env. settings
 # that can enable, or disable specific checks. Note also that some of
 # the checks are available only in emulator and are implemeted in
 # libc_malloc_qemu_instrumented.so.
-ifneq ($(TARGET_BUILD_VARIANT),user)
+ifeq ($(EXT_MALLOC_LEAK_CHECK),true)
 
 # ========================================================
 # libc_malloc_debug_leak.so
@@ -980,7 +980,7 @@ LOCAL_MODULE_TAGS := eng debug
 
 include $(BUILD_SHARED_LIBRARY)
 
-
+ifeq ($(EXT_MALLOC_ANDROID_QEMU_INSTRUMENT),true)
 # ========================================================
 # libc_malloc_debug_qemu.so
 # ========================================================
@@ -1007,7 +1007,8 @@ LOCAL_MODULE_TAGS := eng debug
 
 include $(BUILD_SHARED_LIBRARY)
 
-endif	#!user
+endif   # !EXT_MALLOC_ANDROID_QEMU_INSTRUMENT
+endif	# !EXT_MALLOC_LEAK_CHECK
 
 
 # ========================================================
