@@ -1,0 +1,148 @@
+# olibc configuration
+
+mainmenu "olibc C Library Configurations"
+
+config DESIRED_TARGET_PRODUCT
+	string
+	option env="TARGET_PRODUCT"
+
+choice
+	prompt "Architecture"
+	default TARGET_arm if DESIRED_TARGET_PRODUCT="mini_armv7a_neon"
+	default TARGET_arm if DESIRED_TARGET_PRODUCT="mini_armv7a"
+	default TARGET_mips if DESIRED_TARGET_PRODUCT="mini_mips"
+	default TARGET_x86 if DESIRED_TARGET_PRODUCT="mini_x86"
+	help
+	  The architecture of your target.
+
+config TARGET_arm
+	bool "ARM"
+
+config TARGET_mips
+	bool "MIPS"
+
+config TARGET_x86
+	bool "x86"
+endchoice
+
+
+menu "Target Architecture Features and Options"
+
+config TARGET_CPU_SMP
+	bool "SMP Support"
+	default y
+
+if TARGET_arm
+config TARGET_ARCH
+	string
+	default "arm"
+
+choice
+	prompt "SoC Optimizations"
+	default TARGET_GENERIC_ARM
+
+config TARGET_USE_KRAIT_BIONIC_OPTIMIZATION
+	bool "Qualcomm Krait"
+	select ARCH_ARM_HAVE_NEON
+	select TARGET_CPU_SMP
+
+config TARGET_USE_SCORPION_BIONIC_OPTIMIZATION
+	bool "Qualcomm Scorpion"
+	select ARCH_ARM_HAVE_NEON
+
+config TARGET_USE_SPARROW_BIONIC_OPTIMIZATION
+	bool "Qualcomm Sparrow"
+	select ARCH_ARM_HAVE_NEON
+	select TARGET_CPU_SMP
+
+config TARGET_GENERIC_ARM
+	bool "Generic ARM"
+endchoice
+
+config ARCH_ARM_HAVE_NEON
+	bool "Have NEON co-processor"
+	default n if DESIRED_TARGET_PRODUCT="mini_armv7a"
+	default y
+
+config ARCH_ARM_HAVE_32_BYTE_CACHE_LINES
+	bool "Have 32 byte cache lines"
+	default n
+
+config ARCH_ARM_USE_NON_NEON_MEMCPY
+	bool "Use non-NEON optimized memcpy implementation"
+	depends on ARCH_ARM_HAVE_NEON
+endif # TARGET_arm
+
+config TARGET_SUBARCH
+	string
+	default "neon" if ARCH_ARM_HAVE_NEON
+	default ""
+
+if TARGET_mips
+config TARGET_ARCH
+	string
+	default "mips"
+
+config ARCH_MIPS_HAS_FPU
+	bool "Have FPU"
+endif
+
+if TARGET_x86
+config TARGET_ARCH
+	string
+	default "x86"
+
+config ARCH_X86_HAVE_SSE2
+	bool "Have SSE2"
+
+config ARCH_X86_HAVE_SSSE3
+	bool "Have SSE3"
+	depends on ARCH_X86_HAVE_SSE2
+endif # TARGET_x86
+
+endmenu
+
+
+menu "General Library Settings"
+
+config DEBUG_BIONIC_LIBC
+	bool "Enable olibc debugging"
+	default n
+
+config CUSTOM_MALLOC_ALIGNMENT
+	bool "Customize dlmalloc's alignment"
+	default n
+
+if CUSTOM_MALLOC_ALIGNMENT
+config BOARD_MALLOC_ALIGNMENT
+	int "Controls the minimum alignment for malloc'ed chunks"
+	default 8
+	help
+	  It must be a power of two and at least 8, even on machines for
+	  which smaller alignments would suffice. It may be defined as
+	  larger than this though. Note however that code and data
+	  structures are optimized for the case of 8-byte alignment.
+endif
+
+endmenu
+
+menu "Extensions"
+
+config EXT_MALLOC_LEAK_CHECK
+	bool "Enable emory allocation checking"
+	default n
+	help
+	  Enable memory allocation checking (including memory leaks,
+	  buffer overwrites, etc.)
+	  Note that all these checks are also controlled by env. settings
+	  that can enable, or disable specific checks. Note also that some of
+	  the checks are available only in emulator and are implemeted in
+	  libc_malloc_qemu_instrumented.so.
+
+if EXT_MALLOC_LEAK_CHECK
+config EXT_MALLOC_ANDROID_QEMU_INSTRUMENT
+	bool "Advanced memory instrument for Android QEMU emulator"
+	default n
+endif
+
+endmenu
