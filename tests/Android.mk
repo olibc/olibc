@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-ifneq ($(BUILD_TINY_ANDROID), true)
-
 LOCAL_PATH := $(call my-dir)
 
 # -----------------------------------------------------------------------------
@@ -134,5 +132,3 @@ LOCAL_LDFLAGS += $(test_dynamic_ldflags)
 LOCAL_SRC_FILES := $(test_src_files) $(test_dynamic_src_files)
 include $(BUILD_HOST_NATIVE_TEST)
 endif
-
-endif # !BUILD_TINY_ANDROID
