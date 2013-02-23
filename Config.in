@@ -105,10 +105,6 @@ endmenu
 
 menu "General Library Settings"
 
-config DEBUG_BIONIC_LIBC
-	bool "Enable olibc debugging"
-	default n
-
 config CUSTOM_MALLOC_ALIGNMENT
 	bool "Customize dlmalloc's alignment"
 	default n
@@ -148,7 +144,7 @@ endif
 endmenu
 
 
-menu "Development options"
+menu "Development/Debugging options"
 
 choice
 	prompt "Toolchain"
@@ -182,5 +178,9 @@ config TARGET_LD_USING_GOLD
 	  If your toolchain does not use gold linker, select "No"
 
 endif
+
+config DEBUG_BIONIC_LIBC
+	bool "Enable olibc debugging"
+	default n
 
 endmenu
