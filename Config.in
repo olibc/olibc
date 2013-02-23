@@ -146,3 +146,41 @@ config EXT_MALLOC_ANDROID_QEMU_INSTRUMENT
 endif
 
 endmenu
+
+
+menu "Development options"
+
+choice
+	prompt "Toolchain"
+
+	config USE_PREBUILT_ANDROID_TOOLCHAIN
+	bool "Use prebuilt toolchain by AOSP"
+	select ANDROID_TOOLCHAIN_IDENTIFY
+	select TARGET_LD_USING_GOLD
+
+	config USE_EXTERNAL_TOOLCHAIN
+	bool "Use custom toolchain"
+endchoice
+
+config TOOLCHAIN_ANDROID_IDENTIFY
+	bool
+	default "n"
+
+if USE_EXTERNAL_TOOLCHAIN
+config TARGET_TOOLS_PREFIX
+	string "Cross-compiling toolchain prefix"
+	default ""
+	help
+	  The prefix used to execute your cross-compiling toolchain.  For example,
+	  if you execute 'arm-none-eabi-gcc' to compile programs, then enter
+	  'arm-none-eabi-gcc' here
+
+config TARGET_LD_USING_GOLD
+	bool "Use gold linker for further optimizations"
+	default "n"
+	help
+	  If your toolchain does not use gold linker, select "No"
+
+endif
+
+endmenu
