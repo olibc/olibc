@@ -129,7 +129,7 @@ endmenu
 menu "Extensions"
 
 config EXT_MALLOC_LEAK_CHECK
-	bool "Enable emory allocation checking"
+	bool "Enable memory allocation checking"
 	default n
 	help
 	  Enable memory allocation checking (including memory leaks,
