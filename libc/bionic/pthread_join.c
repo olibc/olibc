@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,47 @@
  * SUCH DAMAGE.
  */
 
-#ifndef LINKER_ENVIRON_H
-#define LINKER_ENVIRON_H
+#include <errno.h>
 
-#include <stdbool.h>
+#include "pthread_accessor.h"
 
-typedef struct KernelArgumentBlock KernelArgumentBlock;
+int pthread_join(pthread_t t, void ** ret_val) {
+  if (t == pthread_self()) {
+    return EDEADLK;
+  }
 
-// Call this function before any of the other functions in this header file.
-extern void linker_env_init(KernelArgumentBlock *args);
+  pthread_accessor thread;
+  pthread_accessor_init(&thread, t);
+  if (pthread_accessor_get(&thread) == NULL) {
+      pthread_accessor_fini(&thread);
+      return ESRCH;
+  }
 
-// Returns the value of environment variable 'name' if defined and not
-// empty, or NULL otherwise.
-extern const char* linker_env_get(const char* name);
+  if (pthread_accessor_get(&thread)->attr.flags & PTHREAD_ATTR_FLAG_DETACHED) {
+    pthread_accessor_fini(&thread);
+    return EINVAL;
+  }
 
-// Returns the value of this program's AT_SECURE variable.
-extern bool get_AT_SECURE();
+  // Wait for thread death when needed.
 
-#endif // LINKER_ENVIRON_H
+  // If the 'join_count' is negative, this is a 'zombie' thread that
+  // is already dead and without stack/TLS. Otherwise, we need to increment 'join-count'
+  // and wait to be signaled
+  int count = pthread_accessor_get(&thread)->join_count;
+  if (count >= 0) {
+    pthread_accessor_get(&thread)->join_count += 1;
+    pthread_cond_wait(&pthread_accessor_get(&thread)->join_cond, &gThreadListLock);
+    count = --pthread_accessor_get(&thread)->join_count;
+  }
+  if (ret_val) {
+    *ret_val = pthread_accessor_get(&thread)->return_value;
+  }
+
+  // Remove thread from thread list when we're the last joiner or when the
+  // thread was already a zombie.
+  if (count <= 0) {
+    _pthread_internal_remove_locked(pthread_accessor_get(&thread));
+  }
+  pthread_accessor_fini(&thread);
+  return 0;
+}

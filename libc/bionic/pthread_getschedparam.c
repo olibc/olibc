@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,31 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <errno.h>
 
-#include <sys/cdefs.h>
+#include "ErrnoRestorer.h"
+#include "pthread_accessor.h"
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+int pthread_getschedparam(pthread_t t, int* policy, struct sched_param* param) {
+  ErrnoRestorer errno_restorer;
+  ErrnoRestorer_init(&errno_restorer);
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
+  pthread_accessor thread;
+  pthread_accessor_init(&thread, t);
+  if (pthread_accessor_get(&thread) == NULL) {
+    pthread_accessor_fini(&thread);
+    ErrnoRestorer_fini(&errno_restorer);
+    return ESRCH;
+  }
 
-#endif /* DEBUG_MAPINFO_H */
+  int rc = sched_getparam(pthread_accessor_get(&thread)->tid, param);
+  if (rc == -1) {
+    pthread_accessor_fini(&thread);
+    ErrnoRestorer_fini(&errno_restorer);
+    return errno;
+  }
+  *policy = sched_getscheduler(pthread_accessor_get(&thread)->tid);
+  pthread_accessor_fini(&thread);
+  ErrnoRestorer_fini(&errno_restorer);
+  return 0;
+}

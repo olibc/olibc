@@ -9,12 +9,12 @@ endif
 
 LOCAL_SRC_FILES:= \
     arch/$(TARGET_ARCH)/begin.$(linker_begin_extension) \
-    debugger.cpp \
-    dlfcn.cpp \
-    linker.cpp \
-    linker_environ.cpp \
-    linker_phdr.cpp \
-    rt.cpp
+    debugger.c \
+    dlfcn.c \
+    linker.c \
+    linker_environ.c \
+    linker_phdr.c \
+    rt.c
 
 LOCAL_LDFLAGS := -shared -Wl,--exclude-libs,ALL -Wl,-Bsymbolic
 

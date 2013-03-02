@@ -19,22 +19,21 @@
 
 #include <pthread.h>
 
-class ScopedPthreadMutexLocker {
- public:
-  explicit ScopedPthreadMutexLocker(pthread_mutex_t* mu) : mu_(mu) {
-    pthread_mutex_lock(mu_);
-  }
+typedef struct ScopedPthreadMutexLocker ScopedPthreadMutexLocker;
 
-  ~ScopedPthreadMutexLocker() {
-    pthread_mutex_unlock(mu_);
-  }
-
- private:
+struct ScopedPthreadMutexLocker {
   pthread_mutex_t* mu_;
-
-  // Disallow copy and assignment.
-  ScopedPthreadMutexLocker(const ScopedPthreadMutexLocker&);
-  void operator=(const ScopedPthreadMutexLocker&);
 };
+
+static inline
+void ScopedPthreadMutexLocker_init(ScopedPthreadMutexLocker *smu, pthread_mutex_t* mu) {
+  smu->mu_ = mu;
+  pthread_mutex_lock(smu->mu_);
+}
+
+static inline
+void ScopedPthreadMutexLocker_fini(ScopedPthreadMutexLocker *smu) {
+  pthread_mutex_unlock(smu->mu_);
+}
 
 #endif // SCOPED_PTHREAD_MUTEX_LOCKER_H

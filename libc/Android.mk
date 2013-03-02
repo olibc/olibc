@@ -265,56 +265,56 @@ libc_common_src_files := \
 	netbsd/nameser/ns_samedomain.c \
 
 libc_bionic_src_files := \
-    bionic/assert.cpp \
-    bionic/brk.cpp \
-    bionic/debug_format.cpp \
-    bionic/dirent.cpp \
+    bionic/assert.c \
+    bionic/brk.c \
+    bionic/debug_format.c \
+    bionic/dirent.c \
     bionic/__errno.c \
-    bionic/eventfd.cpp \
-    bionic/__fgets_chk.cpp \
-    bionic/getauxval.cpp \
-    bionic/getcwd.cpp \
-    bionic/libc_init_common.cpp \
-    bionic/libgen.cpp \
-    bionic/__memcpy_chk.cpp \
-    bionic/__memmove_chk.cpp \
-    bionic/__memset_chk.cpp \
-    bionic/pthread_attr.cpp \
-    bionic/pthread_detach.cpp \
-    bionic/pthread_equal.cpp \
-    bionic/pthread_getcpuclockid.cpp \
-    bionic/pthread_getschedparam.cpp \
-    bionic/pthread_internals.cpp \
-    bionic/pthread_join.cpp \
-    bionic/pthread_kill.cpp \
-    bionic/pthread_self.cpp \
-    bionic/pthread_setname_np.cpp \
-    bionic/pthread_setschedparam.cpp \
-    bionic/pthread_sigmask.cpp \
-    bionic/raise.cpp \
-    bionic/sbrk.cpp \
-    bionic/__set_errno.cpp \
-    bionic/setlocale.cpp \
-    bionic/signalfd.cpp \
-    bionic/sigwait.cpp \
-    bionic/__strcat_chk.cpp \
-    bionic/__strcpy_chk.cpp \
-    bionic/strerror.cpp \
-    bionic/strerror_r.cpp \
-    bionic/__strlcat_chk.cpp \
-    bionic/__strlcpy_chk.cpp \
-    bionic/__strlen_chk.cpp \
-    bionic/__strncat_chk.cpp \
-    bionic/__strncpy_chk.cpp \
-    bionic/strsignal.cpp \
-    bionic/stubs.cpp \
-    bionic/sysconf.cpp \
-    bionic/tdestroy.cpp \
-    bionic/tmpfile.cpp \
-    bionic/__umask_chk.cpp \
-    bionic/__vsnprintf_chk.cpp \
-    bionic/__vsprintf_chk.cpp \
-    bionic/wchar.cpp \
+    bionic/eventfd.c \
+    bionic/__fgets_chk.c \
+    bionic/getauxval.c \
+    bionic/getcwd.c \
+    bionic/libc_init_common.c \
+    bionic/libgen.c \
+    bionic/__memcpy_chk.c \
+    bionic/__memmove_chk.c \
+    bionic/__memset_chk.c \
+    bionic/pthread_attr.c \
+    bionic/pthread_detach.c \
+    bionic/pthread_equal.c \
+    bionic/pthread_getcpuclockid.c \
+    bionic/pthread_getschedparam.c \
+    bionic/pthread_internals.c \
+    bionic/pthread_join.c \
+    bionic/pthread_kill.c \
+    bionic/pthread_self.c \
+    bionic/pthread_setname_np.c \
+    bionic/pthread_setschedparam.c \
+    bionic/pthread_sigmask.c \
+    bionic/raise.c \
+    bionic/sbrk.c \
+    bionic/__set_errno.c \
+    bionic/setlocale.c \
+    bionic/signalfd.c \
+    bionic/sigwait.c \
+    bionic/__strcat_chk.c \
+    bionic/__strcpy_chk.c \
+    bionic/strerror.c \
+    bionic/strerror_r.c \
+    bionic/__strlcat_chk.c \
+    bionic/__strlcpy_chk.c \
+    bionic/__strlen_chk.c \
+    bionic/__strncat_chk.c \
+    bionic/__strncpy_chk.c \
+    bionic/strsignal.c \
+    bionic/stubs.c \
+    bionic/sysconf.c \
+    bionic/tdestroy.c \
+    bionic/tmpfile.c \
+    bionic/__umask_chk.c \
+    bionic/__vsnprintf_chk.c \
+    bionic/__vsprintf_chk.c \
+    bionic/wchar.c \
 
 libc_upstream_netbsd_src_files := \
     upstream-netbsd/common/lib/libc/hash/sha1/sha1.c \
@@ -421,8 +421,8 @@ libc_common_src_files += \
 
 libc_static_common_src_files += \
     bionic/pthread.c.arm \
-    bionic/pthread_create.cpp.arm \
-    bionic/pthread_key.cpp.arm \
+    bionic/pthread_create.c.arm \
+    bionic/pthread_key.c.arm \
 
 # these are used by the static and dynamic versions of the libc
 # respectively
@@ -464,8 +464,8 @@ libc_common_src_files += \
 
 libc_static_common_src_files += \
     bionic/pthread.c \
-    bionic/pthread_create.cpp \
-    bionic/pthread_key.cpp \
+    bionic/pthread_create.c \
+    bionic/pthread_key.c \
 
 libc_arch_static_src_files := \
 	bionic/dl_iterate_phdr_static.c
@@ -512,8 +512,8 @@ libc_common_src_files += \
 
 libc_static_common_src_files += \
     bionic/pthread.c \
-    bionic/pthread_create.cpp \
-    bionic/pthread_key.cpp \
+    bionic/pthread_create.c \
+    bionic/pthread_key.c \
 
 libc_arch_static_src_files := \
 	bionic/dl_iterate_phdr_static.c
@@ -773,7 +773,7 @@ WITH_MALLOC_CHECK_LIBC_A := $(strip $(WITH_MALLOC_CHECK_LIBC_A))
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := bionic/__stack_chk_fail.cpp bionic/__stack_chk_guard.cpp
+LOCAL_SRC_FILES := bionic/__stack_chk_fail.c bionic/__stack_chk_guard.c
 LOCAL_CFLAGS := $(libc_common_cflags) -fno-stack-protector -Werror
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_MODULE := libbionic_ssp
@@ -856,7 +856,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := \
 	$(libc_arch_static_src_files) \
 	$(libc_static_common_src_files) \
-	bionic/libc_init_static.cpp
+	bionic/libc_init_static.c
 
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_CFLAGS := $(libc_common_cflags) \
@@ -880,8 +880,8 @@ LOCAL_SRC_FILES := \
 	$(libc_arch_static_src_files) \
 	$(libc_static_common_src_files) \
 	bionic/dlmalloc.c \
-	bionic/malloc_debug_common.cpp \
-	bionic/libc_init_static.cpp
+	bionic/malloc_debug_common.c \
+	bionic/libc_init_static.c
 
 LOCAL_CFLAGS := $(libc_common_cflags) \
                 -DLIBC_STATIC \
@@ -913,9 +913,9 @@ LOCAL_SRC_FILES := \
 	$(libc_arch_dynamic_src_files) \
 	$(libc_static_common_src_files) \
 	bionic/dlmalloc.c \
-	bionic/malloc_debug_common.cpp \
-	bionic/pthread_debug.cpp \
-	bionic/libc_init_dynamic.cpp
+	bionic/malloc_debug_common.c \
+	bionic/pthread_debug.c \
+	bionic/libc_init_dynamic.c
 
 ifeq ($(TARGET_ARCH),arm)
 	LOCAL_NO_CRT := true
@@ -967,10 +967,10 @@ LOCAL_CFLAGS := \
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 
 LOCAL_SRC_FILES := \
-	bionic/debug_mapinfo.cpp \
-	bionic/debug_stacktrace.cpp \
-	bionic/malloc_debug_leak.cpp \
-	bionic/malloc_debug_check.cpp \
+	bionic/debug_mapinfo.c \
+	bionic/debug_stacktrace.c \
+	bionic/malloc_debug_leak.c \
+	bionic/malloc_debug_check.c \
 
 LOCAL_MODULE:= libc_malloc_debug_leak
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
@@ -998,7 +998,7 @@ LOCAL_CFLAGS := \
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 
 LOCAL_SRC_FILES := \
-	bionic/malloc_debug_qemu.cpp
+	bionic/malloc_debug_qemu.c
 
 LOCAL_MODULE:= libc_malloc_debug_qemu
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk

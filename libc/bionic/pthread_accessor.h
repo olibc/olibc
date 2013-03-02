@@ -17,49 +17,50 @@
 #ifndef PTHREAD_ACCESSOR_H
 #define PTHREAD_ACCESSOR_H
 
+#include <stdbool.h>
 #include <pthread.h>
 
 #include "pthread_internal.h"
 
-class pthread_accessor {
- public:
-  explicit pthread_accessor(pthread_t desired_thread) {
-    Lock();
-    for (thread_ = gThreadList; thread_ != NULL; thread_ = thread_->next) {
-      if (thread_ == reinterpret_cast<pthread_internal_t*>(desired_thread)) {
-        break;
-      }
-    }
-  }
-
-  ~pthread_accessor() {
-    Unlock();
-  }
-
-  void Unlock() {
-    if (is_locked_) {
-      is_locked_ = false;
-      thread_ = NULL;
-      pthread_mutex_unlock(&gThreadListLock);
-    }
-  }
-
-  pthread_internal_t& operator*() const { return *thread_; }
-  pthread_internal_t* operator->() const { return thread_; }
-  pthread_internal_t* get() const { return thread_; }
-
- private:
+typedef struct pthread_accessor pthread_accessor;
+struct pthread_accessor {
   pthread_internal_t* thread_;
   bool is_locked_;
-
-  void Lock() {
-    pthread_mutex_lock(&gThreadListLock);
-    is_locked_ = true;
-  }
-
-  // Disallow copy and assignment.
-  pthread_accessor(const pthread_accessor&);
-  void operator=(const pthread_accessor&);
 };
+
+static inline
+void pthread_accessor_Unlock(pthread_accessor *pa) {
+  if (pa->is_locked_) {
+    pa->is_locked_ = false;
+    pa->thread_ = NULL;
+    pthread_mutex_unlock(&gThreadListLock);
+  }
+}
+
+static inline
+pthread_internal_t* pthread_accessor_get(const pthread_accessor *pa) {
+  return pa->thread_;
+}
+
+static inline
+void pthread_accessor_Lock(pthread_accessor *pa) {
+  pthread_mutex_lock(&gThreadListLock);
+  pa->is_locked_ = true;
+}
+
+static inline
+void pthread_accessor_init(pthread_accessor *pa, pthread_t desired_thread) {
+  pthread_accessor_Lock(pa);
+  for (pa->thread_ = gThreadList; pa->thread_ != NULL; pa->thread_ = pa->thread_->next) {
+    if (pa->thread_ == (pthread_internal_t*)(desired_thread)) {
+      break;
+    }
+  }
+}
+
+static inline
+void pthread_accessor_fini(pthread_accessor *pa) {
+  pthread_accessor_Unlock(pa);
+}
 
 #endif // PTHREAD_ACCESSOR_H

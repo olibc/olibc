@@ -112,9 +112,7 @@ extern void* __get_stack_base(int* p_stack_size);
 
 __END_DECLS
 
-#if defined(__cplusplus)
-struct KernelArgumentBlock;
-extern void __libc_init_tls(KernelArgumentBlock& args);
-#endif
+typedef struct KernelArgumentBlock KernelArgumentBlock;
+extern void __libc_init_tls(KernelArgumentBlock *args);
 
 #endif /* _SYS_TLS_H */

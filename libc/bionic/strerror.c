@@ -26,21 +26,21 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <string.h>
+#include "ThreadLocalBuffer.h"
 
-#include <sys/cdefs.h>
+const char* __strerror_lookup(int);
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+GLOBAL_INIT_THREAD_LOCAL_BUFFER(strerror);
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
+char* strerror(int error_number) {
+  // Just return the original constant in the easy cases.
+  char* result = (char*)(__strerror_lookup(error_number));
+  if (result != NULL) {
+    return result;
+  }
 
-#endif /* DEBUG_MAPINFO_H */
+  LOCAL_INIT_THREAD_LOCAL_BUFFER(char*, strerror, NL_TEXTMAX);
+  strerror_r(error_number, strerror_tls_buffer, strerror_tls_buffer_size);
+  return strerror_tls_buffer;
+}

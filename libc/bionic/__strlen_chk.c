@@ -26,21 +26,39 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <string.h>
+#include <stdlib.h>
+#include <private/logd.h>
 
-#include <sys/cdefs.h>
+/*
+ * Runtime implementation of __strlen_chk.
+ *
+ * See
+ *   http://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
+ *   http://gcc.gnu.org/ml/gcc-patches/2004-09/msg02055.html
+ * for details.
+ *
+ * This strlen check is called if _FORTIFY_SOURCE is defined and
+ * greater than 0.
+ *
+ * This test is designed to detect code such as:
+ *
+ * int main() {
+ *   char buf[10];
+ *   memcpy(buf, "1234567890", sizeof(buf));
+ *   size_t len = strlen(buf); // segfault here with _FORTIFY_SOURCE
+ *   printf("%d\n", len);
+ *   return 0;
+ * }
+ *
+ * or anytime strlen reads beyond an object boundary.
+ */
+size_t __strlen_chk(const char *s, size_t s_len) {
+    size_t ret = strlen(s);
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+    if (__builtin_expect(ret >= s_len, 0)) {
+        __fortify_chk_fail("strlen read overflow", 0);
+    }
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
-
-#endif /* DEBUG_MAPINFO_H */
+    return ret;
+}

@@ -21,32 +21,38 @@
 // This means we can't support real-time signals correctly until we can change the ABI.
 // In the meantime, we can use this union to pass an appropriately-sized block of memory
 // to the kernel, at the cost of not being able to refer to real-time signals.
+typedef union kernel_sigset_t kernel_sigset_t;
 union kernel_sigset_t {
-  kernel_sigset_t() {
-    clear();
-  }
-
-  kernel_sigset_t(const sigset_t* value) {
-    clear();
-    set(value);
-  }
-
-  void clear() {
-    memset(this, 0, sizeof(*this));
-  }
-
-  void set(const sigset_t* value) {
-    bionic = *value;
-  }
-
-  sigset_t* get() {
-    return &bionic;
-  }
-
   sigset_t bionic;
 #ifndef __mips__
   uint32_t kernel[2];
 #endif
 };
+
+static inline
+void kernel_sigset_t_clear(kernel_sigset_t *ks) {
+  memset(ks, 0, sizeof(*ks));
+}
+
+static inline
+void kernel_sigset_t_set(kernel_sigset_t *ks, const sigset_t* value) {
+  ks->bionic = *value;
+}
+
+static inline
+sigset_t* kernel_sigset_t_get(kernel_sigset_t *ks) {
+  return &ks->bionic;
+}
+
+static inline
+void kernel_sigset_t_default_init(kernel_sigset_t *ks) {
+  kernel_sigset_t_clear(ks);
+}
+
+static inline
+void kernel_sigset_t_init(kernel_sigset_t *ks, const sigset_t* value) {
+  kernel_sigset_t_clear(ks);
+  kernel_sigset_t_set(ks, value);
+}
 
 #endif

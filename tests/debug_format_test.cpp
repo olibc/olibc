@@ -18,7 +18,7 @@
 
 #if defined(__BIONIC__)
 
-#include "../libc/bionic/debug_format.cpp"
+#include "../libc/bionic/debug_format.c"
 
 extern int __libc_format_buffer(char* buffer, size_t buffer_size, const char* format, ...);
 

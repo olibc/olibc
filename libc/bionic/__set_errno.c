@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,27 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <errno.h>
 
-#include <sys/cdefs.h>
+// These functions are called from our assembler syscall stubs.
+// C/C++ code should just assign 'errno' instead.
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+// TODO: should be __LIBC_HIDDEN__, but already exported by NDK :-(
+// TODO: this isn't used on ARM.
+int __set_errno(int n) {
+  errno = n;
+  return -1;
+}
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
-
-#endif /* DEBUG_MAPINFO_H */
+// TODO: this is only used on ARM, but is exported by NDK on all platforms :-(
+__LIBC_HIDDEN__ int __set_syscall_errno(int n) {
+  // Some syscalls, mmap() for example, have valid return
+  // values that are "negative".  Since errno values are not
+  // greater than 131 on Linux, we will just consider
+  // anything significantly out of range as not-an-error.
+  if(n > -256) {
+    return __set_errno(-n);
+  } else {
+    return n;
+  }
+}

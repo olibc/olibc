@@ -19,25 +19,26 @@
 
 #include <errno.h>
 
-class ErrnoRestorer {
- public:
-  explicit ErrnoRestorer() : saved_errno_(errno) {
-  }
+typedef struct ErrnoRestorer ErrnoRestorer;
 
-  ~ErrnoRestorer() {
-    errno = saved_errno_;
-  }
-
-  void override(int new_errno) {
-    saved_errno_ = new_errno;
-  }
-
- private:
+struct ErrnoRestorer {
   int saved_errno_;
-
-  // Disallow copy and assignment.
-  ErrnoRestorer(const ErrnoRestorer&);
-  void operator=(const ErrnoRestorer&);
 };
+
+static inline
+void ErrnoRestorer_init(ErrnoRestorer *er) {
+  er->saved_errno_ = errno;
+}
+
+static inline
+void ErrnoRestorer_fini(ErrnoRestorer *er) {
+  errno = er->saved_errno_;
+}
+
+static inline
+void ErrnoRestorer_override(ErrnoRestorer *er, int new_errno) {
+  er->saved_errno_ = new_errno;
+}
+
 
 #endif // ERRNO_RESTORER_H

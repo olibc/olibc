@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,20 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
-
+#include <stddef.h>
 #include <sys/cdefs.h>
+#include <sys/auxv.h>
+#include <private/bionic_auxv.h>
+#include <elf.h>
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+__LIBC_HIDDEN__ Elf32_auxv_t* __libc_auxv = NULL;
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
-
-#endif /* DEBUG_MAPINFO_H */
+unsigned long int getauxval(unsigned long int type) {
+  Elf32_auxv_t* v;
+  for (v = __libc_auxv; v->a_type != AT_NULL; ++v) {
+    if (v->a_type == type) {
+      return v->a_un.a_val;
+    }
+  }
+  return 0;
+}

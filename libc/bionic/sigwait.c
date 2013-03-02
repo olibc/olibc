@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,30 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <errno.h>
+#include <stdbool.h>
+#include <signal.h>
+#include <string.h>
+#include <time.h>
 
-#include <sys/cdefs.h>
+#include <private/kernel_sigset_t.h>
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+int __rt_sigtimedwait(const sigset_t* uthese, siginfo_t* uinfo, const struct timespec* uts, size_t sigsetsize);
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
+int sigwait(const sigset_t* set, int* sig) {
+  kernel_sigset_t sigset;
+  kernel_sigset_t_init(&sigset, set);
+  while (true) {
+    // __rt_sigtimedwait can return EAGAIN or EINTR, we need to loop
+    // around them since sigwait is only allowed to return EINVAL.
+    int result = __rt_sigtimedwait(kernel_sigset_t_get(&sigset), NULL, NULL, sizeof(sigset));
+    if (result >= 0) {
+      *sig = result;
+      return 0;
+    }
 
-#endif /* DEBUG_MAPINFO_H */
+    if (errno != EAGAIN && errno != EINTR) {
+      return errno;
+    }
+  }
+}

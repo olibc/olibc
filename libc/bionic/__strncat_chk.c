@@ -26,21 +26,43 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <string.h>
+#include <stdlib.h>
+#include <private/logd.h>
+#include <safe_iop.h>
 
-#include <sys/cdefs.h>
+/*
+ * Runtime implementation of __builtin____strncat_chk.
+ *
+ * See
+ *   http://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
+ *   http://gcc.gnu.org/ml/gcc-patches/2004-09/msg02055.html
+ * for details.
+ *
+ * This strncat check is called if _FORTIFY_SOURCE is defined and
+ * greater than 0.
+ */
+char *__strncat_chk (char *dest, const char *src,
+              size_t len, size_t dest_buf_size)
+{
+    // TODO: optimize so we don't scan src/dest twice.
+    size_t dest_len = strlen(dest);
+    size_t src_len = strlen(src);
+    if (src_len > len) {
+        src_len = len;
+    }
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+    size_t sum;
+    // sum = src_len + dest_len + 1 (with overflow protection)
+    if (!safe_add3(&sum, src_len, dest_len, 1U)) {
+        __fortify_chk_fail("strncat integer overflow",
+                             BIONIC_EVENT_STRNCAT_INTEGER_OVERFLOW);
+    }
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
+    if (sum > dest_buf_size) {
+        __fortify_chk_fail("strncat buffer overflow",
+                             BIONIC_EVENT_STRNCAT_BUFFER_OVERFLOW);
+    }
 
-#endif /* DEBUG_MAPINFO_H */
+    return strncat(dest, src, len);
+}

@@ -29,6 +29,7 @@
 #ifndef _LINKER_H_
 #define _LINKER_H_
 
+#include <stdbool.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <elf.h>
@@ -48,6 +49,7 @@
 
 // Magic shared structures that GDB knows about.
 
+typedef struct link_map link_map;
 struct link_map {
   uintptr_t l_addr;
   char * l_name;
@@ -63,6 +65,7 @@ enum {
   RT_DELETE
 };
 
+typedef struct r_debug r_debug;
 struct r_debug {
   int32_t r_version;
   struct link_map* r_map;
@@ -76,6 +79,8 @@ struct r_debug {
 #define FLAG_LINKER     0x00000010 // The linker itself
 
 #define SOINFO_NAME_LEN 128
+
+typedef struct soinfo soinfo;
 
 struct soinfo {
   char name[SOINFO_NAME_LEN];
@@ -144,14 +149,18 @@ struct soinfo {
   bool has_text_relocations;
   bool has_DT_SYMBOLIC;
 
-  void CallConstructors();
-  void CallDestructors();
-  void CallPreInitConstructors();
-
- private:
-  void CallArray(const char* array_name, unsigned* array, int count, bool reverse);
-  void CallFunction(const char* function_name, void (*function)());
 };
+
+void soinfo_CallConstructors(soinfo *si);
+void soinfo_CallDestructors(soinfo *si);
+void soinfo_CallPreInitConstructors(soinfo *si);
+void soinfo_CallArray(soinfo *si, const char* array_name,
+                      unsigned* array, int count, bool reverse);
+
+void soinfo_CallFunction(soinfo *si,
+                         const char* function_name,
+                         void (*function)());
+
 
 extern soinfo libdl_info;
 
@@ -175,6 +184,8 @@ Elf32_Sym* soinfo_find_symbol(soinfo* si, const void* addr);
 Elf32_Sym* soinfo_lookup(soinfo* si, const char* name);
 
 void debugger_init();
-extern "C" void notify_gdb_of_libraries();
+void notify_gdb_of_libraries();
+
+#define UNUSED __attribute__((unused))
 
 #endif

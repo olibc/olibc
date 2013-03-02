@@ -26,21 +26,25 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#undef _FORTIFY_SOURCE
 
-#include <sys/cdefs.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <private/logd.h>
+#include <stdlib.h>
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+/*
+ * Runtime implementation of __umask_chk.
+ *
+ * Validate that umask is called with sane mode.
+ *
+ * This umask check is called if _FORTIFY_SOURCE is defined and
+ * greater than 0.
+ */
+mode_t __umask_chk(mode_t mode) {
+    if ((mode & 0777) != mode) {
+        __fortify_chk_fail("umask called with invalid mask", 0);
+    }
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
-
-#endif /* DEBUG_MAPINFO_H */
+    return umask(mode);
+}

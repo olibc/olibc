@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,28 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <unistd.h>
+#include <errno.h>
 
-#include <sys/cdefs.h>
+/* Shared with brk.c. */
+void* __bionic_brk; // TODO: should be __LIBC_HIDDEN__ but accidentally exported by NDK :-(
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+void* sbrk(ptrdiff_t increment) {
+  if (__bionic_brk == NULL) {
+    __bionic_brk = __brk(NULL);
+  }
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
+  void* original_brk = __bionic_brk;
+  void* desired_brk = (void*) ((uintptr_t) original_brk + increment);
 
-#endif /* DEBUG_MAPINFO_H */
+  void* new_brk = __brk(desired_brk);
+  if (new_brk == (void*) -1) {
+    return new_brk;
+  } else if (new_brk < desired_brk) {
+    errno = ENOMEM;
+    return (void*) -1;
+  }
+
+  __bionic_brk = new_brk;
+  return original_brk;
+}

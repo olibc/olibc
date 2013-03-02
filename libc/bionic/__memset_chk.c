@@ -26,21 +26,26 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <string.h>
+#include <stdlib.h>
+#include <private/logd.h>
 
-#include <sys/cdefs.h>
+/*
+ * Runtime implementation of __builtin____memset_chk.
+ *
+ * See
+ *   http://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
+ *   http://gcc.gnu.org/ml/gcc-patches/2004-09/msg02055.html
+ * for details.
+ *
+ * This memset check is called if _FORTIFY_SOURCE is defined and
+ * greater than 0.
+ */
+void *__memset_chk (void *dest, int c, size_t n, size_t dest_len) {
+    if (n > dest_len) {
+        __fortify_chk_fail("memset buffer overflow",
+                             BIONIC_EVENT_MEMSET_BUFFER_OVERFLOW);
+    }
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
-
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
-
-#endif /* DEBUG_MAPINFO_H */
+    return memset(dest, c, n);
+}

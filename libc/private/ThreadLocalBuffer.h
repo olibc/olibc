@@ -51,9 +51,9 @@
 // Leaves "name_tls_buffer" and "name_tls_buffer_size" defined and initialized.
 #define LOCAL_INIT_THREAD_LOCAL_BUFFER(type, name, byte_count) \
   type name ## _tls_buffer = \
-      reinterpret_cast<type>(pthread_getspecific(__bionic_tls_ ## name ## _key)); \
+      (type)(pthread_getspecific(__bionic_tls_ ## name ## _key)); \
   if (name ## _tls_buffer == NULL) { \
-    name ## _tls_buffer = reinterpret_cast<type>(calloc(1, byte_count)); \
+    name ## _tls_buffer = (type)(calloc(1, byte_count)); \
     pthread_setspecific(__bionic_tls_ ## name ## _key, name ## _tls_buffer); \
   } \
   const size_t name ## _tls_buffer_size __attribute__((unused)) = byte_count

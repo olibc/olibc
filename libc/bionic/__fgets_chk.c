@@ -26,21 +26,31 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <private/logd.h>
 
-#include <sys/cdefs.h>
+/*
+ * __fgets_chk. Called in place of fgets() when we know the
+ * size of the buffer we're writing into.
+ *
+ * See
+ *   http://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
+ * for details.
+ *
+ * This fgets check is called if _FORTIFY_SOURCE is defined and
+ * greater than 0.
+ */
+char *__fgets_chk(char *dest, int supplied_size,
+                  FILE *stream, size_t dest_len_from_compiler)
+{
+    if (supplied_size < 0) {
+        __fortify_chk_fail("fgets buffer size less than 0", 0);
+    }
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+    if (((size_t) supplied_size) > dest_len_from_compiler) {
+        __fortify_chk_fail("fgets buffer overflow", 0);
+    }
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
-
-#endif /* DEBUG_MAPINFO_H */
+    return fgets(dest, supplied_size, stream);
+}

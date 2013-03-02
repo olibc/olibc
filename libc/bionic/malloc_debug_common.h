@@ -49,6 +49,8 @@
 // Structures
 // =============================================================================
 
+typedef struct HashEntry HashEntry;
+
 struct HashEntry {
     size_t slot;
     HashEntry* prev;
@@ -60,6 +62,7 @@ struct HashEntry {
     uintptr_t backtrace[0];
 };
 
+typedef struct HashTable HashTable;
 struct HashTable {
     size_t count;
     HashEntry* slots[HASHTABLE_SIZE];
@@ -71,6 +74,7 @@ typedef void (*MallocDebugFree)(void*);
 typedef void* (*MallocDebugCalloc)(size_t, size_t);
 typedef void* (*MallocDebugRealloc)(void*, size_t);
 typedef void* (*MallocDebugMemalign)(size_t, size_t);
+typedef struct MallocDebug MallocDebug;
 struct MallocDebug {
   MallocDebugMalloc malloc;
   MallocDebugFree free;

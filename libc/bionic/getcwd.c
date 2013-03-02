@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,52 @@
  * SUCH DAMAGE.
  */
 
-#ifndef DEBUG_MAPINFO_H
-#define DEBUG_MAPINFO_H
+#include <unistd.h>
+#include <errno.h>
 
-#include <sys/cdefs.h>
+int __getcwd(char* buf, size_t size);
 
-typedef struct mapinfo_t mapinfo_t;
-struct mapinfo_t {
-  struct mapinfo_t* next;
-  unsigned start;
-  unsigned end;
-  char name[];
-};
+char* getcwd(char* buf, size_t size) {
+  // You can't specify size 0 unless you're asking us to allocate for you.
+  if (buf != NULL && size == 0) {
+    errno = EINVAL;
+    return NULL;
+  }
 
-__LIBC_HIDDEN__ mapinfo_t* mapinfo_create(pid_t pid);
-__LIBC_HIDDEN__ void mapinfo_destroy(mapinfo_t* mi);
-__LIBC_HIDDEN__ const mapinfo_t* mapinfo_find(mapinfo_t* mi, uintptr_t pc, uintptr_t* rel_pc);
+  // Allocate a buffer if necessary.
+  char* allocated_buf = NULL;
+  size_t allocated_size = size;
+  if (buf == NULL) {
+    if (size == 0) {
+      // The Linux kernel won't return more than a page, so translate size 0 to 4KiB.
+      // TODO: if we need to support paths longer than that, we'll have to walk the tree ourselves.
+      allocated_size = getpagesize();
+    }
+    buf = allocated_buf = (char*)(malloc(allocated_size));
+    if (buf == NULL) {
+      // malloc should set errno, but valgrind's malloc wrapper doesn't.
+      errno = ENOMEM;
+      return NULL;
+    }
+  }
 
-#endif /* DEBUG_MAPINFO_H */
+  // Ask the kernel to fill our buffer.
+  int rc = __getcwd(buf, allocated_size);
+  if (rc == -1) {
+    free(allocated_buf);
+    // __getcwd set errno.
+    return NULL;
+  }
+
+  // If we allocated a whole page, only return as large an allocation as necessary.
+  if (allocated_buf != NULL) {
+    if (size == 0) {
+      buf = strdup(allocated_buf);
+      free(allocated_buf);
+    } else {
+      buf = allocated_buf;
+    }
+  }
+
+  return buf;
+}
