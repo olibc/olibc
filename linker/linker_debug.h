@@ -31,13 +31,6 @@
 
 #include <stdio.h>
 
-#define TRACE_DEBUG          1
-#define DO_TRACE_LOOKUP      1
-#define DO_TRACE_RELO        1
-#define TIMING               0
-#define STATS                0
-#define COUNT_PAGES          0
-
 /*********************************************************************
  * You shouldn't need to modify anything below unless you are adding
  * more debugging information.

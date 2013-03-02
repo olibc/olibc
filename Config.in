@@ -193,6 +193,35 @@ config DEBUG_BIONIC_LIBC
 	bool "Enable olibc debugging"
 	default n
 
+menu "Dynamic linker debugging options"
+
+config LINKER_TRACE_DEBUG
+	bool "Enable linker debug traces"
+	default y
+
+config LINKER_TRACE_LOOKUP
+	bool "Trace linker: ELF symbol lookup"
+	default y
+	depends on LINKER_TRACE_DEBUG
+
+config LINKER_TRACE_RELO
+	bool "Trace linker: ELF relocation"
+	default y
+	depends on LINKER_TRACE_DEBUG
+
+config LINKER_TIMING
+	bool "Dump linker time"
+	default n
+
+config LINKER_STATS
+	bool "Dump linker relocation stats"
+	default n
+
+config LINKER_COUNT_PAGES
+	bool "Dump pages modified by linker"
+	default n
+endmenu
+
 endmenu
 
 

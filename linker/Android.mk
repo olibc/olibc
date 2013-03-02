@@ -43,6 +43,38 @@ ifeq ($(USE_AT_SECURE),true)
     LOCAL_CFLAGS += -DUSE_AT_SECURE
 endif
 
+# debug traces
+ifeq ($(LINKER_TRACE_DEBUG),true)
+    LOCAL_CFLAGS += -DTRACE_DEBUG=1
+else
+    LOCAL_CFLAGS += -DTRACE_DEBUG=0
+endif
+ifeq ($(LINKER_TRACE_LOOKUP),true)
+    LOCAL_CFLAGS += -DDO_TRACE_LOOKUP=1
+else
+    LOCAL_CFLAGS += -DDO_TRACE_LOOKUP=0
+endif
+ifeq ($(LINKER_TRACE_RELO),true)
+    LOCAL_CFLAGS += -DDO_TRACE_RELO=1
+else
+    LOCAL_CFLAGS += -DDO_TRACE_RELO=0
+endif
+ifeq ($(LINKER_TIMING),true)
+    LOCAL_CFLAGS += -DTIMING=1
+else
+    LOCAL_CFLAGS += -DTIMING=0
+endif
+ifeq ($(LINKER_STATS),true)
+    LOCAL_CFLAGS += -DSTATS=1
+else
+    LOCAL_CFLAGS += -DSTATS=0
+endif
+ifeq ($(LINKER_COUNT_PAGES),true)
+    LOCAL_CFLAGS += -DCOUNT_PAGES=1
+else
+    LOCAL_CFLAGS += -DCOUNT_PAGES=0
+endif
+
 LOCAL_MODULE:= linker
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
