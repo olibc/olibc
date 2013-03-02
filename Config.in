@@ -186,7 +186,6 @@ endif
 config TARGET_LD_USING_GOLD
 	bool "Use gold linker for further optimizations"
 	default "n"
-	depends on !USE_PREBUILT_ANDROID_TOOLCHAIN
 	help
 	  If your toolchain does not use gold linker, select "No"
 
