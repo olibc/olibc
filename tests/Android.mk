@@ -33,6 +33,7 @@ benchmark_src_files = \
 
 # Build benchmarks for the device (with bionic's .so). Run with:
 #   adb shell bionic-benchmarks
+ifeq ($(EXTRA_STLPORT_SUPPORT),true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := bionic-benchmarks
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
@@ -41,6 +42,7 @@ LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include
 LOCAL_SHARED_LIBRARIES += libstlport
 LOCAL_SRC_FILES := $(benchmark_src_files)
 include $(BUILD_EXECUTABLE)
+endif
 
 # -----------------------------------------------------------------------------
 # Unit tests.
@@ -79,6 +81,7 @@ test_dynamic_src_files = \
 
 # Build tests for the device (with bionic's .so). Run with:
 #   adb shell /data/nativetest/bionic-unit-tests/bionic-unit-tests
+ifeq ($(EXTRA_STLPORT_SUPPORT),true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := bionic-unit-tests
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
@@ -87,9 +90,11 @@ LOCAL_LDFLAGS += $(test_dynamic_ldflags)
 LOCAL_SHARED_LIBRARIES += libdl
 LOCAL_SRC_FILES := $(test_src_files) $(test_dynamic_src_files)
 include $(BUILD_NATIVE_TEST)
+endif
 
 # Build tests for the device (with bionic's .a). Run with:
 #   adb shell /data/nativetest/bionic-unit-tests-static/bionic-unit-tests-static
+ifeq ($(EXTRA_STLPORT_SUPPORT),true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := bionic-unit-tests-static
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
@@ -98,6 +103,7 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_SRC_FILES := $(test_src_files)
 LOCAL_STATIC_LIBRARIES += libstlport_static libstdc++ libm libc
 include $(BUILD_NATIVE_TEST)
+endif
 
 # -----------------------------------------------------------------------------
 # Test library for the unit tests.
