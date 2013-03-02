@@ -31,10 +31,6 @@
 
 #include <stdio.h>
 
-/* set LINKER_DEBUG_TO_LOG to 1 to send the logs to logcat,
- * or 0 to use stdout instead.
- */
-#define LINKER_DEBUG_TO_LOG  1
 #define TRACE_DEBUG          1
 #define DO_TRACE_LOOKUP      1
 #define DO_TRACE_RELO        1
@@ -54,17 +50,10 @@
 
 #include <private/debug_format.h>
 
-#if LINKER_DEBUG_TO_LOG
-#define _PRINTVF(v,x...)                                        \
-    do {                                                          \
-        if (debug_verbosity > (v)) __libc_format_log(5-(v),"linker",x);  \
-    } while (0)
-#else /* !LINKER_DEBUG_TO_LOG */
 #define _PRINTVF(v,x...)                           \
     do {                                             \
         if (debug_verbosity > (v)) __libc_format_fd(1, x);  \
     } while (0)
-#endif /* !LINKER_DEBUG_TO_LOG */
 
 #define PRINT(x...)          _PRINTVF(-1, x)
 #define INFO(x...)           _PRINTVF(0, x)

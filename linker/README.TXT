@@ -84,6 +84,4 @@ environment variable to a numeric value from 0 to 2 (corresponding to
 INFO, TRACE, and DEBUG calls in the source). This will only
 affect new processes being launched.
 
-By default, traces are sent to logcat, with the "linker" tag. You can
-change this to go to stdout instead by setting the definition of
-LINKER_DEBUG_TO_LOG to 0 in "linker_debug.h".
+By default, traces are sent to stdout.
