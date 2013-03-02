@@ -33,7 +33,7 @@ benchmark_src_files = \
 
 # Build benchmarks for the device (with bionic's .so). Run with:
 #   adb shell bionic-benchmarks
-ifeq ($(EXTRA_STLPORT_SUPPORT),true)
+ifneq ($(EXTRA_STLPORT_SUPPORT),)
 include $(CLEAR_VARS)
 LOCAL_MODULE := bionic-benchmarks
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
@@ -81,7 +81,7 @@ test_dynamic_src_files = \
 
 # Build tests for the device (with bionic's .so). Run with:
 #   adb shell /data/nativetest/bionic-unit-tests/bionic-unit-tests
-ifeq ($(EXTRA_STLPORT_SUPPORT),true)
+ifneq ($(EXTRA_STLPORT_SUPPORT),)
 include $(CLEAR_VARS)
 LOCAL_MODULE := bionic-unit-tests
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
@@ -94,7 +94,7 @@ endif
 
 # Build tests for the device (with bionic's .a). Run with:
 #   adb shell /data/nativetest/bionic-unit-tests-static/bionic-unit-tests-static
-ifeq ($(EXTRA_STLPORT_SUPPORT),true)
+ifneq ($(EXTRA_STLPORT_SUPPORT),)
 include $(CLEAR_VARS)
 LOCAL_MODULE := bionic-unit-tests-static
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
