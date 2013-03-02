@@ -231,7 +231,7 @@ config EXTRA_CXX_SUPPORT
 	bool "C++ Support for olibc"
 	default n
 
-config EXTRA_STLPORT
+config EXTRA_STLPORT_SUPPORT
 	bool "STLport: complete C++ library"
 	default y
 	depends on EXTRA_CXX_SUPPORT
