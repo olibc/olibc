@@ -124,6 +124,17 @@ endmenu
 
 menu "Extensions"
 
+config USE_AT_SECURE
+	bool "Use the AT_SECURE auxv flag to determine secure mode"
+	default n
+	help
+	  The Linux kernel provides an AT_SECURE auxv flag to inform userspace
+	  whether or not a security transition has occurred.  This is more
+	  reliable than directly checking the uid/gid against the euid/egid,
+	  because it covers not only setuid/setgid but also file capabilities,
+	  SELinux, and AppArmor security transitions.  It is also a more
+	  efficient test since it does not require any additional system calls.
+
 config EXT_MALLOC_LEAK_CHECK
 	bool "Enable memory allocation checking"
 	default n

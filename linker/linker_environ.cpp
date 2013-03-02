@@ -36,12 +36,20 @@
 #include <private/KernelArgumentBlock.h>
 
 static char** _envp;
+#if defined(USE_AT_SECURE)
 static bool _AT_SECURE_value = true;
+#endif
 
 bool get_AT_SECURE() {
+#if defined(USE_AT_SECURE)
   return _AT_SECURE_value;
+#else
+  /* Kernel did not provide AT_SECURE - fall back on legacy test. */
+  return (getuid() != geteuid()) || (getgid() != getegid());
+#endif
 }
 
+#if defined(USE_AT_SECURE)
 static void __init_AT_SECURE(KernelArgumentBlock& args) {
   // Check auxv for AT_SECURE first to see if program is setuid, setgid,
   // has file caps, or caused a SELinux/AppArmor domain transition.
@@ -55,6 +63,7 @@ static void __init_AT_SECURE(KernelArgumentBlock& args) {
     exit(EXIT_FAILURE);
   }
 }
+#endif
 
 // Check if the environment variable definition at 'envstr'
 // starts with '<name>=', and if so return the address of the
@@ -167,7 +176,9 @@ void linker_env_init(KernelArgumentBlock& args) {
   // Store environment pointer - can't be NULL.
   _envp = args.envp;
 
+#if defined(USE_AT_SECURE)
   __init_AT_SECURE(args);
+#endif
   __sanitize_environment_variables();
 }
 

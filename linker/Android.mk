@@ -38,6 +38,11 @@ ifeq ($(TARGET_ARCH),mips)
     LOCAL_CFLAGS += -DANDROID_MIPS_LINKER
 endif
 
+# Use the AT_SECURE auxv flag to determine whether to enable secure mode
+ifeq ($(USE_AT_SECURE),true)
+    LOCAL_CFLAGS += -DUSE_AT_SECURE
+endif
+
 LOCAL_MODULE:= linker
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
