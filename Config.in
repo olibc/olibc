@@ -167,7 +167,6 @@ choice
 	config USE_PREBUILT_ANDROID_TOOLCHAIN
 	bool "Use prebuilt toolchain by AOSP"
 	select TOOLCHAIN_ANDROID_IDENTIFY
-	select TARGET_LD_USING_GOLD
 
 	config USE_EXTERNAL_TOOLCHAIN
 	bool "Use custom toolchain"
@@ -182,12 +181,6 @@ config TARGET_TOOLS_PREFIX
 	  if you execute 'arm-none-eabi-gcc' to compile programs, then enter
 	  'arm-none-eabi-gcc' here
 endif
-
-config TARGET_LD_USING_GOLD
-	bool "Use gold linker for further optimizations"
-	default "n"
-	help
-	  If your toolchain does not use gold linker, select "No"
 
 config DEBUG_BIONIC_LIBC
 	bool "Enable olibc debugging"
