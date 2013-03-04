@@ -96,7 +96,9 @@ void __libc_init_common(KernelArgumentBlock *args) {
   main_thread->allocated_on_heap = false;
   _pthread_internal_add(main_thread);
 
+#if defined(PROPERTY_SYSTEM_SUPPORT)
   __system_properties_init(); // Requires 'environ'.
+#endif
 }
 
 /* This function will be called during normal program termination

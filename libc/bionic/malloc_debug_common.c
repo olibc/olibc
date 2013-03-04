@@ -352,6 +352,7 @@ static void malloc_init_impl() {
     /* Get custom malloc debug level. Note that emulator started with
      * memory checking option will have priority over debug level set in
      * libc.debug.malloc system property. */
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     if (__system_property_get("ro.kernel.qemu", env) && atoi(env)) {
         qemu_running = 1;
         if (__system_property_get("ro.kernel.memcheck", memcheck_tracing)) {
@@ -426,6 +427,7 @@ static void malloc_init_impl() {
             error_log("%s: Debug level %d is unknown\n", __progname, gMallocDebugLevel);
             return;
     }
+#endif
 
     // Load .so that implements the required malloc debugging functionality.
     libc_malloc_impl_handle = dlopen(so_name, RTLD_LAZY);

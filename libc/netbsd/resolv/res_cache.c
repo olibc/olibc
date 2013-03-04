@@ -1352,9 +1352,11 @@ _res_cache_get_max_entries( void )
         return 1;
     }
 
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     if (__system_property_get(DNS_CACHE_SIZE_PROP_NAME, cache_size) > 0) {
         result = atoi(cache_size);
     }
+#endif
 
     // ro.net.dns_cache_size not set or set to negative value
     if (result <= 0) {

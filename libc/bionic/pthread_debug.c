@@ -665,6 +665,7 @@ static MutexInfo* get_most_recently_locked() {
  */
 
 __LIBC_HIDDEN__ void pthread_debug_init() {
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     char env[PROP_VALUE_MAX];
     if (__system_property_get("debug.libc.pthread", env)) {
         int level = atoi(env);
@@ -675,6 +676,7 @@ __LIBC_HIDDEN__ void pthread_debug_init() {
             sPthreadDebugLevel = level;
         }
     }
+#endif
 }
 
 /*

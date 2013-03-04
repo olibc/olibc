@@ -176,12 +176,15 @@ android_gethostbyaddr_proxy(char* nameBuf, size_t nameBufLen, const void *addr, 
 	// Temporary cautious hack to disable the DNS proxy for processes
 	// requesting special treatment.  Ideally the DNS proxy should
 	// accomodate these apps, though.
+#if defined(PROPERTY_SYSTEM_SUPPORT)
 	char propname[PROP_NAME_MAX];
 	char propvalue[PROP_VALUE_MAX];
 	snprintf(propname, sizeof(propname), "net.dns1.%d", getpid());
 	if (__system_property_get(propname, propvalue) > 0) {
 		return -1;
 	}
+#endif
+
 	// create socket
 	sock = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (sock < 0) {

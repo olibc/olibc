@@ -430,12 +430,14 @@ android_getaddrinfo_proxy(
 	// Temporary cautious hack to disable the DNS proxy for processes
 	// requesting special treatment.  Ideally the DNS proxy should
 	// accomodate these apps, though.
+#if defined(PROPERTY_SYSTEM_SUPPORT)
 	char propname[PROP_NAME_MAX];
 	char propvalue[PROP_VALUE_MAX];
 	snprintf(propname, sizeof(propname), "net.dns1.%d", getpid());
 	if (__system_property_get(propname, propvalue) > 0) {
 		return -1;
 	}
+#endif
 
 	// Bogus things we can't serialize.  Don't use the proxy.
 	if ((hostname != NULL &&
@@ -1875,6 +1877,7 @@ error:
 
 static int _using_alt_dns()
 {
+#if defined(PROPERTY_SYSTEM_SUPPORT)
 	char propname[PROP_NAME_MAX];
 	char propvalue[PROP_VALUE_MAX];
 
@@ -1883,6 +1886,7 @@ static int _using_alt_dns()
 	if (__system_property_get(propname, propvalue) > 0 ) {
 		return 1;
 	}
+#endif
 	return 0;
 }
 

@@ -1231,8 +1231,10 @@ tzset_locked P((void))
     name = getenv("TZ");
 
     // try the "persist.sys.timezone" system property first
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     if (name == NULL && __system_property_get("persist.sys.timezone", buf) > 0)
         name = buf;
+#endif
 
     if (name == NULL) {
         tzsetwall();

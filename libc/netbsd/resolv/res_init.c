@@ -171,7 +171,7 @@ res_ninit(res_state statp) {
 	return (__res_vinit(statp, 0));
 }
 
-#ifdef ANDROID_CHANGES
+#if defined(ANDROID_CHANGES) && defined(PROPERTY_SYSTEM_SUPPORT)
 static int load_domain_search_list(res_state statp) {
 	char propvalue[PROP_VALUE_MAX];
 	register char *cp, **pp;
@@ -220,7 +220,7 @@ __res_vinit(res_state statp, int preinit) {
 	char *net;
 	int dots;
 	union res_sockaddr_union u[2];
-#ifdef ANDROID_CHANGES
+#if defined(ANDROID_CHANGES) && ANDROID_CHANGES
         pid_t mypid = getpid();
         int use_proc_props = 0;
         int found_prop;
@@ -318,7 +318,7 @@ __res_vinit(res_state statp, int preinit) {
 	if (nserv > 0)
 		statp->nscount = nserv;
 #endif
-#ifdef ANDROID_CHANGES /* READ FROM SYSTEM PROPERTIES */
+#if defined(ANDROID_CHANGES) && defined(PROPERTY_SYSTEM_SUPPORT) /* READ FROM SYSTEM PROPERTIES */
 	dns_last_change_counter = _get_dns_change_count();
 
 	nserv = 0;
@@ -906,7 +906,7 @@ res_getservers(res_state statp, union res_sockaddr_union *set, int cnt) {
 	return (statp->nscount);
 }
 
-#ifdef ANDROID_CHANGES
+#if defined(ANDROID_CHANGES) && defined(PROPERTY_SYSTEM_SUPPORT)
 static int _get_dns_change_count()
 {
 	if (dns_change_prop == NULL) {

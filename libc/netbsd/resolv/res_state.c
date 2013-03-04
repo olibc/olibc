@@ -69,7 +69,9 @@ _res_thread_alloc(void)
         rt->_h_errno = 0;
         /* Special system property which tracks any changes to 'net.*'. */
         rt->_serial = 0;
+#if defined(PROPERTY_SYSTEM_SUPPORT)
         rt->_pi = (struct prop_info*) __system_property_find("net.change");
+#endif
         if (rt->_pi) {
             rt->_serial = rt->_pi->serial;
         }
@@ -127,7 +129,9 @@ _res_thread_get(void)
              * called the last time. This should only happen very
              * early during the boot sequence. First, let's try to see if it
              * is here now. */
+#if defined(PROPERTY_SYSTEM_SUPPORT)
             rt->_pi = (struct prop_info*) __system_property_find("net.change");
+#endif
             if (rt->_pi == NULL) {
                 /* Still nothing, return current state */
                 D("%s: exiting for tid=%d rt=%d since system property not found",

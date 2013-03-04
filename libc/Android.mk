@@ -223,7 +223,6 @@ libc_common_src_files := \
 	bionic/strntoimax.c \
 	bionic/strntoumax.c \
 	bionic/strtotimeval.c \
-	bionic/system_properties.c \
 	bionic/tcgetpgrp.c \
 	bionic/tcsetpgrp.c \
 	bionic/thread_atexit.c \
@@ -552,6 +551,12 @@ libc_common_cflags += \
 
 ifeq ($(strip $(DEBUG_BIONIC_LIBC)),true)
   libc_common_cflags += -DDEBUG
+endif
+
+ifeq ($(OLIBC_PROPERTY_SYSTEM_SUPPORT),true)
+  libc_common_src_files += \
+	bionic/system_properties.c
+  libc_common_cflags += -DPROPERTY_SYSTEM_SUPPORT
 endif
 
 # To customize dlmalloc's alignment, set BOARD_MALLOC_ALIGNMENT in
