@@ -179,7 +179,6 @@ libc_common_src_files := \
 	bionic/ldexp.c \
 	bionic/logd_write.c \
 	bionic/lseek64.c \
-	bionic/md5.c \
 	bionic/memchr.c \
 	bionic/memmem.c \
 	bionic/memrchr.c \
@@ -264,6 +263,11 @@ libc_common_src_files := \
 	netbsd/nameser/ns_print.c \
 	netbsd/nameser/ns_samedomain.c \
 
+ifeq ($(OLIBC_MD5_SUPPORT),true)
+libc_common_src_files += \
+	bionic/md5.c
+endif
+
 libc_bionic_src_files := \
     bionic/assert.c \
     bionic/brk.c \
@@ -317,7 +321,6 @@ libc_bionic_src_files := \
     bionic/wchar.c \
 
 libc_upstream_netbsd_src_files := \
-    upstream-netbsd/common/lib/libc/hash/sha1/sha1.c \
     upstream-netbsd/common/lib/libc/inet/inet_addr.c \
     upstream-netbsd/libc/compat-43/creat.c \
     upstream-netbsd/libc/gen/ftw.c \
@@ -358,6 +361,11 @@ libc_upstream_netbsd_src_files := \
     upstream-netbsd/libc/string/strcoll.c \
     upstream-netbsd/libc/string/strxfrm.c \
     upstream-netbsd/libc/unistd/killpg.c \
+
+ifeq ($(OLIBC_SHA1_SUPPORT),true)
+libc_upstream_netbsd_src_files += \
+    upstream-netbsd/common/lib/libc/hash/sha1/sha1.c
+endif
 
 # Architecture specific source files go here
 # =========================================================
