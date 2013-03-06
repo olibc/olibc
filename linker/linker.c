@@ -118,6 +118,7 @@ enum RelocationKind {
 };
 
 #if STATS
+typedef struct linker_stats_t linker_stats_t;
 struct linker_stats_t {
     int count[kRelocMax];
 };
@@ -1951,13 +1952,13 @@ static unsigned __linker_init_post_relocation(KernelArgumentBlock *args, unsigne
 
 #if TIMING
     gettimeofday(&t1,NULL);
-    PRINT("LINKER TIME: %s: %d microseconds\n", e.argv[0], (int) (
+    PRINT("LINKER TIME: %s: %d microseconds\n", args->argv[0], (int) (
                (((long long)t1.tv_sec * 1000000LL) + (long long)t1.tv_usec) -
                (((long long)t0.tv_sec * 1000000LL) + (long long)t0.tv_usec)
                ));
 #endif
 #if STATS
-    PRINT("RELO STATS: %s: %d abs, %d rel, %d copy, %d symbol\n", e.argv[0],
+    PRINT("RELO STATS: %s: %d abs, %d rel, %d copy, %d symbol\n", args->argv[0],
            linker_stats.count[kRelocAbsolute],
            linker_stats.count[kRelocRelative],
            linker_stats.count[kRelocCopy],
@@ -1977,7 +1978,7 @@ static unsigned __linker_init_post_relocation(KernelArgumentBlock *args, unsigne
                 }
             }
         }
-        PRINT("PAGES MODIFIED: %s: %d (%dKB)\n", e.argv[0], count, count * 4);
+        PRINT("PAGES MODIFIED: %s: %d (%dKB)\n", args->argv[0], count, count * 4);
     }
 #endif
 
