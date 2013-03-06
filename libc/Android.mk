@@ -553,7 +553,7 @@ ifeq ($(strip $(DEBUG_BIONIC_LIBC)),true)
   libc_common_cflags += -DDEBUG
 endif
 
-ifeq ($(OLIBC_PROPERTY_SYSTEM_SUPPORT),true)
+ifeq ($(PROPERTY_SYSTEM_SUPPORT),true)
   libc_common_src_files += \
 	bionic/system_properties.c
   libc_common_cflags += -DPROPERTY_SYSTEM_SUPPORT

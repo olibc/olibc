@@ -127,8 +127,8 @@ config MD5_IMPL
 	bool "MD5 functions"
 	default n
 
-config OLIBC_PROPERTY_SYSTEM_SUPPORT
-	bool "Property system support for olibc"
+config PROPERTY_SYSTEM_SUPPORT
+	bool "Property system support (originally from Android)"
 	default n
 
 endmenu
