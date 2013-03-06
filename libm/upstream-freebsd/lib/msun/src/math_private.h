@@ -447,7 +447,7 @@ int	__ieee754_rem_pio2(double,double*);
 #endif
 #endif
 
-#ifndef INLINE_REM_PIO2
+#if defined(KRAIT_NEON_OPTIMIZATION)
 double	__kernel_sin(double,double,int) __attribute__((pcs("aapcs-vfp")));
 double	__kernel_cos(double,double) __attribute__((pcs("aapcs-vfp")));
 double	__kernel_tan(double,double,int) __attribute__((pcs("aapcs-vfp")));
