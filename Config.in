@@ -109,16 +109,15 @@ config CUSTOM_MALLOC_ALIGNMENT
 	bool "Customize dlmalloc's alignment"
 	default n
 
-if CUSTOM_MALLOC_ALIGNMENT
 config BOARD_MALLOC_ALIGNMENT
 	int "Controls the minimum alignment for malloc'ed chunks"
 	default 8
+	depends on CUSTOM_MALLOC_ALIGNMENT
 	help
 	  It must be a power of two and at least 8, even on machines for
 	  which smaller alignments would suffice. It may be defined as
 	  larger than this though. Note however that code and data
 	  structures are optimized for the case of 8-byte alignment.
-endif
 
 config SHA1_IMPL
 	bool "SHA1 functions"
@@ -158,11 +157,10 @@ config EXT_MALLOC_LEAK_CHECK
 	  the checks are available only in emulator and are implemeted in
 	  libc_malloc_qemu_instrumented.so.
 
-if EXT_MALLOC_LEAK_CHECK
 config EXT_MALLOC_ANDROID_QEMU_INSTRUMENT
 	bool "Advanced memory instrument for Android QEMU emulator"
 	default n
-endif
+	depends on EXT_MALLOC_LEAK_CHECK
 
 endmenu
 
