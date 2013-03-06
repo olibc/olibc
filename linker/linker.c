@@ -81,6 +81,7 @@ static bool soinfo_link_image(soinfo* si);
 // objects as will fit, and they're all threaded together on a free list.
 #define SOINFO_PER_POOL ((PAGE_SIZE - sizeof(soinfo_pool_t*)) / sizeof(soinfo))
 typedef struct soinfo_pool_t soinfo_pool_t;
+typedef struct dl_phdr_info dl_phdr_info;
 struct soinfo_pool_t {
   soinfo_pool_t* next;
   soinfo info[SOINFO_PER_POOL];
@@ -430,7 +431,8 @@ dl_iterate_phdr(int (*cb)(dl_phdr_info *info, size_t size, void *data),
                 void *data)
 {
     int rv = 0;
-    for (soinfo* si = solist; si != NULL; si = si->next) {
+    soinfo *si;
+    for (si = solist; si != NULL; si = si->next) {
         dl_phdr_info dl_info;
         dl_info.dlpi_addr = si->linkmap.l_addr;
         dl_info.dlpi_name = si->linkmap.l_name;
