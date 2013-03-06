@@ -120,12 +120,12 @@ config BOARD_MALLOC_ALIGNMENT
 	  structures are optimized for the case of 8-byte alignment.
 endif
 
-config OLIBC_SHA1_SUPPORT
-	bool "SHA1 function support for olibc"
+config SHA1_IMPL
+	bool "SHA1 functions"
 	default n
 
-config OLIBC_MD5_SUPPORT
-	bool "MD5 function support for olibc"
+config MD5_IMPL
+	bool "MD5 functions"
 	default n
 
 config OLIBC_PROPERTY_SYSTEM_SUPPORT

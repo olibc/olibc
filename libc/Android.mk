@@ -262,7 +262,7 @@ libc_common_src_files := \
 	netbsd/nameser/ns_print.c \
 	netbsd/nameser/ns_samedomain.c \
 
-ifeq ($(OLIBC_MD5_SUPPORT),true)
+ifeq ($(MD5_IMPL),true)
 libc_common_src_files += \
 	bionic/md5.c
 endif
@@ -361,7 +361,7 @@ libc_upstream_netbsd_src_files := \
     upstream-netbsd/libc/string/strxfrm.c \
     upstream-netbsd/libc/unistd/killpg.c \
 
-ifeq ($(OLIBC_SHA1_SUPPORT),true)
+ifeq ($(SHA1_IMPL),true)
 libc_upstream_netbsd_src_files += \
     upstream-netbsd/common/lib/libc/hash/sha1/sha1.c
 endif
