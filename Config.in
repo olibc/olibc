@@ -119,6 +119,10 @@ config BOARD_MALLOC_ALIGNMENT
 	  larger than this though. Note however that code and data
 	  structures are optimized for the case of 8-byte alignment.
 
+config WCHAR_SUPPORT
+	bool "Wide character support"
+	default y
+
 config SHA1_IMPL
 	bool "SHA1 functions"
 	default n
