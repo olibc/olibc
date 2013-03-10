@@ -368,7 +368,7 @@ libc_common_src_files += \
     wchar/wmemmove.c \
     wchar/wmemset.c
 
-libc_bionic_src_files := \
+libc_bionic_src_files += \
     bionic/wchar.c
 endif
 
