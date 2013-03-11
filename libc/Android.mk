@@ -266,6 +266,7 @@ libc_bionic_src_files := \
     bionic/pthread_sigmask.c \
     bionic/raise.c \
     bionic/sbrk.c \
+    bionic/scandir.c \
     bionic/__set_errno.c \
     bionic/setlocale.c \
     bionic/signalfd.c \
