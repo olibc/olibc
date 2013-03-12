@@ -52,10 +52,10 @@
 typedef struct link_map link_map;
 struct link_map {
   uintptr_t l_addr;
-  char * l_name;
+  char*  l_name;
   uintptr_t l_ld;
-  struct link_map * l_next;
-  struct link_map * l_prev;
+  struct link_map* l_next;
+  struct link_map* l_prev;
 };
 
 // Values for r_debug->state
@@ -92,7 +92,7 @@ struct soinfo {
 
   int unused;  // DO NOT USE, maintained for compatibility.
 
-  unsigned* dynamic;
+  Elf32_Dyn* dynamic;
 
   unsigned unused2; // DO NOT USE, maintained for compatibility
   unsigned unused3; // DO NOT USE, maintained for compatibility
@@ -176,14 +176,14 @@ void do_android_update_LD_LIBRARY_PATH(const char* ld_library_path);
 soinfo* do_dlopen(const char* name, int flags);
 int do_dlclose(soinfo* si);
 
-Elf32_Sym* lookup(const char* name, soinfo** found, soinfo* start);
+Elf32_Sym* dlsym_linear_lookup(const char* name, soinfo** found, soinfo* start);
 soinfo* find_containing_library(const void* addr);
 const char* linker_get_error();
 
-Elf32_Sym* soinfo_find_symbol(soinfo* si, const void* addr);
-Elf32_Sym* soinfo_lookup(soinfo* si, const char* name);
+Elf32_Sym* dladdr_find_symbol(soinfo* si, const void* addr);
+Elf32_Sym* dlsym_handle_lookup(soinfo* si, const char* name);
 
-void debugger_init();
+void debuggerd_init();
 void notify_gdb_of_libraries();
 
 #define UNUSED __attribute__((unused))
