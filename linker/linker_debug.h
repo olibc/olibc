@@ -43,9 +43,11 @@
 
 #include <private/debug_format.h>
 
+__LIBC_HIDDEN__ extern int gLdDebugVerbosity;
+
 #define _PRINTVF(v,x...)                           \
     do {                                             \
-        if (debug_verbosity > (v)) __libc_format_fd(1, x);  \
+        if (gLdDebugVerbosity > (v)) __libc_format_fd(1, x);  \
     } while (0)
 
 #define PRINT(x...)          _PRINTVF(-1, x)
