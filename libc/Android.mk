@@ -11,7 +11,6 @@ libc_common_src_files := \
 	unistd/exec.c \
 	unistd/fnmatch.c \
 	unistd/getopt_long.c \
-	unistd/popen.c \
 	unistd/syslog.c \
 	unistd/system.c \
 	unistd/time.c \
@@ -297,6 +296,7 @@ libc_upstream_netbsd_src_files := \
     upstream-netbsd/libc/gen/ftw.c \
     upstream-netbsd/libc/gen/nftw.c \
     upstream-netbsd/libc/gen/nice.c \
+    upstream-netbsd/libc/gen/popen.c \
     upstream-netbsd/libc/gen/psignal.c \
     upstream-netbsd/libc/gen/setjmperr.c \
     upstream-netbsd/libc/gen/utime.c \
@@ -798,7 +798,7 @@ WITH_MALLOC_CHECK_LIBC_A := $(strip $(WITH_MALLOC_CHECK_LIBC_A))
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES := bionic/__stack_chk_fail.c bionic/__stack_chk_guard.c
+LOCAL_SRC_FILES := bionic/__stack_chk_fail.c
 LOCAL_CFLAGS := $(libc_common_cflags) -fno-stack-protector -Werror
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_MODULE := libbionic_ssp
