@@ -50,9 +50,9 @@
 
 __LIBC_HIDDEN__ extern int gLdDebugVerbosity;
 
-#define _PRINTVF(v,x...)                           \
-    do {                                             \
-        if (gLdDebugVerbosity > (v)) __libc_format_fd(1, x);  \
+#define _PRINTVF(v,x...) \
+    do { \
+      if (gLdDebugVerbosity > (v)) { __libc_format_fd(1, x); write(1, "\n", 1); } \
     } while (0)
 
 #define PRINT(x...)          _PRINTVF(-1, x)
