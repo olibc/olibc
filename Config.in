@@ -38,6 +38,37 @@ config TARGET_ARCH
 	default "arm"
 
 choice
+	prompt "CPU Variant"
+        default TARGET_arm_generic
+	help
+	  The architecture of your target.
+
+config TARGET_ARM_GENERIC
+	bool "Generic ARM"
+
+config TARGET_ARM_CORTEX_A7
+	bool "Cortex-A7"
+
+config TARGET_ARM_CORTEX_A15
+	bool "Cortex-A15"
+
+config TARGET_ARM_SCORPION
+	bool "Qualcomm Scorpion"
+	select ARCH_ARM_HAVE_NEON
+
+config TARGET_ARM_SPARROW
+	bool "Qualcomm Sparrow"
+	select ARCH_ARM_HAVE_NEON
+	select TARGET_CPU_SMP
+
+config TARGET_ARM_KRAIT
+	bool "Qualcomm Krait"
+	select ARCH_ARM_HAVE_NEON
+	select TARGET_CPU_SMP
+
+endchoice
+
+choice
 	prompt "SoC Optimizations"
 	default TARGET_GENERIC_ARM
 
