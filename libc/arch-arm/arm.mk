@@ -16,10 +16,31 @@ _LIBC_ARCH_COMMON_SRC_FILES := \
     arch-arm/bionic/sigsetjmp.S \
     arch-arm/bionic/strcmp.S \
     arch-arm/bionic/strcpy.S \
-    arch-arm/bionic/strlen.c.arm \
     arch-arm/bionic/syscall.S \
     arch-arm/bionic/tgkill.S \
     arch-arm/bionic/tkill.S \
+
+ifeq ($(ARCH_ARM_HAVE_ARMV7A),false)
+_LIBC_ARCH_COMMON_SRC_FILES += arch-arm/bionic/strlen-armv7.S
+else
+_LIBC_ARCH_COMMON_SRC_FILES += arch-arm/bionic/strlen.c.arm
+endif
+
+# Check if we want a neonized version of memmove instead of the
+# current ARM version
+ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
+_LIBC_ARCH_COMMON_SRC_FILES += \
+	arch-arm/bionic/memmove.S
+else
+ifneq (, $(filter true,$(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION) $(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION)))
+ _LIBC_ARCH_COMMON_SRC_FILES += \
+	arch-arm/bionic/memmove.S
+ else # Other ARM
+ _LIBC_ARCH_COMMON_SRC_FILES += \
+	string/bcopy.c \
+	bionic/memmove.c.arm
+ endif # !TARGET_USE_KRAIT_BIONIC_OPTIMIZATION
+endif # !TARGET_USE_SCORPION_BIONIC_OPTIMIZATION
 
 # These are used by the static and dynamic versions of the libc
 # respectively.

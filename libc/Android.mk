@@ -385,28 +385,6 @@ libc_common_src_files += \
 	bionic/socketcalls.c \
 	string/strncmp.c \
 
-ifeq ($(ARCH_ARM_HAVE_ARMV7A),false)
-libc_common_src_files += arch-arm/bionic/strlen-armv7.S
-else
-libc_common_src_files += arch-arm/bionic/strlen.c.arm
-endif
-
-# Check if we want a neonized version of memmove instead of the
-# current ARM version
-ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
-libc_common_src_files += \
-	arch-arm/bionic/memmove.S
-else
-ifneq (, $(filter true,$(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION) $(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION)))
- libc_common_src_files += \
-	arch-arm/bionic/memmove.S
- else # Other ARM
- libc_common_src_files += \
-	string/bcopy.c \
-	bionic/memmove.c.arm
- endif # !TARGET_USE_KRAIT_BIONIC_OPTIMIZATION
-endif # !TARGET_USE_SCORPION_BIONIC_OPTIMIZATION
-
 # These files need to be arm so that gdbserver
 # can set breakpoints in them without messing
 # up any thumb code.
