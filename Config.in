@@ -260,6 +260,10 @@ config LINKER_COUNT_PAGES
 	default n
 endmenu
 
+config OUT_DIR
+	string "Build output directory"
+	default "out"
+
 endmenu
 
 
