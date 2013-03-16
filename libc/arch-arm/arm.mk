@@ -26,22 +26,6 @@ else
 _LIBC_ARCH_COMMON_SRC_FILES += arch-arm/bionic/strlen.c.arm
 endif
 
-# Check if we want a neonized version of memmove instead of the
-# current ARM version
-ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
-_LIBC_ARCH_COMMON_SRC_FILES += \
-	arch-arm/bionic/memmove.S
-else
-ifneq (, $(filter true,$(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION) $(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION)))
- _LIBC_ARCH_COMMON_SRC_FILES += \
-	arch-arm/bionic/memmove.S
- else # Other ARM
- _LIBC_ARCH_COMMON_SRC_FILES += \
-	string/bcopy.c \
-	bionic/memmove.c.arm
- endif # !TARGET_USE_KRAIT_BIONIC_OPTIMIZATION
-endif # !TARGET_USE_SCORPION_BIONIC_OPTIMIZATION
-
 # These are used by the static and dynamic versions of the libc
 # respectively.
 _LIBC_ARCH_STATIC_SRC_FILES := \
