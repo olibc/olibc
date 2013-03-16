@@ -68,28 +68,6 @@ config TARGET_ARM_KRAIT
 
 endchoice
 
-choice
-	prompt "SoC Optimizations"
-	default TARGET_GENERIC_ARM
-
-config TARGET_USE_KRAIT_BIONIC_OPTIMIZATION
-	bool "Qualcomm Krait"
-	select ARCH_ARM_HAVE_NEON
-	select TARGET_CPU_SMP
-
-config TARGET_USE_SCORPION_BIONIC_OPTIMIZATION
-	bool "Qualcomm Scorpion"
-	select ARCH_ARM_HAVE_NEON
-
-config TARGET_USE_SPARROW_BIONIC_OPTIMIZATION
-	bool "Qualcomm Sparrow"
-	select ARCH_ARM_HAVE_NEON
-	select TARGET_CPU_SMP
-
-config TARGET_GENERIC_ARM
-	bool "Generic ARM"
-endchoice
-
 config ARCH_ARM_HAVE_NEON
 	bool "Have NEON co-processor"
 	default n if DESIRED_TARGET_PRODUCT="mini_armv7a"
