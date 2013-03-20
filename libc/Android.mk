@@ -270,6 +270,7 @@ libc_bionic_src_files := \
     bionic/signalfd.c \
     bionic/sigwait.c \
     bionic/__strcat_chk.c \
+    bionic/__strchr_chk.c \
     bionic/__strcpy_chk.c \
     bionic/strerror.c \
     bionic/strerror_r.c \
