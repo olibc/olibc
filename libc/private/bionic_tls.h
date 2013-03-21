@@ -113,6 +113,6 @@ extern void* __get_stack_base(int* p_stack_size);
 __END_DECLS
 
 typedef struct KernelArgumentBlock KernelArgumentBlock;
-extern void __libc_init_tls(KernelArgumentBlock *args);
+extern __LIBC_HIDDEN__ void __libc_init_tls(KernelArgumentBlock* args);
 
 #endif /* _SYS_TLS_H */

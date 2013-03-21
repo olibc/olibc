@@ -61,9 +61,7 @@ extern void malloc_debug_fini(void);
 // that its address is listed in libc.so's .init_array section.
 // This ensures that the function is called by the dynamic linker
 // as soon as the shared library is loaded.
-void __attribute__((constructor)) __libc_preinit(void);
-
-void __libc_preinit() {
+__attribute__((constructor)) static void __libc_preinit() {
   // Read the kernel argument block pointer from TLS.
   void* tls = (void*)(__get_tls());
   KernelArgumentBlock** args_slot = &((KernelArgumentBlock**)(tls))[TLS_SLOT_BIONIC_PREINIT];
@@ -80,7 +78,7 @@ void __libc_preinit() {
   malloc_debug_init();
 }
 
-void __libc_postfini() {
+__LIBC_HIDDEN__ void __libc_postfini() {
   // A hook for the debug malloc library to let it know that we're shutting down.
   malloc_debug_fini();
 }
