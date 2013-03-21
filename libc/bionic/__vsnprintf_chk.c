@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <private/logd.h>
+#include "libc_logging.h"
 
 #define UNUSED __attribute__((unused))
 
