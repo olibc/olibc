@@ -19,12 +19,6 @@ _LIBC_ARCH_COMMON_SRC_FILES := \
     arch-arm/bionic/tgkill.S \
     arch-arm/bionic/tkill.S \
 
-ifeq ($(ARCH_ARM_HAVE_ARMV7A),false)
-_LIBC_ARCH_COMMON_SRC_FILES += arch-arm/bionic/strlen-armv7.S
-else
-_LIBC_ARCH_COMMON_SRC_FILES += arch-arm/bionic/strlen.c.arm
-endif
-
 # These are used by the static and dynamic versions of the libc
 # respectively.
 _LIBC_ARCH_STATIC_SRC_FILES := \

@@ -97,7 +97,6 @@ libc_common_src_files := \
 	string/index.c \
 	string/strcasecmp.c \
 	string/strcat.c \
-	string/strchr.c \
 	string/strcspn.c \
 	string/strdup.c \
 	string/strlcat.c \
@@ -148,7 +147,6 @@ libc_common_src_files := \
 	bionic/issetugid.c \
 	bionic/ldexp.c \
 	bionic/lseek64.c \
-	bionic/memchr.c \
 	bionic/memmem.c \
 	bionic/memrchr.c \
 	bionic/memswap.c \
@@ -228,6 +226,14 @@ libc_common_src_files := \
 	netbsd/nameser/ns_netint.c \
 	netbsd/nameser/ns_print.c \
 	netbsd/nameser/ns_samedomain.c \
+
+ifneq ($(TARGET_ARCH),arm)
+# ARM have arch specific versions for strchr and memchr
+libc_common_src_files += \
+	string/strchr.c \
+	bionic/memchr.c \
+
+endif
 
 ifeq ($(MD5_IMPL),true)
 libc_common_src_files += \
