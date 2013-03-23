@@ -247,6 +247,18 @@ config LINKER_COUNT_PAGES
 	default n
 endmenu
 
+config EXTRA_OLIBC_CFLAGS
+	string "Extra build compile flag"
+	default ""
+
+config EXTRA_OLIBC_CXXFLAGS
+	string "Extra build C++ compile flag"
+	default ""
+
+config EXTRA_OLIBC_LDFLAGS
+	string "Extra build link flag"
+	default ""
+
 config OUT_DIR
 	string "Build output directory"
 	default "out"
