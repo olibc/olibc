@@ -388,7 +388,6 @@ endif
 # =========================================================
 ifeq ($(TARGET_ARCH),arm)
 libc_common_src_files += \
-	bionic/socketcalls.c \
 	string/strncmp.c \
 
 # These files need to be arm so that gdbserver
