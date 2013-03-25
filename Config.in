@@ -218,6 +218,10 @@ config ASYNC_UNWIND_TABLE
 	  however it's will make the code size increase about ~2%
 	  ref : https://wiki.linaro.org/KenWerner/Sandbox/libunwind
 
+config DEFAULT_GNU_STYLE_HASH
+	bool "Build olibc with gnu-style hash by default"
+	default y
+
 menu "Dynamic linker debugging options"
 
 config LINKER_TRACE_DEBUG
