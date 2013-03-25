@@ -671,6 +671,7 @@ typedef struct {
 #define DT_NUM		29
 
 #define DT_LOOS		0x60000000	/* Operating system specific range */
+#define DT_GNU_HASH	0x6ffffef5	/* address of gnu-style symbol hash table */
 #define DT_VERSYM	0x6ffffff0	/* Symbol versions */
 #define DT_FLAGS_1	0x6ffffffb	/* ELF dynamic flags */
 #define DT_VERDEF	0x6ffffffc	/* Versions defined by file */

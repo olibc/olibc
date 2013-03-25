@@ -117,6 +117,14 @@ struct soinfo {
   unsigned* bucket;
   unsigned* chain;
 
+  /* GNU-style hash table infos */
+  size_t gnu_nbucket;
+  unsigned gnu_shift;
+  unsigned gnu_bitmask_words;
+  unsigned *gnu_bitmask;
+  unsigned *gnu_bucket;
+  unsigned *gnu_chain;
+
   unsigned* plt_got;
 
   Elf32_Rel* plt_rel;
@@ -195,6 +203,9 @@ void debuggerd_init();
 void notify_gdb_of_libraries();
 
 #define UNUSED __attribute__((unused))
+#define likely(expr)   __builtin_expect (expr, 1)
+#define unlikely(expr) __builtin_expect (expr, 0)
+
 
 char* linker_get_error_buffer();
 size_t linker_get_error_buffer_size();

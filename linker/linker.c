@@ -447,6 +447,52 @@ dl_iterate_phdr(int (*cb)(dl_phdr_info *info, size_t size, void *data),
 
 #endif
 
+static Elf32_Sym *soinfo_gnu_lookup(soinfo *si, unsigned gnu_hash, const char *name)
+{
+    Elf32_Sym *s;
+    Elf32_Sym *symtab = si->symtab;
+    const char *strtab = si->strtab;
+    int elfclass = 32;
+    Elf32_Word bitmask_word = si->gnu_bitmask[(gnu_hash / elfclass)
+                                              & (si->gnu_bitmask_words - 1)];
+    unsigned hashbit1 = gnu_hash & (elfclass - 1);
+    unsigned hashbit2 = ((gnu_hash >> si->gnu_shift)
+                         & (elfclass - 1));
+    Elf32_Word bucket;
+    Elf32_Word index;
+    /* Bloom Filter */
+    if (likely(((bitmask_word >> hashbit1) &
+                (bitmask_word >> hashbit2) & 1) == 0)){
+        return NULL;
+    }
+    TRACE_TYPE(LOOKUP, "SEARCH %s in %s@0x%08x %08x %d",
+               name, si->name, si->base, gnu_hash, gnu_hash % si->gnu_nbucket);
+    bucket = si->gnu_bucket[gnu_hash % si->gnu_nbucket];
+    if (likely(bucket != 0)) {
+        Elf32_Word *hasharr = &si->gnu_chain[bucket];
+        do {
+            if (((*hasharr ^ gnu_hash) >> 1) == 0){
+                index = hasharr - si->gnu_chain;
+                s = symtab + index;
+                if(strcmp(strtab + s->st_name, name)) continue;
+
+                switch(ELF32_ST_BIND(s->st_info)){
+                case STB_GLOBAL:
+                case STB_WEAK:
+                    /* no section == undefined */
+                    if(s->st_shndx == 0) continue;
+
+                    TRACE_TYPE(LOOKUP, "FOUND %s in %s (%08x) %d",
+                               name, si->name, s->st_value, s->st_size);
+                    return s;
+                }
+            }
+        } while ((*hasharr++ & 1) == 0);
+    }
+
+    return NULL;
+}
+
 static Elf32_Sym* soinfo_elf_lookup(soinfo* si, unsigned hash, const char* name) {
     Elf32_Sym* s;
     Elf32_Sym* symtab = si->symtab;
@@ -478,6 +524,16 @@ static Elf32_Sym* soinfo_elf_lookup(soinfo* si, unsigned hash, const char* name)
     return NULL;
 }
 
+static Elf32_Sym* soinfo_symbol_lookup(soinfo* si, unsigned hash, unsigned gnu_hash, const char* name) {
+    Elf32_Sym *sym;
+    if ( si->gnu_bitmask != NULL ){
+        sym = soinfo_gnu_lookup(si, gnu_hash, name);
+    } else {
+        sym = soinfo_elf_lookup(si, hash, name);
+    }
+    return sym;
+}
+
 static unsigned elfhash(const char* _name) {
     const unsigned char* name = (const unsigned char*) _name;
     unsigned h = 0, g;
@@ -491,8 +547,18 @@ static unsigned elfhash(const char* _name) {
     return h;
 }
 
+static unsigned gnuhash(const char *_name) {
+    const unsigned char *name = (const unsigned char *) _name;
+    unsigned h = 5381;
+    while (*name){
+        h = (h << 5) + h + *name++;
+    }
+    return h & 0xffffffff;
+}
+
 static Elf32_Sym* soinfo_do_lookup(soinfo* si, const char* name, soinfo** lsi, soinfo* needed[]) {
     unsigned elf_hash = elfhash(name);
+    unsigned gnu_hash = gnuhash(name);
     Elf32_Sym* s = NULL;
 
     if (si != NULL && somain != NULL) {
@@ -503,7 +569,7 @@ static Elf32_Sym* soinfo_do_lookup(soinfo* si, const char* name, soinfo** lsi, s
          */
 
         if (si == somain) {
-            s = soinfo_elf_lookup(si, elf_hash, name);
+            s = soinfo_symbol_lookup(si, elf_hash, gnu_hash, name);
             if (s != NULL) {
                 *lsi = si;
                 goto done;
@@ -520,7 +586,7 @@ static Elf32_Sym* soinfo_do_lookup(soinfo* si, const char* name, soinfo** lsi, s
             if (!si->has_DT_SYMBOLIC) {
                 DEBUG("%s: looking up %s in executable %s",
                       si->name, name, somain->name);
-                s = soinfo_elf_lookup(somain, elf_hash, name);
+                s = soinfo_symbol_lookup(somain, elf_hash, gnu_hash, name);
                 if (s != NULL) {
                     *lsi = somain;
                     goto done;
@@ -537,7 +603,7 @@ static Elf32_Sym* soinfo_do_lookup(soinfo* si, const char* name, soinfo** lsi, s
              * and some the first non-weak definition.   This is system dependent.
              * Here we return the first definition found for simplicity.  */
 
-            s = soinfo_elf_lookup(si, elf_hash, name);
+            s = soinfo_symbol_lookup(si, elf_hash, gnu_hash, name);
             if (s != NULL) {
                 *lsi = si;
                 goto done;
@@ -551,7 +617,7 @@ static Elf32_Sym* soinfo_do_lookup(soinfo* si, const char* name, soinfo** lsi, s
             if (si->has_DT_SYMBOLIC) {
                 DEBUG("%s: looking up %s in executable %s after local scope",
                       si->name, name, somain->name);
-                s = soinfo_elf_lookup(somain, elf_hash, name);
+                s = soinfo_symbol_lookup(somain, elf_hash, gnu_hash, name);
                 if (s != NULL) {
                     *lsi = somain;
                     goto done;
@@ -563,7 +629,7 @@ static Elf32_Sym* soinfo_do_lookup(soinfo* si, const char* name, soinfo** lsi, s
     /* Next, look for it in the preloads list */
     size_t i;
     for (i = 0; gLdPreloads[i] != NULL; i++) {
-        s = soinfo_elf_lookup(gLdPreloads[i], elf_hash, name);
+        s = soinfo_symbol_lookup(gLdPreloads[i], elf_hash, gnu_hash, name);
         if (s != NULL) {
             *lsi = gLdPreloads[i];
             goto done;
@@ -573,7 +639,7 @@ static Elf32_Sym* soinfo_do_lookup(soinfo* si, const char* name, soinfo** lsi, s
     for (i = 0; needed[i] != NULL; i++) {
         DEBUG("%s: looking up %s in %s",
               si->name, name, needed[i]->name);
-        s = soinfo_elf_lookup(needed[i], elf_hash, name);
+        s = soinfo_symbol_lookup(needed[i], elf_hash, gnu_hash, name);
         if (s != NULL) {
             *lsi = needed[i];
             goto done;
@@ -603,7 +669,7 @@ done:
  */
 Elf32_Sym* dlsym_handle_lookup(soinfo* si, const char* name)
 {
-    return soinfo_elf_lookup(si, elfhash(name), name);
+    return soinfo_symbol_lookup(si, elfhash(name), gnuhash(name), name);
 }
 
 /* This is used by dlsym(3) to performs a global symbol lookup. If the
@@ -1386,6 +1452,19 @@ static bool soinfo_link_image(soinfo* si) {
             si->bucket = (unsigned *) (base + d->d_un.d_ptr + 8);
             si->chain = (unsigned *) (base + d->d_un.d_ptr + 8 + si->nbucket * 4);
             break;
+        case DT_GNU_HASH:
+            {
+                unsigned symbias;
+                si->gnu_nbucket = ((unsigned *) (si->base + d->d_un.d_ptr))[0];
+                symbias = ((unsigned *) (si->base + d->d_un.d_ptr))[1];
+                si->gnu_bitmask_words = ((unsigned *) (si->base + d->d_un.d_ptr))[2];
+                si->gnu_shift = ((unsigned *) (si->base + d->d_un.d_ptr))[3];
+                si->gnu_bitmask =  (unsigned *) (si->base + d->d_un.d_ptr + 16);
+                si->gnu_bucket = (unsigned *) (si->base + d->d_un.d_ptr + 16 +
+                                               4 * si->gnu_bitmask_words);
+                si->gnu_chain = (si->gnu_bucket + si->gnu_nbucket - symbias);
+            }
+            break;
         case DT_STRTAB:
             si->strtab = (const char *) (base + d->d_un.d_ptr);
             break;
@@ -1518,8 +1597,8 @@ static bool soinfo_link_image(soinfo* si) {
         DL_ERR("linker cannot have DT_NEEDED dependencies on other libraries");
         return false;
     }
-    if (si->nbucket == 0) {
-        DL_ERR("empty/missing DT_HASH in \"%s\" (built with --hash-style=gnu?)", si->name);
+    if (si->nbucket == 0 && si->gnu_nbucket == 0) {
+        DL_ERR("empty/missing DT_HASH and DT_GNU_HASH in \"%s\"", si->name);
         return false;
     }
     if (si->strtab == 0) {
