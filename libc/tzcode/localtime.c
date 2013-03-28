@@ -42,10 +42,10 @@ static char elsieid[] = "@(#)localtime.c    8.3";
 */
 
 #ifdef O_BINARY
-#define OPEN_MODE   (O_RDONLY | O_BINARY)
+#define OPEN_MODE   (O_RDONLY | O_BINARY | O_CLOEXEC)
 #endif /* defined O_BINARY */
 #ifndef O_BINARY
-#define OPEN_MODE   O_RDONLY
+#define OPEN_MODE   (O_RDONLY | O_CLOEXEC)
 #endif /* !defined O_BINARY */
 
 #if 0
