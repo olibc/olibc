@@ -1148,7 +1148,7 @@ retry:
 		 * XXX - potential security hazard could
 		 *	 be detected here.
 		 */
-#ifdef ANDROID_CHANGES
+#if defined(ANDROID_CHANGES) && defined(LOGGER_SYSTEM_SUPPORT)
 		__libc_android_log_event_uid(BIONIC_EVENT_RESOLVER_OLD_RESPONSE);
 #endif
 		DprintQ((statp->options & RES_DEBUG) ||
@@ -1164,7 +1164,7 @@ retry:
 		 * XXX - potential security hazard could
 		 *	 be detected here.
 		 */
-#ifdef ANDROID_CHANGES
+#if defined(ANDROID_CHANGES) && defined(LOGGER_SYSTEM_SUPPORT)
 		__libc_android_log_event_uid(BIONIC_EVENT_RESOLVER_WRONG_SERVER);
 #endif
 		DprintQ((statp->options & RES_DEBUG) ||
@@ -1197,7 +1197,7 @@ retry:
 		 * XXX - potential security hazard could
 		 *	 be detected here.
 		 */
-#ifdef ANDROID_CHANGES
+#if defined(ANDROID_CHANGES) && defined(LOGGER_SYSTEM_SUPPORT)
 		__libc_android_log_event_uid(BIONIC_EVENT_RESOLVER_WRONG_QUERY);
 #endif
 		DprintQ((statp->options & RES_DEBUG) ||

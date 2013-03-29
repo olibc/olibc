@@ -249,7 +249,6 @@ libc_bionic_src_files := \
     bionic/getauxval.c \
     bionic/getcwd.c \
     bionic/libc_init_common.c \
-    bionic/libc_logging.c \
     bionic/libgen.c \
     bionic/__memcpy_chk.c \
     bionic/__memmove_chk.c \
@@ -505,6 +504,15 @@ ifeq ($(PROPERTY_SYSTEM_SUPPORT),true)
   libc_common_src_files += \
 	bionic/system_properties.c
   libc_common_cflags += -DPROPERTY_SYSTEM_SUPPORT
+endif
+
+ifeq ($(LOGGER_SYSTEM_SUPPORT),true)
+  libc_common_src_files += \
+	bionic/libc_logging.c
+  libc_common_cflags += -DLOGGER_SYSTEM_SUPPORT
+else
+  libc_common_src_files += \
+	bionic/libc_logging_stderr.c
 endif
 
 # To customize dlmalloc's alignment, set BOARD_MALLOC_ALIGNMENT in
