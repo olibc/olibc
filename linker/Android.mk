@@ -9,7 +9,6 @@ endif
 
 LOCAL_SRC_FILES:= \
     arch/$(TARGET_ARCH)/begin.$(linker_begin_extension) \
-    debugger.c \
     dlfcn.c \
     linker.c \
     linker_environ.c \
@@ -22,6 +21,11 @@ LOCAL_CFLAGS += -fno-stack-protector \
         -Wstrict-overflow=5 \
         -fvisibility=hidden \
         -Wall -Wextra -Werror
+
+ifeq ($(DEBUGGERD_SYSTEM_SUPPORT),true)
+    LOCAL_SRC_FILES+= \
+        debugger.c
+endif
 
 # We need to access Bionic private headers in the linker.
 LOCAL_CFLAGS += -I$(LOCAL_PATH)/../libc/

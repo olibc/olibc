@@ -1730,7 +1730,9 @@ static Elf32_Addr __linker_init_post_relocation(KernelArgumentBlock* args, Elf32
     // Initialize environment functions, and get to the ELF aux vectors table.
     linker_env_init(args);
 
+#ifdef DEBUGGERD_SUPPORT
     debuggerd_init();
+#endif
 
     // Get a few environment variables.
     const char* LD_DEBUG = linker_env_get("LD_DEBUG");

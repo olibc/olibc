@@ -148,6 +148,10 @@ config LOGGER_SYSTEM_SUPPORT
 	bool "Logger system support (originally from Android)"
 	default n
 
+config DEBUGGERD_SUPPORT
+	bool "Debuggerd system support (originally from Android)"
+	default n
+
 endmenu
 
 menu "Extensions"
