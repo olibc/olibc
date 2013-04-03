@@ -244,7 +244,7 @@ libc_bionic_src_files := \
     bionic/brk.c \
     bionic/dirent.c \
     bionic/__errno.c \
-    bionic/eventfd.c \
+    bionic/eventfd_rw.c \
     bionic/__fgets_chk.c \
     bionic/getauxval.c \
     bionic/getcwd.c \
