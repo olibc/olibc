@@ -31,7 +31,8 @@
 // This function is called from our assembler syscall stubs.
 // C/C++ code should just assign 'errno' instead.
 
-__LIBC_HIDDEN__ int __set_errno(int n) {
+// TODO: this should be __LIBC_HIDDEN__ but was exposed in <errno.h> in the NDK.
+int __set_errno(int n) {
   errno = n;
   return -1;
 }
