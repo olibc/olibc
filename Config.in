@@ -118,6 +118,10 @@ config CUSTOM_MALLOC_ALIGNMENT
 	bool "Customize dlmalloc's alignment"
 	default n
 
+config LIBM_USE_ARM_MODE
+	bool "libm build with ARM mode"
+	default n
+
 config BOARD_MALLOC_ALIGNMENT
 	int "Controls the minimum alignment for malloc'ed chunks"
 	default 8
