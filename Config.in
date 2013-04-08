@@ -111,12 +111,15 @@ config SINGLE_BINARY_SUPPORT
 	bool "Concrete libc/libm/dynamic-linker into single shared library, olibc.so"
 	default y
 
+config LIBM_USE_ARM_MODE
+	bool "Build libm in ARM mode"
+	default n
+	help
+	  By default, libm is built in Thumb mode, which reduces about 16KB
+	  compared with ARM mode.
+
 config CUSTOM_MALLOC_ALIGNMENT
 	bool "Customize dlmalloc's alignment"
-	default n
-
-config LIBM_USE_ARM_MODE
-	bool "libm build with ARM mode"
 	default n
 
 config BOARD_MALLOC_ALIGNMENT
