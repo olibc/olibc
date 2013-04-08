@@ -23,7 +23,7 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
 LOCAL_CFLAGS := $(libstdc++_cflags)
 
-ifeq ($(ALL_IN_ONE),true)
+ifeq ($(SINGLE_BINARY_SUPPORT),true)
     LOCAL_SYSTEM_SHARED_LIBRARIES := olibc
 else
     LOCAL_SYSTEM_SHARED_LIBRARIES := libc
@@ -44,7 +44,7 @@ LOCAL_CFLAGS := $(libstdc++_cflags)
 LOCAL_MODULE:= libstdc++
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
-ifeq ($(ALL_IN_ONE),true)
+ifeq ($(SINGLE_BINARY_SUPPORT),true)
     LOCAL_SYSTEM_SHARED_LIBRARIES := olibc
 else
     LOCAL_SYSTEM_SHARED_LIBRARIES := libc

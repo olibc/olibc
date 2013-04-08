@@ -114,8 +114,8 @@ endmenu
 
 menu "General Library Settings"
 
-config ALL_IN_ONE
-	bool "Build libc/libm/linker all-in-one in olibc.so"
+config SINGLE_BINARY_SUPPORT
+	bool "Concrete libc/libm/dynamic-linker into single shared library, olibc.so"
 	default y
 
 config CUSTOM_MALLOC_ALIGNMENT
