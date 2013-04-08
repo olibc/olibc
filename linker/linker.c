@@ -150,7 +150,7 @@ static unsigned bitmask[4096];
 #endif
 
 #ifndef OLIBC_SINGLE_BINARY_SUPPORT
-/* We don't need follow stubs in all-in-one mode */
+/* We don't have to follow stubs in single binary mode */
 // You shouldn't try to call memory-allocating functions in the dynamic linker.
 // Guard against the most obvious ones.
 #define DISALLOW_ALLOCATION(return_type, name, ...) \
@@ -1961,7 +1961,7 @@ Elf32_Addr __linker_init(void* raw_args) {
 
 #ifdef OLIBC_SINGLE_BINARY_SUPPORT
   /*
-   *  We need keep soinfo for dynamic linker in all-in-one mode
+   *  We have to reserve soinfo for dynamic linker in single binary mode
    *  for further symbol look-up.
    */
   memcpy(&olibc_info, &linker_so, sizeof(soinfo));

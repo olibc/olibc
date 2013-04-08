@@ -167,7 +167,7 @@ int dlclose(void* handle) {
 }
 
 #ifndef OLIBC_SINGLE_BINARY_SUPPORT
-/* libdl functions are look-up from olibc.so in all-in-one mode */
+/* libdl functions are looked up from olibc.so in single binary mode */
 #if defined(ANDROID_ARM_LINKER)
 //   0000000 00011111 111112 22222222 2333333 3333444444444455555555556666666 6667
 //   0123456 78901234 567890 12345678 9012345 6789012345678901234567890123456 7890

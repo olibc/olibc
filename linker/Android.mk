@@ -103,7 +103,7 @@ $(linked_module): PRIVATE_TARGET_CRTBEGIN_STATIC_O := $(TARGET_CRTBEGIN_STATIC_O
 $(linked_module): PRIVATE_TARGET_CRTEND_O := $(TARGET_CRTEND_O)
 
 ifeq ($(SINGLE_BINARY_SUPPORT),true)
-# Build as a shared library in all-in-one mode
+# Built as a shared library in single binary mode
 $(linked_module): $(TARGET_CRTBEGIN_STATIC_O) $(all_objects) $(all_libraries) $(TARGET_CRTEND_O)
 	$(transform-o-to-shared-lib)
 else
