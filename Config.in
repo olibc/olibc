@@ -51,6 +51,7 @@ config TARGET_ARM_CORTEX_A9
 
 config TARGET_ARM_CORTEX_A15
 	bool "Cortex-A15"
+	select ARCH_ARM_HAVE_NEON
 
 config TARGET_ARM_SCORPION
 	bool "Qualcomm Scorpion"
