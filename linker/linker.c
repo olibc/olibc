@@ -87,8 +87,14 @@ struct soinfo_pool_t {
 static struct soinfo_pool_t* gSoInfoPools = NULL;
 static soinfo* gSoInfoFreeList = NULL;
 
+#ifdef OLIBC_ALL_IN_ONE
+static soinfo olibc_info;
+static soinfo* solist = &olibc_info;
+static soinfo* sonext = &olibc_info;
+#else
 static soinfo* solist = &libdl_info;
 static soinfo* sonext = &libdl_info;
+#endif
 static soinfo* somain; /* main process, always the one after libdl_info */
 
 static const char* const gSoPaths[] = {
@@ -141,6 +147,8 @@ static unsigned bitmask[4096];
 #define MARK(x) do {} while (0)
 #endif
 
+#ifndef OLIBC_ALL_IN_ONE
+/* We don't need follow stubs in all-in-one mode */
 // You shouldn't try to call memory-allocating functions in the dynamic linker.
 // Guard against the most obvious ones.
 #define DISALLOW_ALLOCATION(return_type, name, ...) \
@@ -155,6 +163,7 @@ DISALLOW_ALLOCATION(void*, malloc, (size_t u UNUSED));
 DISALLOW_ALLOCATION(void, free, (void* u UNUSED));
 DISALLOW_ALLOCATION(void*, realloc, (void* u1 UNUSED, size_t u2 UNUSED));
 DISALLOW_ALLOCATION(void*, calloc, (size_t u1 UNUSED, size_t u2 UNUSED));
+#endif
 
 static char tmp_err_buf[768];
 static char __linker_dl_err_buf[768];
@@ -406,6 +415,7 @@ static void parse_LD_PRELOAD(const char* path) {
  *
  * This function is exposed via dlfcn.cpp and libdl.so.
  */
+OLIBC_EXPORT
 _Unwind_Ptr dl_unwind_find_exidx(_Unwind_Ptr pc, int *pcount)
 {
     soinfo *si;
@@ -425,6 +435,7 @@ _Unwind_Ptr dl_unwind_find_exidx(_Unwind_Ptr pc, int *pcount)
 
 /* Here, we only have to provide a callback to iterate across all the
  * loaded libraries. gcc_eh does the rest. */
+OLIBC_EXPORT
 int
 dl_iterate_phdr(int (*cb)(dl_phdr_info *info, size_t size, void *data),
                 void *data)
@@ -1777,7 +1788,7 @@ static Elf32_Addr __linker_init_post_relocation(KernelArgumentBlock* args, Elf32
      */
     {
         static soinfo linker_soinfo;
-        strlcpy(linker_soinfo.name, "/system/bin/linker", sizeof(linker_soinfo.name));
+        strlcpy(linker_soinfo.name, DYNAMIC_LINKER_PATH, sizeof(linker_soinfo.name));
         linker_soinfo.flags = 0;
         linker_soinfo.base = linker_base;
 
@@ -1946,6 +1957,15 @@ Elf32_Addr __linker_init(void* raw_args) {
     // is corrupt.
     exit(EXIT_FAILURE);
   }
+
+#ifdef OLIBC_ALL_IN_ONE
+  /*
+   *  We need keep soinfo for dynamic linker in all-in-one mode
+   *  for further symbol look-up.
+   */
+  memcpy(&olibc_info, &linker_so, sizeof(soinfo));
+  strcpy(olibc_info.name, "olibc.so");
+#endif
 
   // We have successfully fixed our own relocations. It's safe to run
   // the main part of the linker now.

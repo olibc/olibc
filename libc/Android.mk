@@ -938,6 +938,45 @@ LOCAL_SYSTEM_SHARED_LIBRARIES :=
 
 include $(BUILD_SHARED_LIBRARY)
 
+# ========================================================
+# libc_internal.a
+# ========================================================
+# It's same as libc.so but build as a static library for
+# merge to dynmic linker
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS := $(libc_common_cflags) -std=gnu99 -DPTHREAD_DEBUG -DPTHREAD_DEBUG_ENABLED=0
+LOCAL_C_INCLUDES := $(libc_common_c_includes)
+
+LOCAL_SRC_FILES := \
+	$(libc_arch_dynamic_src_files) \
+	$(libc_static_common_src_files) \
+	bionic/dlmalloc.c \
+	bionic/malloc_debug_common.c \
+	bionic/pthread_debug.c \
+	bionic/libc_init_dynamic.c
+
+ifeq ($(TARGET_ARCH),arm)
+	LOCAL_NO_CRT := true
+	LOCAL_CFLAGS += -DCRT_LEGACY_WORKAROUND
+
+	LOCAL_SRC_FILES := \
+		arch-arm/bionic/crtbegin_so.c \
+		arch-arm/bionic/atexit_legacy.c \
+		$(LOCAL_SRC_FILES) \
+		arch-arm/bionic/crtend_so.S
+endif
+
+LOCAL_MODULE:= libc_internal
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_REQUIRED_MODULES := tzdata
+
+LOCAL_SHARED_LIBRARIES :=
+LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
+LOCAL_SYSTEM_SHARED_LIBRARIES :=
+
+include $(BUILD_STATIC_LIBRARY)
+
 
 # Extension: enable memory allocation checking (including memory leaks,
 # buffer overwrites, etc.)

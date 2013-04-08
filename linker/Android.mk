@@ -15,8 +15,6 @@ LOCAL_SRC_FILES:= \
     linker_phdr.c \
     rt.c
 
-LOCAL_LDFLAGS := -shared -Wl,--exclude-libs,ALL -Wl,-Bsymbolic
-
 LOCAL_CFLAGS += -fno-stack-protector \
         -Wstrict-overflow=5 \
         -fvisibility=hidden \
@@ -55,23 +53,39 @@ LOCAL_CFLAGS += -DTIMING=$(if $(filter true,$(LINKER_TIMING)),1,0)
 LOCAL_CFLAGS += -DSTATS=$(if $(filter true,$(LINKER_STATS)),1,0)
 LOCAL_CFLAGS += -DCOUNT_PAGES=$(if $(filter true,$(LINKER_COUNT_PAGES)),1,0)
 
-LOCAL_MODULE:= linker
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
-LOCAL_STATIC_LIBRARIES := libc_nomalloc
+ifeq ($(ALL_IN_ONE),true)
+  LOCAL_LDFLAGS := -shared -Wl,-Bsymbolic -Wl,-soname,olibc.so
+  LOCAL_CFLAGS += -DOLIBC_ALL_IN_ONE
 
-#LOCAL_FORCE_STATIC_EXECUTABLE := true # not necessary when not including BUILD_EXECUTABLE
+  LOCAL_MODULE := olibc
 
-#
-# include $(BUILD_EXECUTABLE)
-#
-# Instead of including $(BUILD_EXECUTABLE), we execute the steps to create an executable by
-# hand, as we want to insert an extra step that is not supported by the build system, and
-# is probably specific the linker only, so there's no need to modify the build system for
-# the purpose.
+  LOCAL_WHOLE_STATIC_LIBRARIES := libc_internal libm
 
-LOCAL_MODULE_CLASS := EXECUTABLES
-LOCAL_MODULE_SUFFIX := $(TARGET_EXECUTABLE_SUFFIX)
+  LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+  LOCAL_MODULE_SUFFIX := $(TARGET_SHLIB_SUFFIX)
+  OVERRIDE_BUILT_MODULE_PATH := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)
+
+  LOCAL_SYSTEM_SHARED_LIBRARIES :=
+else
+  LOCAL_LDFLAGS := -shared -Wl,--exclude-libs,ALL -Wl,-Bsymbolic
+
+  LOCAL_MODULE:= linker
+
+  LOCAL_STATIC_LIBRARIES := libc_nomalloc
+
+  #
+  # include $(BUILD_EXECUTABLE)
+  #
+  # Instead of including $(BUILD_EXECUTABLE), we execute the steps to create an executable by
+  # hand, as we want to insert an extra step that is not supported by the build system, and
+  # is probably specific the linker only, so there's no need to modify the build system for
+  # the purpose.
+
+  LOCAL_MODULE_CLASS := EXECUTABLES
+  LOCAL_MODULE_SUFFIX := $(TARGET_EXECUTABLE_SUFFIX)
+endif
 
 # we don't want crtbegin.o (because we have begin.o), so unset it
 # just for this module
@@ -87,10 +101,17 @@ $(linked_module): PRIVATE_TARGET_LIBGCC := $(TARGET_LIBGCC)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_CRTBEGIN_DYNAMIC_O)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_STATIC_O := $(TARGET_CRTBEGIN_STATIC_O)
 $(linked_module): PRIVATE_TARGET_CRTEND_O := $(TARGET_CRTEND_O)
+
+ifeq ($(ALL_IN_ONE),true)
+# Build as a shared library in all-in-one mode
+$(linked_module): $(TARGET_CRTBEGIN_STATIC_O) $(all_objects) $(all_libraries) $(TARGET_CRTEND_O)
+	$(transform-o-to-shared-lib)
+else
 $(linked_module): $(TARGET_CRTBEGIN_STATIC_O) $(all_objects) $(all_libraries) $(TARGET_CRTEND_O)
 	$(transform-o-to-static-executable)
 	@echo "target PrefixSymbols: $(PRIVATE_MODULE) ($@)"
 	$(hide) $(TARGET_OBJCOPY) --prefix-symbols=__dl_ $@
+endif
 
 #
 # end of BUILD_EXECUTABLE hack

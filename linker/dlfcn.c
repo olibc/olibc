@@ -50,6 +50,7 @@ static void __bionic_format_dlerror(const char* msg, const char* detail) {
   __bionic_set_dlerror(buffer);
 }
 
+OLIBC_EXPORT
 const char* dlerror() {
   const char* old_value = __bionic_set_dlerror(NULL);
   return old_value;
@@ -62,6 +63,7 @@ void android_update_LD_LIBRARY_PATH(const char* ld_library_path) {
   ScopedPthreadMutexLocker_fini(&locker);
 }
 
+OLIBC_EXPORT
 void* dlopen(const char* filename, int flags) {
   ScopedPthreadMutexLocker locker;
   ScopedPthreadMutexLocker_init(&locker, &gDlMutex);
@@ -75,6 +77,7 @@ void* dlopen(const char* filename, int flags) {
   return result;
 }
 
+OLIBC_EXPORT
 void* dlsym(void* handle, const char* symbol) {
   ScopedPthreadMutexLocker locker;
   ScopedPthreadMutexLocker_init(&locker, &gDlMutex);
@@ -126,6 +129,7 @@ void* dlsym(void* handle, const char* symbol) {
   }
 }
 
+OLIBC_EXPORT
 int dladdr(const void* addr, Dl_info* info) {
   ScopedPthreadMutexLocker locker;
   ScopedPthreadMutexLocker_init(&locker, &gDlMutex);
@@ -153,6 +157,7 @@ int dladdr(const void* addr, Dl_info* info) {
   return 1;
 }
 
+OLIBC_EXPORT
 int dlclose(void* handle) {
   ScopedPthreadMutexLocker locker;
   ScopedPthreadMutexLocker_init(&locker, &gDlMutex);
@@ -161,6 +166,8 @@ int dlclose(void* handle) {
   return ret;
 }
 
+#ifndef OLIBC_ALL_IN_ONE
+/* libdl functions are look-up from olibc.so in all-in-one mode */
 #if defined(ANDROID_ARM_LINKER)
 //   0000000 00011111 111112 22222222 2333333 3333444444444455555555556666666 6667
 //   0123456 78901234 567890 12345678 9012345 6789012345678901234567890123456 7890
@@ -261,3 +268,4 @@ soinfo libdl_info = {
     has_text_relocations: false,
     has_DT_SYMBOLIC: true,
 };
+#endif /* !defined(OLIBC_ALL_IN_ONE) */

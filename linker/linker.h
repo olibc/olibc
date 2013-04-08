@@ -206,6 +206,13 @@ void notify_gdb_of_libraries();
 #define likely(expr)   __builtin_expect (expr, 1)
 #define unlikely(expr) __builtin_expect (expr, 0)
 
+#ifdef OLIBC_ALL_IN_ONE
+#define OLIBC_EXPORT __attribute__ ((visibility ("default")))
+#define DYNAMIC_LINKER_PATH "/system/lib/olibc.so"
+#else
+#define OLIBC_EXPORT
+#define DYNAMIC_LINKER_PATH "/system/bin/linker"
+#endif
 
 char* linker_get_error_buffer();
 size_t linker_get_error_buffer_size();

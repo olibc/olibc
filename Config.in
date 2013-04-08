@@ -114,6 +114,10 @@ endmenu
 
 menu "General Library Settings"
 
+config ALL_IN_ONE
+	bool "Build libc/libm/linker all-in-one in olibc.so"
+	default y
+
 config CUSTOM_MALLOC_ALIGNMENT
 	bool "Customize dlmalloc's alignment"
 	default n
