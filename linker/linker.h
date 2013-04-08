@@ -206,7 +206,7 @@ void notify_gdb_of_libraries();
 #define likely(expr)   __builtin_expect (expr, 1)
 #define unlikely(expr) __builtin_expect (expr, 0)
 
-#ifdef OLIBC_ALL_IN_ONE
+#ifdef OLIBC_SINGLE_BINARY_SUPPORT
 #define OLIBC_EXPORT __attribute__ ((visibility ("default")))
 #define DYNAMIC_LINKER_PATH "/system/lib/olibc.so"
 #else

@@ -87,7 +87,7 @@ struct soinfo_pool_t {
 static struct soinfo_pool_t* gSoInfoPools = NULL;
 static soinfo* gSoInfoFreeList = NULL;
 
-#ifdef OLIBC_ALL_IN_ONE
+#ifdef OLIBC_SINGLE_BINARY_SUPPORT
 static soinfo olibc_info;
 static soinfo* solist = &olibc_info;
 static soinfo* sonext = &olibc_info;
@@ -147,7 +147,7 @@ static unsigned bitmask[4096];
 #define MARK(x) do {} while (0)
 #endif
 
-#ifndef OLIBC_ALL_IN_ONE
+#ifndef OLIBC_SINGLE_BINARY_SUPPORT
 /* We don't need follow stubs in all-in-one mode */
 // You shouldn't try to call memory-allocating functions in the dynamic linker.
 // Guard against the most obvious ones.
@@ -1958,7 +1958,7 @@ Elf32_Addr __linker_init(void* raw_args) {
     exit(EXIT_FAILURE);
   }
 
-#ifdef OLIBC_ALL_IN_ONE
+#ifdef OLIBC_SINGLE_BINARY_SUPPORT
   /*
    *  We need keep soinfo for dynamic linker in all-in-one mode
    *  for further symbol look-up.

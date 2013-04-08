@@ -55,9 +55,9 @@ LOCAL_CFLAGS += -DCOUNT_PAGES=$(if $(filter true,$(LINKER_COUNT_PAGES)),1,0)
 
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
-ifeq ($(ALL_IN_ONE),true)
+ifeq ($(SINGLE_BINARY_SUPPORT),true)
   LOCAL_LDFLAGS := -shared -Wl,-Bsymbolic -Wl,-soname,olibc.so
-  LOCAL_CFLAGS += -DOLIBC_ALL_IN_ONE
+  LOCAL_CFLAGS += -DOLIBC_SINGLE_BINARY_SUPPORT
 
   LOCAL_MODULE := olibc
 
@@ -102,7 +102,7 @@ $(linked_module): PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_CRTBEGIN_DYNAMIC
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_STATIC_O := $(TARGET_CRTBEGIN_STATIC_O)
 $(linked_module): PRIVATE_TARGET_CRTEND_O := $(TARGET_CRTEND_O)
 
-ifeq ($(ALL_IN_ONE),true)
+ifeq ($(SINGLE_BINARY_SUPPORT),true)
 # Build as a shared library in all-in-one mode
 $(linked_module): $(TARGET_CRTBEGIN_STATIC_O) $(all_objects) $(all_libraries) $(TARGET_CRTEND_O)
 	$(transform-o-to-shared-lib)
