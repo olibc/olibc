@@ -254,18 +254,10 @@ libm_common_src_files += \
 endif
 
 #
-# Build a dummy libm.a for target.
+# libm.a for target.
 #
 include $(CLEAR_VARS)
 LOCAL_MODULE:= libm
-LOCAL_SYSTEM_SHARED_LIBRARIES :=
-include $(BUILD_STATIC_LIBRARY)
-
-#
-# libm_internal.a for target.
-#
-include $(CLEAR_VARS)
-LOCAL_MODULE:= libm_internal
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 ifeq ($(LIBM_USE_ARM_MODE),true)
 LOCAL_ARM_MODE := arm
@@ -275,3 +267,13 @@ LOCAL_C_INCLUDES += $(libm_common_includes) $(libm_$(TARGET_ARCH)_includes)
 LOCAL_SRC_FILES := $(libm_common_src_files) $(libm_$(TARGET_ARCH)_src_files)
 LOCAL_SYSTEM_SHARED_LIBRARIES := libc
 include $(BUILD_STATIC_LIBRARY)
+
+#
+# libm.so for target.
+#
+include $(CLEAR_VARS)
+LOCAL_MODULE:= libm
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_SYSTEM_SHARED_LIBRARIES := libc
+LOCAL_WHOLE_STATIC_LIBRARIES := libm
+include $(BUILD_SHARED_LIBRARY)
