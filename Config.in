@@ -72,14 +72,6 @@ config ARCH_ARM_HAVE_NEON
 	bool "Have NEON co-processor"
 	default n if DESIRED_TARGET_PRODUCT="mini_armv7a"
 	default y
-
-config ARCH_ARM_HAVE_32_BYTE_CACHE_LINES
-	bool "Have 32 byte cache lines"
-	default n
-
-config ARCH_ARM_USE_NON_NEON_MEMCPY
-	bool "Use non-NEON optimized memcpy implementation"
-	depends on ARCH_ARM_HAVE_NEON
 endif # TARGET_arm
 
 config TARGET_SUBARCH
