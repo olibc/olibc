@@ -31,223 +31,113 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <pthread.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-
-/*** Generic output sink
- ***/
-
-typedef struct Out Out;
-struct Out {
-  void *opaque;
-  void (*send)(void *opaque, const char *data, int len);
-};
-
-static void out_send(Out *o, const char *data, size_t len) {
-    o->send(o->opaque, data, (int)len);
-}
-
-static void
-out_send_repeat(Out *o, char ch, int count)
-{
-    char pad[8];
-    const int padSize = (int)sizeof(pad);
-
-    memset(pad, ch, sizeof(pad));
-    while (count > 0) {
-        int avail = count;
-        if (avail > padSize) {
-            avail = padSize;
-        }
-        o->send(o->opaque, pad, avail);
-        count -= avail;
-    }
-}
-
-/* forward declaration */
-static void out_vformat(Out* o, const char* format, va_list args);
-
-/*** Bounded buffer output
- ***/
-
-typedef struct BufOut BufOut;
-struct BufOut {
-  Out out[1];
-  char *buffer;
-  char *pos;
-  char *end;
-  int total;
-};
-
-static void buf_out_send(void *opaque, const char *data, int len) {
-    BufOut *bo = (BufOut*)(opaque);
-
-    if (len < 0) {
-        len = strlen(data);
-    }
-
-    bo->total += len;
-
-    while (len > 0) {
-        int avail = bo->end - bo->pos;
-        if (avail == 0)
-            break;
-        if (avail > len)
-            avail = len;
-        memcpy(bo->pos, data, avail);
-        bo->pos += avail;
-        bo->pos[0] = '\0';
-        len -= avail;
-    }
-}
-
-static Out*
-buf_out_init(BufOut *bo, char *buffer, size_t size)
-{
-    if (size == 0)
-        return NULL;
-
-    bo->out->opaque = bo;
-    bo->out->send   = buf_out_send;
-    bo->buffer      = buffer;
-    bo->end         = buffer + size - 1;
-    bo->pos         = bo->buffer;
-    bo->pos[0]      = '\0';
-    bo->total       = 0;
-
-    return bo->out;
-}
-
-static int
-buf_out_length(BufOut *bo)
-{
-    return bo->total;
-}
-
-static int
-vformat_buffer(char *buff, size_t buf_size, const char *format, va_list args)
-{
-    BufOut bo;
-    Out *out;
-
-    out = buf_out_init(&bo, buff, buf_size);
-    if (out == NULL)
-        return 0;
-
-    out_vformat(out, format, args);
-
-    return buf_out_length(&bo);
-}
-
-int __libc_format_buffer(char* buffer, size_t buffer_size, const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  int result = vformat_buffer(buffer, buffer_size, format, args);
-  va_end(args);
-  return result;
-}
-
-
-/*** File descriptor output
- ***/
-
-typedef struct FdOut FdOut;
-struct FdOut {
-  Out out[1];
-  int fd;
-  int total;
-};
-
-static void
-fd_out_send(void *opaque, const char *data, int len)
-{
-    FdOut *fdo = (FdOut*)(opaque);
-
-    if (len < 0)
-        len = strlen(data);
-
-    while (len > 0) {
-        int ret = write(fdo->fd, data, len);
-        if (ret < 0) {
-            if (errno == EINTR)
-                continue;
-            break;
-        }
-        data += ret;
-        len -= ret;
-        fdo->total += ret;
-    }
-}
-
-static Out*
-fd_out_init(FdOut *fdo, int  fd)
-{
-    fdo->out->opaque = fdo;
-    fdo->out->send = fd_out_send;
-    fdo->fd = fd;
-    fdo->total = 0;
-
-    return fdo->out;
-}
-
-static int
-fd_out_length(FdOut *fdo)
-{
-    return fdo->total;
-}
-
-
-int __libc_format_fd(int fd, const char* format, ...) {
-  FdOut fdo;
-  Out* out = fd_out_init(&fdo, fd);
-  if (out == NULL) {
-    return 0;
-  }
-
-  va_list args;
-  va_start(args, format);
-  out_vformat(out, format, args);
-  va_end(args);
-
-  return fd_out_length(&fdo);
-}
-
-/*** Log output
- ***/
-
-#include <unistd.h>
-#include <fcntl.h>
+#include <sys/mman.h>
 #include <sys/uio.h>
+#include <unistd.h>
 
+static pthread_mutex_t gAbortMsgLock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t gLogInitializationLock = PTHREAD_MUTEX_INITIALIZER;
 
-static const int main_log_fd = STDERR_FILENO;
-static const int event_log_fd = STDERR_FILENO;
+__LIBC_HIDDEN__ abort_msg_t** __abort_message_ptr; // Accessible to __libc_init_common.
 
-int __libc_format_log_va_list(int priority, const char* tag, const char* fmt, va_list args) {
-  char buf[1024];
-  int buf_strlen = vformat_buffer(buf, sizeof(buf), fmt, args);
+typedef struct iovec iovec;
 
-  struct iovec vec[2];
-  vec[0].iov_base = (char*)(tag);
-  vec[0].iov_len = strlen(tag) + 1;
-  vec[1].iov_base = (char*)(buf);
-  vec[1].iov_len = buf_strlen + 1;
+// Must be kept in sync with frameworks/base/core/java/android/util/EventLog.java.
+enum AndroidEventLogType {
+  EVENT_TYPE_INT      = 0,
+  EVENT_TYPE_LONG     = 1,
+  EVENT_TYPE_STRING   = 2,
+  EVENT_TYPE_LIST     = 3,
+};
 
-  return TEMP_FAILURE_RETRY(writev(main_log_fd, vec, 2));
+typedef struct Out Out;
+typedef void (*SendFunc)(void *o, const char* data, int len);
+struct Out {
+  SendFunc Send;
+  void *out;
+};
+
+typedef struct BufferOutputStream BufferOutputStream;
+struct BufferOutputStream {
+  int total;
+
+  char* buffer_;
+  char* pos_;
+  char* end_;
+};
+
+static void BufferOutputStream_init(BufferOutputStream* o,
+                                    char* buffer, size_t size) {
+  o->total = 0;
+  o->buffer_ = buffer;
+  o->end_ = buffer + size - 1;
+  o->pos_ = o->buffer_;
+  o->pos_[0] = '\0';
 }
 
-int __libc_format_log(int priority, const char* tag, const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  int result = __libc_format_log_va_list(priority, tag, format, args);
-  va_end(args);
-  return result;
+static void BufferOutputStream_Send(BufferOutputStream* o,
+                                    const char* data, int len) {
+  if (len < 0) {
+    len = strlen(data);
+  }
+  while (len > 0) {
+    int avail = o->end_ - o->pos_;
+    if (avail == 0) {
+      break;
+    }
+    if (avail > len) {
+      avail = len;
+    }
+    memcpy(o->pos_, data, avail);
+    o->pos_ += avail;
+    o->pos_[0] = '\0';
+    len -= avail;
+    o->total += avail;
+  }
+}
+
+static void BufferOutputStream_Sendder(Out* o, const char* data, int len) {
+  BufferOutputStream_Send((BufferOutputStream*)o->out, data, len);
+}
+
+typedef struct FdOutputStream FdOutputStream;
+struct FdOutputStream {
+  int total;
+
+  int fd_;
+};
+
+static void FdOutputStream_init(FdOutputStream* o, int fd){
+  o->total = 0;
+  o->fd_ = fd;
+}
+
+static void FdOutputStream_Send(FdOutputStream* o,
+                                const char* data, int len) {
+  if (len < 0) {
+    len = strlen(data);
+  }
+
+  while (len > 0) {
+    int rc = TEMP_FAILURE_RETRY(write(o->fd_, data, len));
+    if (rc == -1) {
+      break;
+    }
+    data += rc;
+    len -= rc;
+    o->total += rc;
+  }
+}
+
+static void FdOutputStream_Sendder(Out* o, const char* data, int len) {
+  FdOutputStream_Send((FdOutputStream*)o->out, data, len);
 }
 
 /*** formatted output implementation
@@ -259,9 +149,7 @@ int __libc_format_log(int priority, const char* tag, const char* format, ...) {
  *
  * NOTE: Does *not* handle a sign prefix.
  */
-static unsigned
-parse_decimal(const char *format, int *ppos)
-{
+static unsigned parse_decimal(const char *format, int *ppos) {
     const char* p = format + *ppos;
     unsigned result = 0;
 
@@ -269,8 +157,9 @@ parse_decimal(const char *format, int *ppos)
         int ch = *p;
         unsigned d = (unsigned)(ch - '0');
 
-        if (d >= 10U)
+        if (d >= 10U) {
             break;
+        }
 
         result = result*10 + d;
         p++;
@@ -310,8 +199,7 @@ static void format_unsigned(char* buf, size_t buf_size, uint64_t value, int base
 
   // Reverse digit string in-place.
   size_t length = p - buf;
-  size_t i, j;
-  for (i = 0, j = length - 1; i < j; ++i, --j) {
+  for (size_t i = 0, j = length - 1; i < j; ++i, --j) {
     char ch = buf[i];
     buf[i] = buf[j];
     buf[j] = ch;
@@ -338,10 +226,23 @@ static void format_integer(char* buf, size_t buf_size, uint64_t value, char conv
   format_unsigned(buf, buf_size, value, base, caps);
 }
 
+static void SendRepeat(Out *o, char ch, int count) {
+  char pad[8];
+  memset(pad, ch, sizeof(pad));
+
+  const int pad_size = (int)(sizeof(pad));
+  while (count > 0) {
+    int avail = count;
+    if (avail > pad_size) {
+      avail = pad_size;
+    }
+    o->Send(o, pad, avail);
+    count -= avail;
+  }
+}
+
 /* Perform formatted output to an output target 'o' */
-static void
-out_vformat(Out *o, const char *format, va_list args)
-{
+static void out_vformat(Out *o, const char* format, va_list args) {
     int nn = 0;
 
     for (;;) {
@@ -368,7 +269,7 @@ out_vformat(Out *o, const char *format, va_list args)
         } while (1);
 
         if (mm > nn) {
-            out_send(o, format+nn, mm-nn);
+            o->Send(o, format+nn, mm-nn);
             nn = mm;
         }
 
@@ -384,7 +285,7 @@ out_vformat(Out *o, const char *format, va_list args)
             c = format[nn++];
             if (c == '\0') {  /* single trailing '%' ? */
                 c = '%';
-                out_send(o, &c, 1);
+                o->Send(o, &c, 1);
                 return;
             }
             else if (c == '0') {
@@ -505,29 +406,142 @@ out_vformat(Out *o, const char *format, va_list args)
 
         if (slen < width && !padLeft) {
             char padChar = padZero ? '0' : ' ';
-            out_send_repeat(o, padChar, width - slen);
+            SendRepeat(o, padChar, width - slen);
         }
 
-        out_send(o, str, slen);
+        o->Send(o, str, slen);
 
         if (slen < width && padLeft) {
             char padChar = padZero ? '0' : ' ';
-            out_send_repeat(o, padChar, width - slen);
+            SendRepeat(o, padChar, width - slen);
         }
     }
 }
 
-static int __libc_android_log_event(int32_t tag, char type, const void* payload, size_t len) {
-  struct iovec vec[2];
-  vec[0].iov_base = &type;
-  vec[0].iov_len = sizeof(type);
-  vec[1].iov_base = (void*)(payload);
-  vec[1].iov_len = len;
+int __libc_format_buffer(char* buffer, size_t buffer_size, const char* format, ...) {
+  BufferOutputStream os;
+  BufferOutputStream_init(&os, buffer, buffer_size);
+  va_list args;
+  va_start(args, format);
+  Out o;
+  o.Send = (SendFunc)BufferOutputStream_Sendder;
+  o.out = (void*)&os;
+  out_vformat(&o, format, args);
+  va_end(args);
+  return os.total;
+}
 
-  return TEMP_FAILURE_RETRY(writev(event_log_fd, vec, 2));
+int __libc_format_fd(int fd, const char* format, ...) {
+  FdOutputStream os;
+  FdOutputStream_init(&os, fd);
+  va_list args;
+  va_start(args, format);
+  Out o;
+  o.Send = (SendFunc)FdOutputStream_Sendder;
+  o.out = (void*)&os;
+  out_vformat(&o, format, args);
+  va_end(args);
+  return os.total;
+}
+
+static int __libc_write_log(int priority, const char* tag, const char* msg) {
+
+  iovec vec[4];
+  char prefix[] = "[";
+  char suffix[] = "] ";
+  vec[0].iov_base = prefix;
+  vec[0].iov_len = sizeof(prefix);
+  vec[1].iov_base = (char*)tag;
+  vec[1].iov_len = strlen(tag);
+  vec[2].iov_base = suffix;
+  vec[2].iov_len = sizeof(suffix);
+  vec[3].iov_base = (char*)(msg);
+  vec[3].iov_len = strlen(msg) + 1;
+
+  return TEMP_FAILURE_RETRY(writev(STDERR_FILENO, vec, 4));
+}
+
+int __libc_format_log_va_list(int priority, const char* tag, const char* format, va_list args) {
+  char buffer[1024];
+  BufferOutputStream os;
+  BufferOutputStream_init(&os, buffer, sizeof(buffer));
+  Out o;
+  o.Send = (SendFunc)BufferOutputStream_Sendder;
+  o.out = (void*)&os;
+  out_vformat(&o, format, args);
+  return __libc_write_log(priority, tag, buffer);
+}
+
+int __libc_format_log(int priority, const char* tag, const char* format, ...) {
+  va_list args;
+  va_start(args, format);
+  int result = __libc_format_log_va_list(priority, tag, format, args);
+  va_end(args);
+  return result;
+}
+
+static int __libc_android_log_event(int32_t tag, char type, const void* payload, size_t len) {
+  iovec vec;
+  vec.iov_base = (void*)(payload);
+  vec.iov_len = len;
+
+  return TEMP_FAILURE_RETRY(writev(STDERR_FILENO, &vec, 1));
+}
+
+void __libc_android_log_event_int(int32_t tag, int value) {
+  __libc_android_log_event(tag, EVENT_TYPE_INT, &value, sizeof(value));
+}
+
+void __libc_android_log_event_uid(int32_t tag) {
+  __libc_android_log_event_int(tag, getuid());
 }
 
 void __fortify_chk_fail(const char *msg, uint32_t tag) {
-  __libc_format_log(ANDROID_LOG_FATAL, "libc", "FORTIFY_SOURCE: %s. Calling abort().\n", msg);
+  if (tag != 0) {
+    __libc_android_log_event_uid(tag);
+  }
+  __libc_fatal("FORTIFY_SOURCE: %s. Calling abort().", msg);
+}
+
+void __libc_fatal(const char* format, ...) {
+  char msg[1024];
+  BufferOutputStream os;
+  BufferOutputStream_init(&os, msg, sizeof(msg));
+  va_list args;
+  va_start(args, format);
+  Out o;
+  o.Send = (SendFunc)BufferOutputStream_Sendder;
+  o.out = (void*)&os;
+  out_vformat(&o, format, args);
+  va_end(args);
+
+  // TODO: log to stderr for the benefit of "adb shell" users.
+
+  // Log to the log for the benefit of regular app developers (whose stdout and stderr are closed).
+  __libc_write_log(ANDROID_LOG_FATAL, "libc", msg);
+
+  __libc_set_abort_message(msg);
+
   abort();
+}
+
+void __libc_set_abort_message(const char* msg) {
+  size_t size = sizeof(abort_msg_t) + strlen(msg) + 1;
+  void* map = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+  if (map == MAP_FAILED) {
+    return;
+  }
+
+  if (__abort_message_ptr != NULL) {
+    ScopedPthreadMutexLocker locker;
+    ScopedPthreadMutexLocker_init(&locker, &gAbortMsgLock);
+    if (*__abort_message_ptr != NULL) {
+      munmap(*__abort_message_ptr, (*__abort_message_ptr)->size);
+    }
+    abort_msg_t* new_abort_message = (abort_msg_t*)(map);
+    new_abort_message->size = size;
+    strcpy(new_abort_message->msg, msg);
+    *__abort_message_ptr = new_abort_message;
+    ScopedPthreadMutexLocker_fini(&locker);
+  }
 }

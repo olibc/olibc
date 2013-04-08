@@ -200,6 +200,7 @@ Elf32_Sym* dladdr_find_symbol(soinfo* si, const void* addr);
 Elf32_Sym* dlsym_handle_lookup(soinfo* si, const char* name);
 
 void debuggerd_init();
+extern abort_msg_t* gAbortMessage;
 void notify_gdb_of_libraries();
 
 #define UNUSED __attribute__((unused))
