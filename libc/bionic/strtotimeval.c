@@ -32,7 +32,6 @@
 
 char * strtotimeval (const char *str, struct timeval *ts)
 {
-    int n;
     char *s, *s0;
     long  fs;	/* Fractional seconds */
 

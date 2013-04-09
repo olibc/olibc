@@ -571,8 +571,6 @@ _dnsPacket_checkQName( DnsPacket*  packet )
 static int
 _dnsPacket_checkQR( DnsPacket*  packet )
 {
-    int  len;
-
     if (!_dnsPacket_checkQName(packet))
         return 0;
 
@@ -831,8 +829,6 @@ _dnsPacket_hashQName( DnsPacket*  packet, unsigned  hash )
 static unsigned
 _dnsPacket_hashQR( DnsPacket*  packet, unsigned  hash )
 {
-    int   len;
-
     hash = _dnsPacket_hashQName(packet, hash);
     hash = _dnsPacket_hashBytes(packet, 4, hash); /* TYPE and CLASS */
     return hash;

@@ -266,7 +266,6 @@ int sem_wait(sem_t *sem)
 
 int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
 {
-    int  ret;
     unsigned int shared;
 
     if (sem == NULL) {

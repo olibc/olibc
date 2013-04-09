@@ -34,9 +34,7 @@
 size_t
 wcsxfrm(wchar_t * __restrict dest, const wchar_t * __restrict src, size_t len)
 {
-    int prim, sec, l;
     size_t slen;
-    char *mbsrc, *s, *ss;
 
     if (*src == L'\0') {
         if (len != 0)

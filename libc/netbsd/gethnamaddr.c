@@ -522,7 +522,6 @@ gethostbyname_internal(const char *name, int af, res_state res)
 	char *bp, *ep;
 	int size;
 	struct hostent *hp;
-        struct resolv_cache*  cache;
         res_static  rs = __res_get_static();
 
 	static const ns_dtab dtab[] = {
