@@ -665,7 +665,12 @@ static MutexInfo* get_most_recently_locked() {
 __LIBC_HIDDEN__ void pthread_debug_init() {
 #if defined(PROPERTY_SYSTEM_SUPPORT)
     char env[PROP_VALUE_MAX];
-    if (__system_property_get("debug.libc.pthread", env)) {
+    if (__system_property_get("debug.libc.pthread", env))
+#else
+    char *env;
+    if ((env = getenv("PTHREAD_DEBUG")))
+#endif
+    {
         int level = atoi(env);
         if (level) {
             LOGI("pthread deadlock detection level %d enabled for pid %d (%s)",
@@ -674,7 +679,6 @@ __LIBC_HIDDEN__ void pthread_debug_init() {
             sPthreadDebugLevel = level;
         }
     }
-#endif
 }
 
 /*
