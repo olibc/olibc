@@ -345,9 +345,15 @@ static void malloc_init_impl() {
     MallocDebugInit malloc_debug_initialize = NULL;
     unsigned int qemu_running = 0;
     unsigned int memcheck_enabled = 0;
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     char env[PROP_VALUE_MAX];
     char memcheck_tracing[PROP_VALUE_MAX];
     char debug_program[PROP_VALUE_MAX];
+#else
+    char *env;
+    char *memcheck_tracing = "";
+    char *debug_program;
+#endif
 
     /* Get custom malloc debug level. Note that emulator started with
      * memory checking option will have priority over debug level set in
@@ -363,12 +369,19 @@ static void malloc_init_impl() {
             }
         }
     }
+#endif
 
     /* If debug level has not been set by memcheck option in the emulator,
      * lets grab it from libc.debug.malloc system property. */
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     if (gMallocDebugLevel == 0 && __system_property_get("libc.debug.malloc", env)) {
         gMallocDebugLevel = atoi(env);
     }
+#else
+    if (gMallocDebugLevel == 0 && (env = getenv("DEBUG_MALLOC"))) {
+        gMallocDebugLevel = atoi(env);
+    }
+#endif
 
     /* Debug level 0 means that we should use dlxxx allocation
      * routines (default). */
@@ -379,7 +392,11 @@ static void malloc_init_impl() {
     /* If libc.debug.malloc.program is set and is not a substring of progname,
      * then exit.
      */
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     if (__system_property_get("libc.debug.malloc.program", debug_program)) {
+#else
+    if ((debug_program = getenv("DEBUG_MALLOC_PROGRAM"))) {
+#endif
         if (!strstr(__progname, debug_program)) {
             return;
         }
@@ -397,11 +414,13 @@ static void malloc_init_impl() {
         case 1:
         case 5:
         case 10: {
+#if defined(PROPERTY_SYSTEM_SUPPORT)
             char debug_backlog[PROP_VALUE_MAX];
             if (__system_property_get("libc.debug.malloc.backlog", debug_backlog)) {
                 gMallocDebugBacklog = atoi(debug_backlog);
                 info_log("%s: setting backlog length to %d\n", __progname, gMallocDebugBacklog);
             }
+#endif
             if (gMallocDebugBacklog == 0) {
                 gMallocDebugBacklog = BACKLOG_DEFAULT_LEN;
             }
@@ -427,7 +446,6 @@ static void malloc_init_impl() {
             error_log("%s: Debug level %d is unknown\n", __progname, gMallocDebugLevel);
             return;
     }
-#endif
 
     // Load .so that implements the required malloc debugging functionality.
     libc_malloc_impl_handle = dlopen(so_name, RTLD_LAZY);
