@@ -446,9 +446,10 @@ int __libc_format_fd(int fd, const char* format, ...) {
 
 static int __libc_write_log(int priority, const char* tag, const char* msg) {
 
-  iovec vec[4];
+  iovec vec[5];
   char prefix[] = "[";
   char suffix[] = "] ";
+  char newline[] = "\n";
   vec[0].iov_base = prefix;
   vec[0].iov_len = sizeof(prefix);
   vec[1].iov_base = (char*)tag;
@@ -457,8 +458,10 @@ static int __libc_write_log(int priority, const char* tag, const char* msg) {
   vec[2].iov_len = sizeof(suffix);
   vec[3].iov_base = (char*)(msg);
   vec[3].iov_len = strlen(msg) + 1;
+  vec[4].iov_base = newline;
+  vec[4].iov_len = sizeof(newline);
 
-  return TEMP_FAILURE_RETRY(writev(STDERR_FILENO, vec, 4));
+  return TEMP_FAILURE_RETRY(writev(STDERR_FILENO, vec, 5));
 }
 
 int __libc_format_log_va_list(int priority, const char* tag, const char* format, va_list args) {
