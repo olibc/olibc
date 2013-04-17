@@ -27,6 +27,7 @@
 #define LOCK_AT_FORK 1
 #define USE_RECURSIVE_LOCK 0
 #define USE_SPIN_LOCKS 0
+#define DLMALLOC_EXPORT __LIBC_HIDDEN__
 
 /* Include the proper definitions. */
 #include "../upstream-dlmalloc/malloc.h"
