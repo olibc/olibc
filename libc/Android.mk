@@ -53,7 +53,6 @@ libc_common_src_files := \
 	stdlib/exit.c \
 	stdlib/getenv.c \
 	stdlib/putenv.c \
-	stdlib/qsort.c \
 	stdlib/setenv.c \
 	stdlib/strtod.c \
 	stdlib/strtoimax.c \
@@ -293,6 +292,7 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/tempnam.c \
     upstream-freebsd/lib/libc/stdio/tmpnam.c \
     upstream-freebsd/lib/libc/stdio/wsetup.c \
+    upstream-freebsd/lib/libc/stdlib/qsort.c \
     upstream-freebsd/lib/libc/stdlib/realpath.c \
 
 libc_upstream_netbsd_src_files := \
