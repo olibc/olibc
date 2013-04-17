@@ -429,7 +429,7 @@ static void copy_TM_to_tm(const struct TM *src, struct tm *dest) {
 
 
 /* Simulate localtime_r() to the best of our ability */
-struct tm * fake_localtime_r(const time_t *clock, struct tm *result) {
+static struct tm * fake_localtime_r(const time_t *clock, struct tm *result) {
     const struct tm *static_result = localtime(clock);
 
     assert(result != NULL);
@@ -447,7 +447,7 @@ struct tm * fake_localtime_r(const time_t *clock, struct tm *result) {
 
 
 /* Simulate gmtime_r() to the best of our ability */
-struct tm * fake_gmtime_r(const time_t *clock, struct tm *result) {
+static struct tm * fake_gmtime_r(const time_t *clock, struct tm *result) {
     const struct tm *static_result = gmtime(clock);
 
     assert(result != NULL);
