@@ -177,6 +177,12 @@
 #define	LABEL(y)	_LABEL(_C_LABEL(y))
 #define	END(y)		.size y, . - y
 
+#ifdef __ELF__
+#define ENTRY_PRIVATE(y)  ENTRY(y); .hidden _C_LABEL(y)
+#else
+#define ENTRY_PRIVATE(y)  ENTRY(y)
+#endif
+
 #define	ASMSTR		.asciz
 
 #ifdef __ELF__
