@@ -46,11 +46,9 @@ __noreturn void __libc_init(void* raw_args,
                             structors_array_t const * const structors);
 void __libc_fini(void* finit_array);
 
-__END_DECLS
+typedef struct KernelArgumentBlock KernelArgumentBlock;
+void __LIBC_HIDDEN__ __libc_init_common(KernelArgumentBlock *args);
 
-#if defined(__cplusplus)
-struct KernelArgumentBlock;
-void __LIBC_HIDDEN__ __libc_init_common(KernelArgumentBlock& args);
-#endif
+__END_DECLS
 
 #endif
