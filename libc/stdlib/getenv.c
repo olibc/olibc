@@ -42,7 +42,7 @@ char *__findenv(const char *name, int *offset);
  *
  *	This routine *should* be a static; don't use it.
  */
-char *
+__LIBC_HIDDEN__ char *
 __findenv(const char *name, int *offset)
 {
 	extern char **environ;
