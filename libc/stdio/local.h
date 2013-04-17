@@ -41,25 +41,25 @@
  * in particular, macros and private variables.
  */
 
-int	__sflush(FILE *);
-int	__sflush_locked(FILE *);
-FILE	*__sfp(void);
-int	__srefill(FILE *);
-int	__sread(void *, char *, int);
-int	__swrite(void *, const char *, int);
-fpos_t	__sseek(void *, fpos_t, int);
-int	__sclose(void *);
-void	__sinit(void);
-void	_cleanup(void);
-void	__smakebuf(FILE *);
-int	__swhatbuf(FILE *, size_t *, int *);
-int	_fwalk(int (*)(FILE *));
-int	__swsetup(FILE *);
-int	__sflags(const char *, int *);
-int	__vfprintf(FILE *, const char *, __va_list);
+__LIBC_HIDDEN__ int	__sflush(FILE *);
+__LIBC_HIDDEN__ int	__sflush_locked(FILE *);
+__LIBC_HIDDEN__ FILE	*__sfp(void);
+__LIBC_HIDDEN__ int	__srefill(FILE *);
+__LIBC_HIDDEN__ int	__sread(void *, char *, int);
+__LIBC_HIDDEN__ int	__swrite(void *, const char *, int);
+__LIBC_HIDDEN__ fpos_t	__sseek(void *, fpos_t, int);
+__LIBC_HIDDEN__ int	__sclose(void *);
+__LIBC_HIDDEN__ void	__sinit(void);
+__LIBC_HIDDEN__ void	_cleanup(void);
+__LIBC_HIDDEN__ void	__smakebuf(FILE *);
+__LIBC_HIDDEN__ int	__swhatbuf(FILE *, size_t *, int *);
+__LIBC_HIDDEN__ int	_fwalk(int (*)(FILE *));
+__LIBC_HIDDEN__ int	__swsetup(FILE *);
+__LIBC_HIDDEN__ int	__sflags(const char *, int *);
+__LIBC_HIDDEN__ int	__vfprintf(FILE *, const char *, __va_list);
 
 extern void __atexit_register_cleanup(void (*)(void));
-extern int __sdidinit;
+__LIBC_HIDDEN__ extern int __sdidinit;
 
 /*
  * Return true if the given FILE cannot be written now.
