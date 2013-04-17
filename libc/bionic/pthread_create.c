@@ -94,7 +94,6 @@ void __thread_entry(void* (*func)(void*), void* arg, void** tls) {
   pthread_exit(result);
 }
 
-__LIBC_ABI_PRIVATE__
 int _init_thread(pthread_internal_t* thread, bool add_to_thread_list) {
   int error = 0;
 

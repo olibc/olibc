@@ -77,7 +77,7 @@ END(__pthread_clone)
     #       implementation much simpler.
     #
 
-ENTRY(__bionic_clone)
+ENTRY_PRIVATE(__bionic_clone)
     mov     ip, sp
     .save   {r4, r5, r6, r7}
 

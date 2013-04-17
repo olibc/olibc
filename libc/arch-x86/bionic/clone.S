@@ -63,7 +63,7 @@ END(__pthread_clone)
  *                     int           (*fn)(void *),
  *                     void          *arg);
  */
-ENTRY(__bionic_clone)
+ENTRY_PRIVATE(__bionic_clone)
         pushl   %ebx
         pushl   %esi
         pushl   %edi

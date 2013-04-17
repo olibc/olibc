@@ -55,10 +55,10 @@ typedef struct pthread_internal_t
     char dlerror_buffer[__BIONIC_DLERROR_BUFFER_SIZE];
 } pthread_internal_t;
 
-int _init_thread(pthread_internal_t* thread, bool add_to_thread_list);
-void __init_tls(pthread_internal_t* thread);
-void _pthread_internal_add(pthread_internal_t* thread);
-pthread_internal_t* __get_thread(void);
+__LIBC_HIDDEN__ int _init_thread(pthread_internal_t* thread, bool add_to_thread_list);
+__LIBC_HIDDEN__ void __init_tls(pthread_internal_t* thread);
+__LIBC_HIDDEN__ void _pthread_internal_add(pthread_internal_t* thread);
+__LIBC_HIDDEN__ pthread_internal_t* __get_thread(void);
 
 __LIBC_HIDDEN__ void pthread_key_clean_all(void);
 __LIBC_HIDDEN__ void _pthread_internal_remove_locked(pthread_internal_t* thread);
@@ -129,10 +129,10 @@ extern int  __pthread_cond_timedwait_relative(pthread_cond_t*,
                                               const struct timespec*);
 
 /* needed by fork.c */
-extern void __timer_table_start_stop(int  stop);
-extern void __bionic_atfork_run_prepare();
-extern void __bionic_atfork_run_child();
-extern void __bionic_atfork_run_parent();
+__LIBC_HIDDEN__ extern void __timer_table_start_stop(int  stop);
+__LIBC_HIDDEN__ extern void __bionic_atfork_run_prepare();
+__LIBC_HIDDEN__ extern void __bionic_atfork_run_child();
+__LIBC_HIDDEN__ extern void __bionic_atfork_run_parent();
 
 __END_DECLS
 

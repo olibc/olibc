@@ -44,7 +44,7 @@ extern void _exit_thread(int  retCode);
 /* this function is called from the __bionic_clone
  * assembly fragment to call the thread function
  * then exit. */
-extern void
+__LIBC_HIDDEN__ extern void
 __bionic_clone_entry( int (*fn)(void *), void *arg )
 {
     int  ret = (*fn)(arg);

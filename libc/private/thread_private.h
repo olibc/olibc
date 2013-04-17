@@ -147,8 +147,8 @@ void	_thread_malloc_unlock(void);
 						_thread_malloc_init();\
 				} while (0)
 
-void	_thread_atexit_lock(void);
-void	_thread_atexit_unlock(void);
+__LIBC_HIDDEN__ void	_thread_atexit_lock(void);
+__LIBC_HIDDEN__ void	_thread_atexit_unlock(void);
 
 #define _ATEXIT_LOCK()		do {					\
 					if (__isthreaded)		\

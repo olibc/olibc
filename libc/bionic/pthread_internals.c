@@ -51,7 +51,7 @@ void _pthread_internal_remove_locked(pthread_internal_t* thread) {
   }
 }
 
-__LIBC_ABI_PRIVATE__ void _pthread_internal_add(pthread_internal_t* thread) {
+void _pthread_internal_add(pthread_internal_t* thread) {
   ScopedPthreadMutexLocker locker;
   ScopedPthreadMutexLocker_init(&locker, &gThreadListLock);
 
@@ -65,7 +65,7 @@ __LIBC_ABI_PRIVATE__ void _pthread_internal_add(pthread_internal_t* thread) {
   ScopedPthreadMutexLocker_fini(&locker);
 }
 
-__LIBC_ABI_PRIVATE__ pthread_internal_t* __get_thread(void) {
+pthread_internal_t* __get_thread(void) {
   void** tls = (void**)((void*)(__get_tls()));
   return (pthread_internal_t*)(tls[TLS_SLOT_THREAD_ID]);
 }
