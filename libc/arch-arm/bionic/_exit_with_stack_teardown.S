@@ -30,7 +30,7 @@
 #include <asm/unistd.h>
 
 // void _exit_with_stack_teardown(void* stackBase, int stackSize, int retCode)
-ENTRY(_exit_with_stack_teardown)
+ENTRY_PRIVATE(_exit_with_stack_teardown)
     mov     lr, r2
     ldr     r7, =__NR_munmap
     swi     #0              // the stack is destroyed by this call

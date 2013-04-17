@@ -34,6 +34,7 @@
 
 	.type	_exit_with_stack_teardown, @function
 	.global	_exit_with_stack_teardown
+	.hidden	_exit_with_stack_teardown
 	.align	4
 	.ent	_exit_with_stack_teardown
 _exit_with_stack_teardown:
