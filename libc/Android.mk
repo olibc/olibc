@@ -575,6 +575,12 @@ else
     libc_common_cflags += -DANDROID_SMP=0
 endif
 
+ifeq ($(EXT_MALLOC_LEAK_CHECK),true)
+    malloc_debug_commom_file := bionic/malloc_debug_common.c
+else
+    malloc_debug_commom_file := bionic/malloc_debug_dummy.c
+endif
+
 # crtbrand.c needs <stdint.h> and a #define for the platform SDK version.
 libc_crt_target_cflags += \
     -I$(LOCAL_PATH)/include  \
@@ -860,8 +866,8 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := \
 	$(libc_arch_static_src_files) \
 	$(libc_static_common_src_files) \
+	$(malloc_debug_commom_file) \
 	bionic/dlmalloc.c \
-	bionic/malloc_debug_common.c \
 	bionic/libc_init_static.c
 
 LOCAL_CFLAGS := $(libc_common_cflags) \
@@ -893,8 +899,8 @@ LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_SRC_FILES := \
 	$(libc_arch_dynamic_src_files) \
 	$(libc_static_common_src_files) \
+	$(malloc_debug_commom_file) \
 	bionic/dlmalloc.c \
-	bionic/malloc_debug_common.c \
 	bionic/pthread_debug.c \
 	bionic/libc_init_dynamic.c
 
@@ -940,8 +946,8 @@ LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_SRC_FILES := \
 	$(libc_arch_dynamic_src_files) \
 	$(libc_static_common_src_files) \
+	$(malloc_debug_commom_file) \
 	bionic/dlmalloc.c \
-	bionic/malloc_debug_common.c \
 	bionic/pthread_debug.c \
 	bionic/libc_init_dynamic.c
 
