@@ -263,7 +263,7 @@ do {								\
 /*
  * Common routine to process the arguments to nan(), nanf(), and nanl().
  */
-void _scan_nan(uint32_t *__words, int __num_words, const char *__s);
+__LIBC_HIDDEN__ void _scan_nan(uint32_t *__words, int __num_words, const char *__s);
 
 #ifdef _COMPLEX_H
 
@@ -433,28 +433,28 @@ irintl(long double x)
 
 /* fdlibm kernel function */
 #if defined(KRAIT_NEON_OPTIMIZATION)
-int	__kernel_rem_pio2(double*,double*,int,int,int) __attribute__((pcs("aapcs-vfp")));
+__LIBC_HIDDEN__ int	__kernel_rem_pio2(double*,double*,int,int,int) __attribute__((pcs("aapcs-vfp")));
 #else
-int	__kernel_rem_pio2(double*,double*,int,int,int);
+__LIBC_HIDDEN__ int	__kernel_rem_pio2(double*,double*,int,int,int);
 #endif
 
 /* double precision kernel functions */
 #ifndef INLINE_REM_PIO2
 #if defined(KRAIT_NEON_OPTIMIZATION)
-int	__ieee754_rem_pio2(double,double*) __attribute__((pcs("aapcs-vfp")));
+__LIBC_HIDDEN__ int	__ieee754_rem_pio2(double,double*) __attribute__((pcs("aapcs-vfp")));
 #else
-int	__ieee754_rem_pio2(double,double*);
+__LIBC_HIDDEN__ int	__ieee754_rem_pio2(double,double*);
 #endif
 #endif
 
 #if defined(KRAIT_NEON_OPTIMIZATION)
-double	__kernel_sin(double,double,int) __attribute__((pcs("aapcs-vfp")));
-double	__kernel_cos(double,double) __attribute__((pcs("aapcs-vfp")));
-double	__kernel_tan(double,double,int) __attribute__((pcs("aapcs-vfp")));
+__LIBC_HIDDEN__ double	__kernel_sin(double,double,int) __attribute__((pcs("aapcs-vfp")));
+__LIBC_HIDDEN__ double	__kernel_cos(double,double) __attribute__((pcs("aapcs-vfp")));
+__LIBC_HIDDEN__ double	__kernel_tan(double,double,int) __attribute__((pcs("aapcs-vfp")));
 #else
-double	__kernel_sin(double,double,int);
-double	__kernel_cos(double,double);
-double	__kernel_tan(double,double,int);
+__LIBC_HIDDEN__ double	__kernel_sin(double,double,int);
+__LIBC_HIDDEN__ double	__kernel_cos(double,double);
+__LIBC_HIDDEN__ double	__kernel_tan(double,double,int);
 #endif
 double	__ldexp_exp(double,int);
 #ifdef _COMPLEX_H
@@ -463,25 +463,25 @@ double complex __ldexp_cexp(double complex,int);
 
 /* float precision kernel functions */
 #ifndef INLINE_REM_PIO2F
-int	__ieee754_rem_pio2f(float,double*);
+__LIBC_HIDDEN__ int	__ieee754_rem_pio2f(float,double*);
 #endif
 #ifndef INLINE_KERNEL_SINDF
-float	__kernel_sindf(double);
+__LIBC_HIDDEN__ float	__kernel_sindf(double);
 #endif
 #ifndef INLINE_KERNEL_COSDF
-float	__kernel_cosdf(double);
+__LIBC_HIDDEN__ float	__kernel_cosdf(double);
 #endif
 #ifndef INLINE_KERNEL_TANDF
-float	__kernel_tandf(double,int);
+__LIBC_HIDDEN__ float	__kernel_tandf(double,int);
 #endif
-float	__ldexp_expf(float,int);
+__LIBC_HIDDEN__ float	__ldexp_expf(float,int);
 #ifdef _COMPLEX_H
-float complex __ldexp_cexpf(float complex,int);
+__LIBC_HIDDEN__ float complex __ldexp_cexpf(float complex,int);
 #endif
 
 /* long double precision kernel functions */
-long double __kernel_sinl(long double, long double, int);
-long double __kernel_cosl(long double, long double);
-long double __kernel_tanl(long double, long double, int);
+__LIBC_HIDDEN__ long double __kernel_sinl(long double, long double, int);
+__LIBC_HIDDEN__ long double __kernel_cosl(long double, long double);
+__LIBC_HIDDEN__ long double __kernel_tanl(long double, long double, int);
 
 #endif /* !_MATH_PRIVATE_H_ */
