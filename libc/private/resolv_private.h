@@ -334,11 +334,11 @@ __END_DECLS
  * Make them go away if a client is including this
  *
  */
-extern const struct res_sym __p_key_syms[];
-extern const struct res_sym __p_cert_syms[];
-extern const struct res_sym __p_class_syms[];
-extern const struct res_sym __p_type_syms[];
-extern const struct res_sym __p_rcode_syms[];
+__LIBC_HIDDEN__ extern const struct res_sym __p_key_syms[];
+__LIBC_HIDDEN__ extern const struct res_sym __p_cert_syms[];
+__LIBC_HIDDEN__ extern const struct res_sym __p_class_syms[];
+__LIBC_HIDDEN__ extern const struct res_sym __p_type_syms[];
+__LIBC_HIDDEN__ extern const struct res_sym __p_rcode_syms[];
 #endif /* SHARED_LIBBIND */
 
 #ifndef ADNROID_CHANGES
