@@ -213,3 +213,15 @@ endif
 ifeq ($(SYSVIPC_SUPPORT),true)
   syscall_src += arch-arm/syscalls/semctl.S
 endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/shmat.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/shmdt.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/shmctl.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/shmget.S
+endif

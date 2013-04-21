@@ -22,6 +22,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
 
 static const key_t key = 0x1234;
 
@@ -43,4 +44,29 @@ TEST(sysvipc, sem) {
   ASSERT_TRUE(semop(semid, &sblock, 1) != -1);
   ASSERT_TRUE(semop(semid, &sbunlock, 1) != -1);
   ASSERT_TRUE(semctl(semid, 0, IPC_RMID) != -1);
+}
+
+TEST(sysvipc, shm) {
+  int shmid;
+  void *shmaddr1, *shmaddr2;
+  void *invalid_addr = reinterpret_cast<void*>(-1);
+  int *shmptr1, *shmptr2;
+  int size = getpagesize();
+  ASSERT_TRUE((shmid = shmget(key, size, IPC_CREAT)) != -1);
+  ASSERT_EQ((shmget(key, 0, 0)), shmid);
+  ASSERT_TRUE((shmaddr1 = shmat(shmid, NULL, 0)) != invalid_addr);
+  ASSERT_TRUE((shmaddr2 = shmat(shmid, NULL, 0)) != invalid_addr);
+
+  shmptr1 = reinterpret_cast<int*>(shmaddr1);
+  shmptr2 = reinterpret_cast<int*>(shmaddr2);
+
+  *shmptr1 = 10;
+  ASSERT_EQ(*shmptr1, *shmptr2);
+  *shmptr1 = 30;
+  ASSERT_EQ(*shmptr1, *shmptr2);
+
+  ASSERT_TRUE(shmdt(shmptr1) != -1);
+  ASSERT_TRUE(shmdt(shmptr2) != -1);
+
+  ASSERT_TRUE(shmctl(shmid, IPC_RMID, NULL) != -1);
 }

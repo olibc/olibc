@@ -325,3 +325,8 @@ int     semget(key_t key, int nsems, int semflg)  1 <SYSVIPC_SUPPORT>
 int     semop(int semid, struct sembuf *sops, unsigned nsops)  1 <SYSVIPC_SUPPORT>
 int semtimedop(int semid, struct sembuf *sops, unsigned nsops, struct timespec *timeout) 1 <SYSVIPC_SUPPORT>
 int     semctl(int semid, int semnum, int cmd, ...) 1 <SYSVIPC_SUPPORT>
+
+void *  shmat(int shmid, const void *shmaddr,int shmflg) 1 <SYSVIPC_SUPPORT>
+int     shmdt(const void *shmaddr) 1 <SYSVIPC_SUPPORT>
+int     shmctl(int shmid, int cmd, struct shmid_ds *buf) 1 <SYSVIPC_SUPPORT>
+int     shmget(key_t key, size_t size, int shmflg) 1 <SYSVIPC_SUPPORT>
