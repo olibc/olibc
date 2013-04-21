@@ -203,3 +203,10 @@ syscall_src += arch-x86/syscalls/inotify_add_watch.S
 syscall_src += arch-x86/syscalls/inotify_rm_watch.S
 syscall_src += arch-x86/syscalls/poll.S
 syscall_src += arch-x86/syscalls/eventfd.S
+
+ifeq ($(SYSVIPC_SUPPORT),true)
+  syscall_src += arch-x86/syscalls/semctl.S
+  syscall_src += arch-x86/syscalls/semget.S
+  syscall_src += arch-x86/syscalls/semop.S
+  syscall_src += arch-x86/syscalls/semtimedop.S
+endif

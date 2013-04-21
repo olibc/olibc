@@ -79,6 +79,10 @@ test_src_files = \
     time_test.cpp \
     unistd_test.cpp \
 
+ifeq ($(SYSVIPC_SUPPORT),true)
+  test_src_files += sysvipc_test.cpp
+endif
+
 test_dynamic_ldflags = -Wl,--export-dynamic -Wl,-u,DlSymTestFunction
 test_dynamic_src_files = \
     dlfcn_test.cpp \

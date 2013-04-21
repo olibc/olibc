@@ -156,6 +156,10 @@ config DEBUGGERD_SUPPORT
 	bool "Debuggerd system support (originally from Android)"
 	default n
 
+config SYSVIPC_SUPPORT
+	bool "SysV IPC support"
+	default y
+
 endmenu
 
 menu "Extensions"

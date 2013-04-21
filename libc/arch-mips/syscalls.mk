@@ -204,3 +204,10 @@ syscall_src += arch-mips/syscalls/poll.S
 syscall_src += arch-mips/syscalls/eventfd.S
 syscall_src += arch-mips/syscalls/_flush_cache.S
 syscall_src += arch-mips/syscalls/syscall.S
+
+ifeq ($(SYSVIPC_SUPPORT),true)
+  syscall_src += arch-x86/syscalls/semctl.S
+  syscall_src += arch-x86/syscalls/semget.S
+  syscall_src += arch-x86/syscalls/semop.S
+  syscall_src += arch-x86/syscalls/semtimedop.S
+endif

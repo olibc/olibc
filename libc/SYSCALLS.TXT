@@ -319,3 +319,9 @@ int     cacheflush:__ARM_NR_cacheflush(long start, long end, long flags)  1,-1,-
 # MIPS-specific
 int     _flush_cache:cacheflush(char *addr, const int nbytes, const int op) -1,-1,1
 int     syscall(int number,...) -1,-1,1
+
+# SysV IPC
+int     semget(key_t key, int nsems, int semflg)  1
+int     semop(int semid, struct sembuf *sops, unsigned nsops)  1
+int semtimedop(int semid, struct sembuf *sops, unsigned nsops, struct timespec *timeout) 1
+int     semctl(int semid, int semnum, int cmd, ...) 1
