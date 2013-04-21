@@ -321,7 +321,7 @@ int     _flush_cache:cacheflush(char *addr, const int nbytes, const int op) -1,-
 int     syscall(int number,...) -1,-1,1
 
 # SysV IPC
-int     semget(key_t key, int nsems, int semflg)  1
-int     semop(int semid, struct sembuf *sops, unsigned nsops)  1
-int semtimedop(int semid, struct sembuf *sops, unsigned nsops, struct timespec *timeout) 1
-int     semctl(int semid, int semnum, int cmd, ...) 1
+int     semget(key_t key, int nsems, int semflg)  1 <SYSVIPC_SUPPORT>
+int     semop(int semid, struct sembuf *sops, unsigned nsops)  1 <SYSVIPC_SUPPORT>
+int semtimedop(int semid, struct sembuf *sops, unsigned nsops, struct timespec *timeout) 1 <SYSVIPC_SUPPORT>
+int     semctl(int semid, int semnum, int cmd, ...) 1 <SYSVIPC_SUPPORT>

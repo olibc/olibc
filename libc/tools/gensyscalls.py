@@ -361,8 +361,15 @@ class State:
 
         for sc in self.syscalls:
             if arch_test[arch](sc):
-                fp.write("syscall_src += arch-%s/syscalls/%s.S\n" %
-                         (arch, sc["func"]))
+                if sc["cond"] != "":
+                    fp.write("ifeq ($(%s),true)\n" %
+                             (sc["cond"]))
+                    fp.write("  syscall_src += arch-%s/syscalls/%s.S\n" %
+                             (arch, sc["func"]))
+                    fp.write("endif\n")
+                else:
+                    fp.write("syscall_src += arch-%s/syscalls/%s.S\n" %
+                             (arch, sc["func"]))
         fp.close()
         self.other_files.append( path )
 

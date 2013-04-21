@@ -236,7 +236,11 @@ class SysCallsTxtParser:
             syscall_params = []
             params         = "void"
 
-        number = line[pos_rparen+1:].strip()
+        pos_lbracket = line.find('<')
+        if pos_lbracket != -1:
+            number = line[pos_rparen+1:pos_lbracket].strip()
+        else:
+            number = line[pos_rparen+1:].strip()
         if number == "stub":
             syscall_common = -1
             syscall_arm  = -1
@@ -264,6 +268,11 @@ class SysCallsTxtParser:
             except:
                 E("invalid syscall number in '%s'" % line)
                 return
+        pos_rbracket = line.find('>')
+        if pos_rbracket != -1:
+            syscall_cond = line[pos_lbracket+1:pos_rbracket].strip()
+        else:
+            syscall_cond = ""
 
         global verbose
         if verbose >= 2:
@@ -286,6 +295,7 @@ class SysCallsTxtParser:
               "name"   : syscall_name,
               "func"   : syscall_func,
               "params" : syscall_params,
+              "cond"   : syscall_cond,
               "decl"   : "%-15s  %s (%s);" % (return_type, syscall_func, params) }
         self.syscalls.append(t)
 
