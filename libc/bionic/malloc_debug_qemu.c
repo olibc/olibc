@@ -79,6 +79,7 @@
  * sources (file memcheck/memcheck_common.h). So, every time a change is made to
  * any of these two declaration, another one must be also updated accordingly.
  */
+typedef struct MallocDesc MallocDesc;
 struct MallocDesc {
     /* Pointer to the memory block actually allocated from the heap. Note that
      * this is not the pointer that is returned to the malloc's caller. Pointer
@@ -130,6 +131,7 @@ struct MallocDesc {
  * memcheck/memecheck_common.h). So, every time a change is made to any of these
  * two declaration, another one must be also updated accordingly.
  */
+typedef struct MallocDescQuery MallocDescQuery;
 struct MallocDescQuery {
     /* Pointer, for which information is queried. Note that this pointer doesn't
      * have to be exact pointer returned to malloc's caller, but can point
@@ -170,6 +172,7 @@ struct MallocDescQuery {
  * memcheck/memecheck_common.h). So, every time a change is made to any of these
  * two declaration, another one must be also updated accordingly.
  */
+typedef struct MallocFree MallocFree;
 struct MallocFree {
     /* Pointer to be freed. */
     void*       ptr;
@@ -365,7 +368,7 @@ static uint32_t tracing_flags = 0;
  *  Pointer to the allocated memory returned to the malloc caller.
  */
 static inline void* mallocdesc_user_ptr(const MallocDesc* desc) {
-    return static_cast<char*>(desc->ptr) + desc->prefix_size;
+    return (char*)(desc->ptr) + desc->prefix_size;
 }
 
 /* Gets size of memory block actually allocated from the heap for the given
@@ -386,7 +389,7 @@ static inline uint32_t mallocdesc_alloc_size(const MallocDesc* desc) {
  *  Pointer to the end of (one byte past) the allocated block.
  */
 static inline void* mallocdesc_alloc_end(const MallocDesc* desc) {
-    return static_cast<char*>(desc->ptr) + mallocdesc_alloc_size(desc);
+    return (char*)(desc->ptr) + mallocdesc_alloc_size(desc);
 }
 
 /* Fires up an event in the emulator.

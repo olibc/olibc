@@ -28,6 +28,7 @@
 
 #include "debug_stacktrace.h"
 
+#include <stdbool.h>
 #include <dlfcn.h>
 #include <unistd.h>
 #include <unwind.h>
@@ -53,7 +54,7 @@ __LIBC_HIDDEN__ void backtrace_startup() {
   gDemangler = dlopen("libgccdemangle.so", RTLD_NOW);
   if (gDemangler != NULL) {
     void* sym = dlsym(gDemangler, "__cxa_demangle");
-    gDemanglerFn = reinterpret_cast<DemanglerFn>(sym);
+    gDemanglerFn = (DemanglerFn) sym;
   }
 }
 
@@ -69,19 +70,16 @@ static char* demangle(const char* symbol) {
   return (*gDemanglerFn)(symbol, NULL, NULL, NULL);
 }
 
+typedef struct stack_crawl_state_t stack_crawl_state_t;
 struct stack_crawl_state_t {
   uintptr_t* frames;
   size_t frame_count;
   size_t max_depth;
   bool have_skipped_self;
-
-  stack_crawl_state_t(uintptr_t* frames, size_t max_depth)
-      : frames(frames), frame_count(0), max_depth(max_depth), have_skipped_self(false) {
-  }
 };
 
 static _Unwind_Reason_Code trace_function(__unwind_context* context, void* arg) {
-  stack_crawl_state_t* state = static_cast<stack_crawl_state_t*>(arg);
+  stack_crawl_state_t* state = (struct stack_crawl_state_t*) arg;
 
   uintptr_t ip = _Unwind_GetIP(context);
 
@@ -96,13 +94,18 @@ static _Unwind_Reason_Code trace_function(__unwind_context* context, void* arg) 
 }
 
 __LIBC_HIDDEN__ int get_backtrace(uintptr_t* frames, size_t max_depth) {
-  stack_crawl_state_t state(frames, max_depth);
+  struct stack_crawl_state_t state = {
+    .frames = frames,
+    .max_depth = max_depth,
+    .have_skipped_self = false,
+  };
   _Unwind_Backtrace(trace_function, &state);
   return state.frame_count;
 }
 
 __LIBC_HIDDEN__ void log_backtrace(uintptr_t* frames, size_t frame_count) {
   uintptr_t self_bt[16];
+  size_t i;
   if (frames == NULL) {
     frame_count = get_backtrace(self_bt, 16);
     frames = self_bt;
@@ -111,7 +114,7 @@ __LIBC_HIDDEN__ void log_backtrace(uintptr_t* frames, size_t frame_count) {
   __libc_format_log(ANDROID_LOG_ERROR, "libc",
                     "*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n");
 
-  for (size_t i = 0 ; i < frame_count; ++i) {
+  for (i = 0 ; i < frame_count; ++i) {
     void* offset = 0;
     const char* symbol = NULL;
 

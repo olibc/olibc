@@ -49,7 +49,7 @@
 #include "dlmalloc.h"
 #include "libc_logging.h"
 #include "malloc_debug_common.h"
-#include "ScopedPthreadMutexLocker.h"
+#include <private/ScopedPthreadMutexLocker.h>
 
 // This file should be included into the build only when
 // MALLOC_LEAK_CHECK, or MALLOC_QEMU_INSTRUMENT, or both
@@ -77,13 +77,14 @@ extern HashTable gHashTable;
 // Structures
 // =============================================================================
 
+typedef struct AllocationEntry AllocationEntry;
 struct AllocationEntry {
     HashEntry* entry;
     uint32_t guard;
 };
 
 static AllocationEntry* to_header(void* mem) {
-  return reinterpret_cast<AllocationEntry*>(mem) - 1;
+  return (AllocationEntry*) mem - 1;
 }
 
 // =============================================================================
@@ -142,7 +143,7 @@ static HashEntry* record_backtrace(uintptr_t* backtrace, size_t numEntries, size
         entry->allocations++;
     } else {
         // create a new entry
-        entry = static_cast<HashEntry*>(dlmalloc(sizeof(HashEntry) + numEntries*sizeof(uintptr_t)));
+        entry = (HashEntry*) dlmalloc(sizeof(HashEntry) + numEntries*sizeof(uintptr_t));
         if (!entry) {
             return NULL;
         }
@@ -254,7 +255,7 @@ void* fill_memalign(size_t alignment, size_t bytes) {
 // malloc leak functions
 // =============================================================================
 
-static void* MEMALIGN_GUARD = reinterpret_cast<void*>(0xA1A41520);
+static void* MEMALIGN_GUARD = (void*) 0xA1A41520;
 
 void* leak_malloc(size_t bytes) {
     // allocate enough space infront of the allocation to store the pointer for
@@ -270,18 +271,20 @@ void* leak_malloc(size_t bytes) {
 
     void* base = dlmalloc(size);
     if (base != NULL) {
-        ScopedPthreadMutexLocker locker(&gAllocationsMutex);
+        ScopedPthreadMutexLocker locker;
+        ScopedPthreadMutexLocker_init(&locker, &gAllocationsMutex);
 
         uintptr_t backtrace[BACKTRACE_SIZE];
         size_t numEntries = get_backtrace(backtrace, BACKTRACE_SIZE);
 
-        AllocationEntry* header = reinterpret_cast<AllocationEntry*>(base);
+        AllocationEntry* header = (AllocationEntry*) base;
         header->entry = record_backtrace(backtrace, numEntries, bytes);
         header->guard = GUARD;
 
         // now increment base to point to after our header.
         // this should just work since our header is 8 bytes.
-        base = reinterpret_cast<AllocationEntry*>(base) + 1;
+        base = (AllocationEntry*) base + 1;
+        ScopedPthreadMutexLocker_fini(&locker);
     }
 
     return base;
@@ -289,15 +292,16 @@ void* leak_malloc(size_t bytes) {
 
 void leak_free(void* mem) {
     if (mem != NULL) {
-        ScopedPthreadMutexLocker locker(&gAllocationsMutex);
+        ScopedPthreadMutexLocker locker;
+        ScopedPthreadMutexLocker_init(&locker, &gAllocationsMutex);
 
         // check the guard to make sure it is valid
         AllocationEntry* header = to_header(mem);
 
         if (header->guard != GUARD) {
             // could be a memaligned block
-            if (reinterpret_cast<void**>(mem)[-1] == MEMALIGN_GUARD) {
-                mem = reinterpret_cast<void**>(mem)[-2];
+            if (((void**) mem)[-1] == MEMALIGN_GUARD) {
+                mem = ((void**) mem)[-2];
                 header = to_header(mem);
             }
         }
@@ -317,6 +321,7 @@ void leak_free(void* mem) {
             debug_log("WARNING bad header guard: '0x%x'! and invalid entry: %p\n",
                     header->guard, header->entry);
         }
+        ScopedPthreadMutexLocker_fini(&locker);
     }
 }
 
@@ -375,7 +380,7 @@ void* leak_memalign(size_t alignment, size_t bytes) {
 
     void* base = leak_malloc(size);
     if (base != NULL) {
-        intptr_t ptr = reinterpret_cast<intptr_t>(base);
+        intptr_t ptr = (intptr_t) base;
         if ((ptr % alignment) == 0) {
             return base;
         }
@@ -384,10 +389,10 @@ void* leak_memalign(size_t alignment, size_t bytes) {
         ptr += ((-ptr) % alignment);
 
         // there is always enough space for the base pointer and the guard
-        reinterpret_cast<void**>(ptr)[-1] = MEMALIGN_GUARD;
-        reinterpret_cast<void**>(ptr)[-2] = base;
+        ((void**) ptr)[-1] = MEMALIGN_GUARD;
+        ((void**) ptr)[-2] = base;
 
-        return reinterpret_cast<void*>(ptr);
+        return (void*) ptr;
     }
     return base;
 }

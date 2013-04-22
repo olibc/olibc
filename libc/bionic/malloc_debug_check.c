@@ -50,7 +50,7 @@
 #include "dlmalloc.h"
 #include "libc_logging.h"
 #include "malloc_debug_common.h"
-#include "ScopedPthreadMutexLocker.h"
+#include <private/ScopedPthreadMutexLocker.h>
 
 /* libc.debug.malloc.backlog */
 extern unsigned int gMallocDebugBacklog;
@@ -72,6 +72,7 @@ static void log_message(const char* format, ...) {
   va_end(args);
 }
 
+typedef struct hdr_t hdr_t;
 struct hdr_t {
     uint32_t tag;
     hdr_t* prev;
@@ -84,12 +85,13 @@ struct hdr_t {
     char front_guard[FRONT_GUARD_LEN];
 } __attribute__((packed));
 
+typedef struct ftr_t ftr_t;
 struct ftr_t {
     char rear_guard[REAR_GUARD_LEN];
 } __attribute__((packed));
 
 static inline ftr_t* to_ftr(hdr_t* hdr) {
-    return reinterpret_cast<ftr_t*>(reinterpret_cast<char*>(hdr + 1) + hdr->size);
+    return (ftr_t*)((char*)(hdr + 1) + hdr->size);
 }
 
 static inline void* user(hdr_t* hdr) {
@@ -97,7 +99,7 @@ static inline void* user(hdr_t* hdr) {
 }
 
 static inline hdr_t* meta(void* user) {
-    return reinterpret_cast<hdr_t*>(user) - 1;
+    return (hdr_t*) user - 1;
 }
 
 static unsigned gAllocatedBlockCount;
@@ -115,7 +117,8 @@ static inline void init_front_guard(hdr_t *hdr) {
 }
 
 static inline bool is_front_guard_valid(hdr_t *hdr) {
-    for (size_t i = 0; i < FRONT_GUARD_LEN; i++) {
+    size_t i;
+    for (i = 0; i < FRONT_GUARD_LEN; i++) {
         if (hdr->front_guard[i] != FRONT_GUARD) {
             return 0;
         }
@@ -174,13 +177,15 @@ static inline int del_locked(hdr_t *hdr, hdr_t **tail, hdr_t **head) {
 }
 
 static inline void add(hdr_t *hdr, size_t size) {
-    ScopedPthreadMutexLocker locker(&lock);
+    ScopedPthreadMutexLocker locker;
+    ScopedPthreadMutexLocker_init(&locker, &lock);
     hdr->tag = ALLOCATION_TAG;
     hdr->size = size;
     init_front_guard(hdr);
     init_rear_guard(hdr);
     ++gAllocatedBlockCount;
     add_locked(hdr, &tail, &head);
+    ScopedPthreadMutexLocker_fini(&locker);
 }
 
 static inline int del(hdr_t *hdr) {
@@ -188,9 +193,11 @@ static inline int del(hdr_t *hdr) {
         return -1;
     }
 
-    ScopedPthreadMutexLocker locker(&lock);
+    ScopedPthreadMutexLocker locker;
+    ScopedPthreadMutexLocker_init(&locker, &lock);
     del_locked(hdr, &tail, &head);
     --gAllocatedBlockCount;
+    ScopedPthreadMutexLocker_fini(&locker);
     return 0;
 }
 
@@ -290,17 +297,24 @@ static inline void del_from_backlog_locked(hdr_t *hdr) {
 }
 
 static inline void del_from_backlog(hdr_t *hdr) {
-    ScopedPthreadMutexLocker locker(&backlog_lock);
+    ScopedPthreadMutexLocker locker;
+    ScopedPthreadMutexLocker_init(&locker, &backlog_lock);
     del_from_backlog_locked(hdr);
+    ScopedPthreadMutexLocker_fini(&locker);
 }
 
 static inline int del_leak(hdr_t *hdr, int *safe) {
-    ScopedPthreadMutexLocker locker(&lock);
-    return del_and_check_locked(hdr, &tail, &head, &gAllocatedBlockCount, safe);
+    int ret;
+    ScopedPthreadMutexLocker locker;
+    ScopedPthreadMutexLocker_init(&locker, &lock);
+    ret = del_and_check_locked(hdr, &tail, &head, &gAllocatedBlockCount, safe);
+    ScopedPthreadMutexLocker_fini(&locker);
+    return ret;
 }
 
 static inline void add_to_backlog(hdr_t *hdr) {
-    ScopedPthreadMutexLocker locker(&backlog_lock);
+    ScopedPthreadMutexLocker locker;
+    ScopedPthreadMutexLocker_init(&locker, &backlog_lock);
     hdr->tag = BACKLOG_TAG;
     backlog_num++;
     add_locked(hdr, &backlog_tail, &backlog_head);
@@ -311,12 +325,13 @@ static inline void add_to_backlog(hdr_t *hdr) {
         del_from_backlog_locked(gone);
         dlfree(gone);
     }
+    ScopedPthreadMutexLocker_fini(&locker);
 }
 
 void* chk_malloc(size_t size) {
 //  log_message("%s: %s\n", __FILE__, __FUNCTION__);
 
-    hdr_t* hdr = static_cast<hdr_t*>(dlmalloc(sizeof(hdr_t) + size + sizeof(ftr_t)));
+    hdr_t* hdr = (hdr_t*) dlmalloc(sizeof(hdr_t) + size + sizeof(ftr_t));
     if (hdr) {
         hdr->bt_depth = get_backtrace(hdr->bt, MAX_BACKTRACE_DEPTH);
         add(hdr, size);
@@ -325,7 +340,7 @@ void* chk_malloc(size_t size) {
     return NULL;
 }
 
-void* chk_memalign(size_t, size_t bytes) {
+void* chk_memalign(size_t unused, size_t bytes) {
 //  log_message("%s: %s\n", __FILE__, __FUNCTION__);
     // XXX: it's better to use malloc, than being wrong
     return chk_malloc(bytes);
@@ -414,7 +429,7 @@ void *chk_realloc(void *ptr, size_t size) {
         }
     }
 
-    hdr = static_cast<hdr_t*>(dlrealloc(hdr, sizeof(hdr_t) + size + sizeof(ftr_t)));
+    hdr = (hdr_t*) dlrealloc(hdr, sizeof(hdr_t) + size + sizeof(ftr_t));
     if (hdr) {
         hdr->bt_depth = get_backtrace(hdr->bt, MAX_BACKTRACE_DEPTH);
         add(hdr, size);
@@ -427,7 +442,7 @@ void *chk_realloc(void *ptr, size_t size) {
 void *chk_calloc(int nmemb, size_t size) {
 //  log_message("%s: %s\n", __FILE__, __FUNCTION__);
     size_t total_size = nmemb * size;
-    hdr_t* hdr = static_cast<hdr_t*>(dlcalloc(1, sizeof(hdr_t) + total_size + sizeof(ftr_t)));
+    hdr_t* hdr = (hdr_t*) dlcalloc(1, sizeof(hdr_t) + total_size + sizeof(ftr_t));
     if (hdr) {
         hdr->bt_depth = get_backtrace(hdr->bt, MAX_BACKTRACE_DEPTH);
         add(hdr, total_size);
