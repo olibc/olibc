@@ -23,6 +23,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
+#include <sys/msg.h>
 
 static const key_t key = 0x1234;
 
@@ -69,4 +70,20 @@ TEST(sysvipc, shm) {
   ASSERT_TRUE(shmdt(shmptr2) != -1);
 
   ASSERT_TRUE(shmctl(shmid, IPC_RMID, NULL) != -1);
+}
+
+TEST(sysvipc, msg) {
+  int msgqid;
+  struct mymsg {
+    long int    mtype;       /* message type */
+    char        mtext[256];    /* message text */
+  };
+  struct mymsg msg = {10, "Aloha SysV message queue"}, msg_recv;
+  msgqid = msgget(key, IPC_CREAT | 0666);
+  ASSERT_TRUE(msgqid != -1);
+  int msglen = sizeof(struct mymsg) - sizeof(long int);
+  ASSERT_TRUE(msgsnd(msgqid, &msg, msglen, 0) != -1);
+  ASSERT_TRUE(msgrcv(msgqid, &msg_recv, msglen, 0, 0) != -1);
+  ASSERT_EQ(memcmp(&msg, &msg_recv, sizeof(struct mymsg)), 0);
+  ASSERT_TRUE(msgctl(msgqid, IPC_RMID, NULL) != -1);
 }

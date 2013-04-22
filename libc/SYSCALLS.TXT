@@ -330,3 +330,7 @@ void *  shmat(int shmid, const void *shmaddr,int shmflg) 1 <SYSVIPC_SUPPORT>
 int     shmdt(const void *shmaddr) 1 <SYSVIPC_SUPPORT>
 int     shmctl(int shmid, int cmd, struct shmid_ds *buf) 1 <SYSVIPC_SUPPORT>
 int     shmget(key_t key, size_t size, int shmflg) 1 <SYSVIPC_SUPPORT>
+int     msgctl(int msqid, int cmd, struct msqid_ds *buf) 1 <SYSVIPC_SUPPORT>
+int     msgget(key_t key, int msgflg) 1 <SYSVIPC_SUPPORT>
+ssize_t msgrcv(int msqid, void *msgp, size_t msgsz, long int msgtyp, int msgflg) 1 <SYSVIPC_SUPPORT>
+int     msgsnd(int msqid, const void *msgp, size_t msgsz, int msgflg) 1 <SYSVIPC_SUPPORT>
