@@ -204,38 +204,5 @@ syscall_src += arch-x86/syscalls/inotify_rm_watch.S
 syscall_src += arch-x86/syscalls/poll.S
 syscall_src += arch-x86/syscalls/eventfd.S
 ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/semget.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/semop.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/semtimedop.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/semctl.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/shmat.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/shmdt.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/shmctl.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/shmget.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/msgctl.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/msgget.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/msgrcv.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/msgsnd.S
+  syscall_src += arch-x86/syscalls/ipc.S
 endif

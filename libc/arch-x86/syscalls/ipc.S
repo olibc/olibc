@@ -3,16 +3,20 @@
 #include <machine/asm.h>
 #include <asm/unistd.h>
 
-ENTRY(semtimedop)
+ENTRY(ipc)
     pushl   %ebx
     pushl   %ecx
     pushl   %edx
     pushl   %esi
-    mov     20(%esp), %ebx
-    mov     24(%esp), %ecx
-    mov     28(%esp), %edx
-    mov     32(%esp), %esi
-    movl    $__NR_semtimedop, %eax
+    pushl   %edi
+    pushl   %ebp
+    mov     28(%esp), %ebx
+    mov     32(%esp), %ecx
+    mov     36(%esp), %edx
+    mov     40(%esp), %esi
+    mov     44(%esp), %edi
+    mov     48(%esp), %ebp
+    movl    $__NR_ipc, %eax
     int     $0x80
     cmpl    $-MAX_ERRNO, %eax
     jb      1f
@@ -22,9 +26,11 @@ ENTRY(semtimedop)
     addl    $4, %esp
     orl     $-1, %eax
 1:
+    popl    %ebp
+    popl    %edi
     popl    %esi
     popl    %edx
     popl    %ecx
     popl    %ebx
     ret
-END(semtimedop)
+END(ipc)
