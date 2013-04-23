@@ -53,7 +53,7 @@ TEST(sysvipc, shm) {
   void *invalid_addr = reinterpret_cast<void*>(-1);
   int *shmptr1, *shmptr2;
   int size = getpagesize();
-  ASSERT_TRUE((shmid = shmget(key, size, IPC_CREAT)) != -1);
+  ASSERT_TRUE((shmid = shmget(key, size, IPC_CREAT | 0666)) != -1);
   ASSERT_EQ((shmget(key, 0, 0)), shmid);
   ASSERT_TRUE((shmaddr1 = shmat(shmid, NULL, 0)) != invalid_addr);
   ASSERT_TRUE((shmaddr2 = shmat(shmid, NULL, 0)) != invalid_addr);
