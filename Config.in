@@ -144,18 +144,6 @@ config MD5_IMPL
 	bool "MD5 functions"
 	default n
 
-config PROPERTY_SYSTEM_SUPPORT
-	bool "Property system support (originally from Android)"
-	default n
-
-config LOGGER_SYSTEM_SUPPORT
-	bool "Logger system support (originally from Android)"
-	default n
-
-config DEBUGGERD_SUPPORT
-	bool "Debuggerd system support (originally from Android)"
-	default n
-
 config SYSVIPC_SUPPORT
 	bool "SysV IPC support"
 	default y
@@ -175,6 +163,22 @@ config USE_AT_SECURE
 	  SELinux, and AppArmor security transitions.  It is also a more
 	  efficient test since it does not require any additional system calls.
 
+menu "Android compatibility"
+
+config PROPERTY_SYSTEM_SUPPORT
+	bool "Property system support"
+	default n
+
+config LOGGER_SYSTEM_SUPPORT
+	bool "Logger system support"
+	default n
+
+config DEBUGGERD_SUPPORT
+	bool "Debuggerd system support"
+	default n
+
+endmenu
+
 config EXT_MALLOC_LEAK_CHECK
 	bool "Enable memory allocation checking"
 	default n
@@ -190,7 +194,6 @@ config EXT_MALLOC_ANDROID_QEMU_INSTRUMENT
 	bool "Advanced memory instrument for Android QEMU emulator"
 	default n
 	depends on EXT_MALLOC_LEAK_CHECK
-
 endmenu
 
 
