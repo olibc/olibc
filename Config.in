@@ -134,7 +134,7 @@ config BOARD_MALLOC_ALIGNMENT
 
 config WCHAR_SUPPORT
 	bool "Wide character support"
-	default y
+	default n
 
 config SHA1_IMPL
 	bool "SHA1 functions"
