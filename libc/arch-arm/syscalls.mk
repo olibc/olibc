@@ -116,14 +116,30 @@ syscall_src += arch-arm/syscalls/faccessat.S
 syscall_src += arch-arm/syscalls/symlink.S
 syscall_src += arch-arm/syscalls/fchdir.S
 syscall_src += arch-arm/syscalls/truncate.S
-syscall_src += arch-arm/syscalls/setxattr.S
-syscall_src += arch-arm/syscalls/lsetxattr.S
-syscall_src += arch-arm/syscalls/getxattr.S
-syscall_src += arch-arm/syscalls/lgetxattr.S
-syscall_src += arch-arm/syscalls/listxattr.S
-syscall_src += arch-arm/syscalls/llistxattr.S
-syscall_src += arch-arm/syscalls/removexattr.S
-syscall_src += arch-arm/syscalls/lremovexattr.S
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/setxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/lsetxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/getxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/lgetxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/listxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/llistxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/removexattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-arm/syscalls/lremovexattr.S
+endif
 syscall_src += arch-arm/syscalls/__statfs64.S
 syscall_src += arch-arm/syscalls/unshare.S
 syscall_src += arch-arm/syscalls/pause.S

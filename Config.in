@@ -152,9 +152,14 @@ endmenu
 
 menu "Extensions"
 
+config XATTR_SUPPORT
+	bool "Support xattr system call"
+	default n
+
 config USE_AT_SECURE
 	bool "Use the AT_SECURE auxv flag to determine secure mode"
 	default n
+	depends on XATTR_SUPPORT
 	help
 	  The Linux kernel provides an AT_SECURE auxv flag to inform userspace
 	  whether or not a security transition has occurred.  This is more

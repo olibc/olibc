@@ -191,14 +191,14 @@ int     faccessat(int, const char *, int, int)  1
 int     symlink(const char *, const char *)  1
 int     fchdir(int)    1
 int     truncate(const char*, off_t)    1
-int     setxattr(const char *, const char *, const void *, size_t, int) 1
-int     lsetxattr(const char *, const char *, const void *, size_t, int) 1
-ssize_t getxattr(const char *, const char *, void *, size_t) 1
-ssize_t lgetxattr(const char *, const char *, void *, size_t) 1
-ssize_t listxattr(const char *, char *, size_t) 1
-ssize_t llistxattr(const char *, char *, size_t) 1
-int     removexattr(const char *, const char *) 1
-int     lremovexattr(const char *, const char *) 1
+int     setxattr(const char *, const char *, const void *, size_t, int) 1 <XATTR_SUPPORT>
+int     lsetxattr(const char *, const char *, const void *, size_t, int) 1 <XATTR_SUPPORT>
+ssize_t getxattr(const char *, const char *, void *, size_t) 1 <XATTR_SUPPORT>
+ssize_t lgetxattr(const char *, const char *, void *, size_t) 1 <XATTR_SUPPORT>
+ssize_t listxattr(const char *, char *, size_t) 1 <XATTR_SUPPORT>
+ssize_t llistxattr(const char *, char *, size_t) 1 <XATTR_SUPPORT>
+int     removexattr(const char *, const char *) 1 <XATTR_SUPPORT>
+int     lremovexattr(const char *, const char *) 1 <XATTR_SUPPORT>
 int     __statfs64:statfs64(const char *, size_t, struct statfs *)  1
 long    unshare(unsigned long)  1
 

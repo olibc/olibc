@@ -119,14 +119,30 @@ syscall_src += arch-mips/syscalls/faccessat.S
 syscall_src += arch-mips/syscalls/symlink.S
 syscall_src += arch-mips/syscalls/fchdir.S
 syscall_src += arch-mips/syscalls/truncate.S
-syscall_src += arch-mips/syscalls/setxattr.S
-syscall_src += arch-mips/syscalls/lsetxattr.S
-syscall_src += arch-mips/syscalls/getxattr.S
-syscall_src += arch-mips/syscalls/lgetxattr.S
-syscall_src += arch-mips/syscalls/listxattr.S
-syscall_src += arch-mips/syscalls/llistxattr.S
-syscall_src += arch-mips/syscalls/removexattr.S
-syscall_src += arch-mips/syscalls/lremovexattr.S
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/setxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/lsetxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/getxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/lgetxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/listxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/llistxattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/removexattr.S
+endif
+ifeq ($(XATTR_SUPPORT),true)
+  syscall_src += arch-mips/syscalls/lremovexattr.S
+endif
 syscall_src += arch-mips/syscalls/__statfs64.S
 syscall_src += arch-mips/syscalls/unshare.S
 syscall_src += arch-mips/syscalls/pause.S
