@@ -203,7 +203,6 @@ void debuggerd_init();
 extern abort_msg_t* gAbortMessage;
 void notify_gdb_of_libraries();
 
-#define UNUSED __attribute__((unused))
 #define likely(expr)   __builtin_expect (expr, 1)
 #define unlikely(expr) __builtin_expect (expr, 0)
 

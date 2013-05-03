@@ -29,9 +29,7 @@
 #include <locale.h>
 #include <stdlib.h>
 
-#define UNUSED __attribute__((unused))
-
 // setlocale(3) always fails on bionic.
-char* setlocale(int category UNUSED, char const* locale UNUSED) {
+char* setlocale(int category __LIBC_UNUSED__, char const* locale __LIBC_UNUSED__) {
     return NULL;
 }

@@ -31,8 +31,6 @@
 #include <stdarg.h>
 #include "libc_logging.h"
 
-#define UNUSED __attribute__((unused))
-
 /*
  * Runtime implementation of __builtin____vsprintf_chk.
  *
@@ -46,7 +44,7 @@
  */
 int __vsprintf_chk(
         char *dest,
-        int flags UNUSED,
+        int flags __LIBC_UNUSED__,
         size_t dest_len_from_compiler,
         const char *format,
         va_list va)

@@ -175,7 +175,7 @@ static bool haveSiginfo(int signum) {
  * Catches fatal signals so we can ask debuggerd to ptrace us before
  * we crash.
  */
-void debuggerd_signal_handler(int n, siginfo_t* info, void* unused UNUSED) {
+void debuggerd_signal_handler(int n, siginfo_t* info, void* unused __LIBC_UNUSED__) {
     /*
      * It's possible somebody cleared the SA_SIGINFO flag, which would mean
      * our "info" arg holds an undefined value.

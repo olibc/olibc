@@ -32,8 +32,6 @@
 #include <string.h>
 #include <wchar.h>
 
-#define UNUSED __attribute__((unused))
-
 /* stubs for wide-char functions */
 
 wint_t btowc(int c) {
@@ -68,17 +66,17 @@ int vwprintf(const wchar_t* format, va_list arg) {
   return vfwprintf(stdout, format, arg);
 }
 
-int vfwprintf(FILE* stream UNUSED, const wchar_t* format UNUSED, va_list arg UNUSED) {
+int vfwprintf(FILE* stream __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, va_list arg __LIBC_UNUSED__) {
   errno = ENOTSUP;
   return -1;
 }
 
-int vswprintf(wchar_t* s UNUSED, size_t n UNUSED, const wchar_t* format UNUSED, va_list arg UNUSED) {
+int vswprintf(wchar_t* s __LIBC_UNUSED__, size_t n __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, va_list arg __LIBC_UNUSED__) {
   errno = ENOTSUP;
   return -1;
 }
 
-int fwscanf(FILE* stream UNUSED, const wchar_t* format UNUSED, ... ) {
+int fwscanf(FILE* stream __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, ... ) {
   errno = ENOTSUP;
   return -1;
 }
@@ -91,7 +89,7 @@ int wscanf(const wchar_t* format, ... ) {
   return result;
 }
 
-int swscanf(const wchar_t* s UNUSED, const wchar_t* format UNUSED, ... ) {
+int swscanf(const wchar_t* s __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, ... ) {
   errno = ENOTSUP;
   return -1;
 }
@@ -142,7 +140,7 @@ int fputws(const wchar_t* str, FILE* stream) {
   return fputs((const char*)(str), stream );
 }
 
-int fwide(FILE* stream UNUSED, int mode) {
+int fwide(FILE* stream __LIBC_UNUSED__, int mode) {
   return mode;
 }
 
@@ -154,15 +152,15 @@ wint_t getwchar() {
   return getchar();
 }
 
-int mbsinit(const mbstate_t* ps UNUSED) {
+int mbsinit(const mbstate_t* ps __LIBC_UNUSED__) {
   return 1;
 }
 
-size_t mbrlen(const char* s UNUSED, size_t n, mbstate_t* ps UNUSED) {
+size_t mbrlen(const char* s __LIBC_UNUSED__, size_t n, mbstate_t* ps __LIBC_UNUSED__) {
   return (n != 0);
 }
 
-size_t mbrtowc(wchar_t* pwc, const char* s, size_t n, mbstate_t* ps UNUSED) {
+size_t mbrtowc(wchar_t* pwc, const char* s, size_t n, mbstate_t* ps __LIBC_UNUSED__) {
   if (s == NULL) {
     s   = "";
     pwc = NULL;
@@ -179,7 +177,7 @@ size_t mbrtowc(wchar_t* pwc, const char* s, size_t n, mbstate_t* ps UNUSED) {
   return (*s != 0);
 }
 
-size_t mbsrtowcs(wchar_t* dst, const char** src, size_t len, mbstate_t* ps UNUSED) {
+size_t mbsrtowcs(wchar_t* dst, const char** src, size_t len, mbstate_t* ps __LIBC_UNUSED__) {
   const char* s  = *src;
   const char* s2 = (const char*)(memchr(s, 0, len));
 
@@ -219,7 +217,7 @@ wint_t ungetwc(wint_t wc, FILE* stream) {
   return ungetc((char)(wc), stream);
 }
 
-size_t wcrtomb(char* s, wchar_t wc UNUSED, mbstate_t* ps UNUSED) {
+size_t wcrtomb(char* s, wchar_t wc __LIBC_UNUSED__, mbstate_t* ps __LIBC_UNUSED__) {
   if (s != NULL) {
     *s = 1;
   }
@@ -230,7 +228,7 @@ size_t wcsftime(wchar_t* wcs, size_t maxsize, const wchar_t* format,  const stru
   return strftime((char*)(wcs), maxsize, (const char*)(format), timptr);
 }
 
-size_t wcsrtombs(char* dst, const wchar_t** src, size_t len, mbstate_t* ps UNUSED) {
+size_t wcsrtombs(char* dst, const wchar_t** src, size_t len, mbstate_t* ps __LIBC_UNUSED__) {
   const char* s = (const char*)(*src);
   const char* s2 = (const char*)(memchr(s, 0, len));
   if (s2 != NULL) {

@@ -41,8 +41,6 @@
 #include "private/ErrnoRestorer.h"
 #include "private/libc_logging.h"
 
-#define UNUSED __attribute__((unused))
-
 // Thread-specific state for the non-reentrant functions.
 static pthread_once_t stubs_once = PTHREAD_ONCE_INIT;
 static pthread_key_t stubs_key;
@@ -389,7 +387,7 @@ passwd* getpwnam(const char* login) { // NOLINT: implementing bad function.
 }
 
 // All users are in just one group, the one passed in.
-int getgrouplist(const char* user UNUSED, gid_t group, gid_t* groups, int* ngroups) {
+int getgrouplist(const char* user __LIBC_UNUSED__, gid_t group, gid_t* groups, int* ngroups) {
     if (*ngroups < 1) {
         *ngroups = 1;
         return -1;
@@ -431,22 +429,22 @@ group* getgrnam(const char* name) { // NOLINT: implementing bad function.
 }
 
 // We don't have an /etc/networks, so all inputs return NULL.
-netent* getnetbyname(const char* name UNUSED) {
+netent* getnetbyname(const char* name __LIBC_UNUSED__) {
   return NULL;
 }
 
 // We don't have an /etc/networks, so all inputs return NULL.
-netent* getnetbyaddr(uint32_t net UNUSED, int type UNUSED) {
+netent* getnetbyaddr(uint32_t net __LIBC_UNUSED__, int type __LIBC_UNUSED__) {
   return NULL;
 }
 
 // We don't have an /etc/protocols, so all inputs return NULL.
-protoent* getprotobyname(const char* name UNUSED) {
+protoent* getprotobyname(const char* name __LIBC_UNUSED__) {
   return NULL;
 }
 
 // We don't have an /etc/protocols, so all inputs return NULL.
-protoent* getprotobynumber(int proto UNUSED) {
+protoent* getprotobynumber(int proto __LIBC_UNUSED__) {
   return NULL;
 }
 
@@ -462,17 +460,17 @@ void endpwent() {
   UNIMPLEMENTED;
 }
 
-mntent* getmntent(FILE* f UNUSED) {
+mntent* getmntent(FILE* f __LIBC_UNUSED__) {
   UNIMPLEMENTED;
   return NULL;
 }
 
-char* ttyname(int fd UNUSED) { // NOLINT: implementing bad function.
+char* ttyname(int fd __LIBC_UNUSED__) { // NOLINT: implementing bad function.
   UNIMPLEMENTED;
   return NULL;
 }
 
-int ttyname_r(int fd UNUSED, char* buf UNUSED, size_t buflen UNUSED) {
+int ttyname_r(int fd __LIBC_UNUSED__, char* buf __LIBC_UNUSED__, size_t buflen __LIBC_UNUSED__) {
   UNIMPLEMENTED;
   return -ERANGE;
 }
