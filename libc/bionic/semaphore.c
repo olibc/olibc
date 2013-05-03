@@ -147,7 +147,7 @@ int sem_close(sem_t *sem)
 }
 
 
-int sem_unlink(const char * name)
+int sem_unlink(const char * name __LIBC_UNUSED__)
 {
     errno = ENOSYS;
     return -1;

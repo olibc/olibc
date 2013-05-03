@@ -309,7 +309,7 @@ res_opt(int a, u_char *b, int c, int d)
 }
 
 const char *
-hostalias(const char *name) {
+hostalias(const char *name __LIBC_UNUSED__) {
 	return NULL;
 }
 

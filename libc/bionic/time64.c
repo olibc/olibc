@@ -248,7 +248,7 @@ Time64_T timegm64(const struct TM *date) {
 }
 
 
-static int check_tm(struct TM *tm)
+static int check_tm(struct TM *tm __LIBC_UNUSED__)
 {
     /* Don't forget leap seconds */
     assert(tm->tm_sec >= 0);

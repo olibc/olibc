@@ -43,7 +43,6 @@
 #include <unistd.h>
 
 static pthread_mutex_t gAbortMsgLock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t gLogInitializationLock = PTHREAD_MUTEX_INITIALIZER;
 
 __LIBC_HIDDEN__ abort_msg_t** __abort_message_ptr; // Accessible to __libc_init_common.
 
@@ -444,8 +443,8 @@ int __libc_format_fd(int fd, const char* format, ...) {
   return os.total;
 }
 
-static int __libc_write_log(int priority, const char* tag, const char* msg) {
-
+static int __libc_write_log(int priority  __LIBC_UNUSED__,
+                            const char* tag, const char* msg) {
   iovec vec[5];
   char prefix[] = "[";
   char suffix[] = "] ";
@@ -483,7 +482,9 @@ int __libc_format_log(int priority, const char* tag, const char* format, ...) {
   return result;
 }
 
-static int __libc_android_log_event(int32_t tag, char type, const void* payload, size_t len) {
+static int __libc_android_log_event(int32_t tag __LIBC_UNUSED__,
+                                    char type __LIBC_UNUSED__,
+                                    const void* payload, size_t len) {
   iovec vec;
   vec.iov_base = (void*)(payload);
   vec.iov_len = len;

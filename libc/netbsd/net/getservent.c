@@ -33,7 +33,7 @@
 #include "services.h"
 
 void
-setservent(int f)
+setservent(int f __LIBC_UNUSED__)
 {
     res_static  rs = __res_get_static();
     if (rs) {

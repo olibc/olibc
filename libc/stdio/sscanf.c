@@ -38,7 +38,7 @@
 
 /* ARGSUSED */
 static int
-eofread(void *cookie, char *buf, int len)
+eofread(void *cookie __LIBC_UNUSED__, char *buf __LIBC_UNUSED__, int len __LIBC_UNUSED__)
 {
 
 	return (0);

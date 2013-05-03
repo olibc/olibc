@@ -39,7 +39,9 @@
 #include <sys/_system_properties.h>
 
 /* Set to 1 to enable debug traces */
+#ifndef DEBUG
 #define DEBUG 0
+#endif
 
 #if DEBUG
 #  include "libc_logging.h"
@@ -134,7 +136,7 @@ _res_thread_get(void)
 #endif
             if (rt->_pi == NULL) {
                 /* Still nothing, return current state */
-                D("%s: exiting for tid=%d rt=%d since system property not found",
+                D("%s: exiting for tid=%d rt=%p since system property not found",
                   __FUNCTION__, gettid(), rt);
                 return rt;
             }

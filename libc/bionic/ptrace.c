@@ -63,6 +63,6 @@ long ptrace(int request, pid_t pid, void * addr, void * data)
 #define ATTRIBUTES __attribute__((noinline))
 #endif
 
-void ATTRIBUTES _thread_created_hook(pid_t thread_id)
+void ATTRIBUTES _thread_created_hook(pid_t thread_id __LIBC_UNUSED__)
 {
 }

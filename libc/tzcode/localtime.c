@@ -385,9 +385,7 @@ settzname P((void))
 }
 
 static int
-differ_by_repeat(t1, t0)
-const time_t    t1;
-const time_t    t0;
+differ_by_repeat(const time_t t1  __LIBC_UNUSED__, const time_t t0  __LIBC_UNUSED__)
 {
     if (TYPE_INTEGRAL(time_t) &&
         TYPE_BIT(time_t) - TYPE_SIGNED(time_t) < SECSPERREPEAT_BITS)
@@ -1223,12 +1221,12 @@ static void
 tzset_locked P((void))
 {
     register const char *   name = NULL;
-    static char buf[PROP_VALUE_MAX];
 
     name = getenv("TZ");
 
     // try the "persist.sys.timezone" system property first
 #if defined(PROPERTY_SYSTEM_SUPPORT)
+    static char buf[PROP_VALUE_MAX];
     if (name == NULL && __system_property_get("persist.sys.timezone", buf) > 0)
         name = buf;
 #endif

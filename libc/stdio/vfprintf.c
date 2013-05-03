@@ -188,7 +188,7 @@ __vfprintf(FILE *fp, const char *fmt0, __va_list ap)
 	double _double = 0.;	/* double precision arguments %[eEfgG] */
 	int expt;		/* integer value of exponent */
 	int expsize = 0;	/* character count for expstr */
-	int ndig;		/* actual number of digits returned by cvt */
+	int ndig = 0;		/* actual number of digits returned by cvt */
 	char expstr[7];		/* buffer for exponent string */
 #endif
 
