@@ -387,7 +387,7 @@ passwd* getpwnam(const char* login) { // NOLINT: implementing bad function.
 }
 
 // All users are in just one group, the one passed in.
-int getgrouplist(const char* user __LIBC_UNUSED__, gid_t group, gid_t* groups, int* ngroups) {
+int getgrouplist(const char* user __unused, gid_t group, gid_t* groups, int* ngroups) {
     if (*ngroups < 1) {
         *ngroups = 1;
         return -1;
@@ -429,22 +429,22 @@ group* getgrnam(const char* name) { // NOLINT: implementing bad function.
 }
 
 // We don't have an /etc/networks, so all inputs return NULL.
-netent* getnetbyname(const char* name __LIBC_UNUSED__) {
+netent* getnetbyname(const char* name __unused) {
   return NULL;
 }
 
 // We don't have an /etc/networks, so all inputs return NULL.
-netent* getnetbyaddr(uint32_t net __LIBC_UNUSED__, int type __LIBC_UNUSED__) {
+netent* getnetbyaddr(uint32_t net __unused, int type __unused) {
   return NULL;
 }
 
 // We don't have an /etc/protocols, so all inputs return NULL.
-protoent* getprotobyname(const char* name __LIBC_UNUSED__) {
+protoent* getprotobyname(const char* name __unused) {
   return NULL;
 }
 
 // We don't have an /etc/protocols, so all inputs return NULL.
-protoent* getprotobynumber(int proto __LIBC_UNUSED__) {
+protoent* getprotobynumber(int proto __unused) {
   return NULL;
 }
 
@@ -460,17 +460,17 @@ void endpwent() {
   UNIMPLEMENTED;
 }
 
-mntent* getmntent(FILE* f __LIBC_UNUSED__) {
+mntent* getmntent(FILE* f __unused) {
   UNIMPLEMENTED;
   return NULL;
 }
 
-char* ttyname(int fd __LIBC_UNUSED__) { // NOLINT: implementing bad function.
+char* ttyname(int fd __unused) { // NOLINT: implementing bad function.
   UNIMPLEMENTED;
   return NULL;
 }
 
-int ttyname_r(int fd __LIBC_UNUSED__, char* buf __LIBC_UNUSED__, size_t buflen __LIBC_UNUSED__) {
+int ttyname_r(int fd __unused, char* buf __unused, size_t buflen __unused) {
   UNIMPLEMENTED;
   return -ERANGE;
 }

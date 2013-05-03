@@ -385,7 +385,7 @@ settzname P((void))
 }
 
 static int
-differ_by_repeat(const time_t t1  __LIBC_UNUSED__, const time_t t0  __LIBC_UNUSED__)
+differ_by_repeat(const time_t t1  __unused, const time_t t0  __unused)
 {
     if (TYPE_INTEGRAL(time_t) &&
         TYPE_BIT(time_t) - TYPE_SIGNED(time_t) < SECSPERREPEAT_BITS)

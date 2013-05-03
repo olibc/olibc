@@ -45,7 +45,7 @@
 int __vsnprintf_chk(
         char *dest,
         size_t supplied_size,
-        int flags __LIBC_UNUSED__,
+        int flags __unused,
         size_t dest_len_from_compiler,
         const char *format,
         va_list va)

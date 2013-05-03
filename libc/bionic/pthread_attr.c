@@ -96,8 +96,8 @@ int pthread_attr_getstacksize(pthread_attr_t const* attr, size_t* stack_size) {
   return 0;
 }
 
-int pthread_attr_setstackaddr(pthread_attr_t *attr __LIBC_UNUSED__,
-                              void *stackaddr __LIBC_UNUSED__) {
+int pthread_attr_setstackaddr(pthread_attr_t *attr __unused,
+                              void *stackaddr __unused) {
   // This was removed from POSIX.1-2008, and is not implemented on bionic.
   // Needed for ABI compatibility with the NDK.
   return ENOSYS;
@@ -147,7 +147,7 @@ int pthread_getattr_np(pthread_t thid, pthread_attr_t* attr) {
   return 0;
 }
 
-int pthread_attr_setscope(pthread_attr_t *attr __LIBC_UNUSED__, int scope) {
+int pthread_attr_setscope(pthread_attr_t *attr __unused, int scope) {
   if (scope == PTHREAD_SCOPE_SYSTEM) {
     return 0;
   }
@@ -157,6 +157,6 @@ int pthread_attr_setscope(pthread_attr_t *attr __LIBC_UNUSED__, int scope) {
   return EINVAL;
 }
 
-int pthread_attr_getscope(pthread_attr_t const *attr __LIBC_UNUSED__) {
+int pthread_attr_getscope(pthread_attr_t const *attr __unused) {
   return PTHREAD_SCOPE_SYSTEM;
 }

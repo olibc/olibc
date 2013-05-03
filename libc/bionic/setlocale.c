@@ -30,6 +30,6 @@
 #include <stdlib.h>
 
 // setlocale(3) always fails on bionic.
-char* setlocale(int category __LIBC_UNUSED__, char const* locale __LIBC_UNUSED__) {
+char* setlocale(int category __unused, char const* locale __unused) {
     return NULL;
 }

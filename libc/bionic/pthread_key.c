@@ -89,28 +89,28 @@ static tls_map_t ScopedTlsMapAccess_s_tls_map_;
 static pthread_mutex_t ScopedTlsMapAccess_s_tls_map_lock_;
 
 static inline
-void ScopedTlsMapAccess_Lock(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__) {
+void ScopedTlsMapAccess_Lock(ScopedTlsMapAccess *tls_map __unused) {
   pthread_mutex_lock(&ScopedTlsMapAccess_s_tls_map_lock_);
 }
 
 static inline
-void ScopedTlsMapAccess_Unlock(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__) {
+void ScopedTlsMapAccess_Unlock(ScopedTlsMapAccess *tls_map __unused) {
   pthread_mutex_unlock(&ScopedTlsMapAccess_s_tls_map_lock_);
 }
 
 static inline
-bool ScopedTlsMapAccess_IsInUse(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__, pthread_key_t key) {
+bool ScopedTlsMapAccess_IsInUse(ScopedTlsMapAccess *tls_map __unused, pthread_key_t key) {
   return (TLSMAP_WORD(ScopedTlsMapAccess_s_tls_map_, key) & TLSMAP_MASK(key)) != 0;
 }
 
 static inline
-void ScopedTlsMapAccess_SetInUse(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__, pthread_key_t key, void (*key_destructor)(void*)) {
+void ScopedTlsMapAccess_SetInUse(ScopedTlsMapAccess *tls_map __unused, pthread_key_t key, void (*key_destructor)(void*)) {
   TLSMAP_WORD(ScopedTlsMapAccess_s_tls_map_, key) |= TLSMAP_MASK(key);
   ScopedTlsMapAccess_s_tls_map_.key_destructors[key] = key_destructor;
 }
 
 static inline
-void ScopedTlsMapAccess_init(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__) {
+void ScopedTlsMapAccess_init(ScopedTlsMapAccess *tls_map __unused) {
   ScopedTlsMapAccess_Lock(tls_map);
 
   // If this is the first time the TLS map has been accessed,
@@ -129,12 +129,12 @@ void ScopedTlsMapAccess_init(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__) {
 }
 
 static inline
-void ScopedTlsMapAccess_fini(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__) {
+void ScopedTlsMapAccess_fini(ScopedTlsMapAccess *tls_map __unused) {
   ScopedTlsMapAccess_Unlock(tls_map);
 }
 
 static inline
-int ScopedTlsMapAccess_CreateKey(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__, pthread_key_t* result, void (*key_destructor)(void*)) {
+int ScopedTlsMapAccess_CreateKey(ScopedTlsMapAccess *tls_map __unused, pthread_key_t* result, void (*key_destructor)(void*)) {
   // Take the first unallocated key.
   int key;
   for (key = 0; key < BIONIC_TLS_SLOTS; ++key) {
@@ -150,7 +150,7 @@ int ScopedTlsMapAccess_CreateKey(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__, pt
 }
 
 static inline
-void ScopedTlsMapAccess_DeleteKey(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__, pthread_key_t key) {
+void ScopedTlsMapAccess_DeleteKey(ScopedTlsMapAccess *tls_map __unused, pthread_key_t key) {
   TLSMAP_WORD(ScopedTlsMapAccess_s_tls_map_, key) &= ~TLSMAP_MASK(key);
   ScopedTlsMapAccess_s_tls_map_.key_destructors[key] = NULL;
 }
@@ -159,7 +159,7 @@ void ScopedTlsMapAccess_DeleteKey(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__, p
 // from this thread's TLS area. This must call the destructor of all keys
 // that have a non-NULL data value and a non-NULL destructor.
 static inline
-void ScopedTlsMapAccess_CleanAll(ScopedTlsMapAccess *tls_map __LIBC_UNUSED__) {
+void ScopedTlsMapAccess_CleanAll(ScopedTlsMapAccess *tls_map __unused) {
   void** tls = (void**)__get_tls();
 
   // Because destructors can do funky things like deleting/creating other

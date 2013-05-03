@@ -88,8 +88,8 @@
 #include <unistd.h>
 
 static nss_method
-_nsmethod(const char *source, const char *database __LIBC_UNUSED__,
-    const char *method  __LIBC_UNUSED__,
+_nsmethod(const char *source, const char *database __unused,
+    const char *method  __unused,
     const ns_dtab disp_tab[], void **cb_data)
 {
 	int	curdisp;

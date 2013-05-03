@@ -446,7 +446,7 @@ name:		t = sp->fts_path + NAPPEND(p->fts_parent);
  */
 /* ARGSUSED */
 int
-fts_set(FTS *sp __LIBC_UNUSED__, FTSENT *p, int instr)
+fts_set(FTS *sp __unused, FTSENT *p, int instr)
 {
 	if (instr && instr != FTS_AGAIN && instr != FTS_FOLLOW &&
 	    instr != FTS_NOINSTR && instr != FTS_SKIP) {

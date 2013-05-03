@@ -1892,7 +1892,7 @@ static int _using_alt_dns()
 
 /*ARGSUSED*/
 static int
-_dns_getaddrinfo(void *rv, void	*cb_data __LIBC_UNUSED__, va_list ap)
+_dns_getaddrinfo(void *rv, void	*cb_data __unused, va_list ap)
 {
 	struct addrinfo *ai;
 	querybuf *buf, *buf2;
@@ -2112,7 +2112,7 @@ found:
 
 /*ARGSUSED*/
 static int
-_files_getaddrinfo(void *rv, void *cb_data __LIBC_UNUSED__, va_list ap)
+_files_getaddrinfo(void *rv, void *cb_data __unused, va_list ap)
 {
 	const char *name;
 	const struct addrinfo *pai;

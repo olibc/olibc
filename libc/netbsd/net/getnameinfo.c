@@ -513,7 +513,7 @@ ip6_parsenumeric(const struct sockaddr *sa, const char *addr, char *host,
 
 /* ARGSUSED */
 static int
-ip6_sa2str(const struct sockaddr_in6 *sa6, char *buf, size_t bufsiz, int flags  __LIBC_UNUSED__)
+ip6_sa2str(const struct sockaddr_in6 *sa6, char *buf, size_t bufsiz, int flags  __unused)
 {
 	unsigned int ifindex;
 	const struct in6_addr *a6;

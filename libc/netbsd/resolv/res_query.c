@@ -410,9 +410,9 @@ res_nquerydomain(res_state statp,
 }
 
 const char *
-res_hostalias(const res_state statp  __LIBC_UNUSED__,
-              const char *name __LIBC_UNUSED__,
-              char *dst __LIBC_UNUSED__,
-              size_t siz  __LIBC_UNUSED__) {
+res_hostalias(const res_state statp  __unused,
+              const char *name __unused,
+              char *dst __unused,
+              size_t siz  __unused) {
 	return (NULL);
 }

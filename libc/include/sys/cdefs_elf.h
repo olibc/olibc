@@ -101,10 +101,6 @@
 #define __LIBC_HIDDEN__							\
 	__attribute__ ((visibility ("hidden")))
 
-/* This must be used to tag function argument that are unused */
-#define __LIBC_UNUSED__							\
-	__attribute__((unused))
-
 /* This must be used to tag non-static functions that are public, i.e.
  * exposed by the shared library, and part of the stable NDK ABI */
 #define __LIBC_ABI_PUBLIC__ \

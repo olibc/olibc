@@ -66,17 +66,17 @@ int vwprintf(const wchar_t* format, va_list arg) {
   return vfwprintf(stdout, format, arg);
 }
 
-int vfwprintf(FILE* stream __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, va_list arg __LIBC_UNUSED__) {
+int vfwprintf(FILE* stream __unused, const wchar_t* format __unused, va_list arg __unused) {
   errno = ENOTSUP;
   return -1;
 }
 
-int vswprintf(wchar_t* s __LIBC_UNUSED__, size_t n __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, va_list arg __LIBC_UNUSED__) {
+int vswprintf(wchar_t* s __unused, size_t n __unused, const wchar_t* format __unused, va_list arg __unused) {
   errno = ENOTSUP;
   return -1;
 }
 
-int fwscanf(FILE* stream __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, ... ) {
+int fwscanf(FILE* stream __unused, const wchar_t* format __unused, ... ) {
   errno = ENOTSUP;
   return -1;
 }
@@ -89,7 +89,7 @@ int wscanf(const wchar_t* format, ... ) {
   return result;
 }
 
-int swscanf(const wchar_t* s __LIBC_UNUSED__, const wchar_t* format __LIBC_UNUSED__, ... ) {
+int swscanf(const wchar_t* s __unused, const wchar_t* format __unused, ... ) {
   errno = ENOTSUP;
   return -1;
 }
@@ -140,7 +140,7 @@ int fputws(const wchar_t* str, FILE* stream) {
   return fputs((const char*)(str), stream );
 }
 
-int fwide(FILE* stream __LIBC_UNUSED__, int mode) {
+int fwide(FILE* stream __unused, int mode) {
   return mode;
 }
 
@@ -152,15 +152,15 @@ wint_t getwchar() {
   return getchar();
 }
 
-int mbsinit(const mbstate_t* ps __LIBC_UNUSED__) {
+int mbsinit(const mbstate_t* ps __unused) {
   return 1;
 }
 
-size_t mbrlen(const char* s __LIBC_UNUSED__, size_t n, mbstate_t* ps __LIBC_UNUSED__) {
+size_t mbrlen(const char* s __unused, size_t n, mbstate_t* ps __unused) {
   return (n != 0);
 }
 
-size_t mbrtowc(wchar_t* pwc, const char* s, size_t n, mbstate_t* ps __LIBC_UNUSED__) {
+size_t mbrtowc(wchar_t* pwc, const char* s, size_t n, mbstate_t* ps __unused) {
   if (s == NULL) {
     s   = "";
     pwc = NULL;
@@ -177,7 +177,7 @@ size_t mbrtowc(wchar_t* pwc, const char* s, size_t n, mbstate_t* ps __LIBC_UNUSE
   return (*s != 0);
 }
 
-size_t mbsrtowcs(wchar_t* dst, const char** src, size_t len, mbstate_t* ps __LIBC_UNUSED__) {
+size_t mbsrtowcs(wchar_t* dst, const char** src, size_t len, mbstate_t* ps __unused) {
   const char* s  = *src;
   const char* s2 = (const char*)(memchr(s, 0, len));
 
@@ -217,7 +217,7 @@ wint_t ungetwc(wint_t wc, FILE* stream) {
   return ungetc((char)(wc), stream);
 }
 
-size_t wcrtomb(char* s, wchar_t wc __LIBC_UNUSED__, mbstate_t* ps __LIBC_UNUSED__) {
+size_t wcrtomb(char* s, wchar_t wc __unused, mbstate_t* ps __unused) {
   if (s != NULL) {
     *s = 1;
   }
@@ -228,7 +228,7 @@ size_t wcsftime(wchar_t* wcs, size_t maxsize, const wchar_t* format,  const stru
   return strftime((char*)(wcs), maxsize, (const char*)(format), timptr);
 }
 
-size_t wcsrtombs(char* dst, const wchar_t** src, size_t len, mbstate_t* ps __LIBC_UNUSED__) {
+size_t wcsrtombs(char* dst, const wchar_t** src, size_t len, mbstate_t* ps __unused) {
   const char* s = (const char*)(*src);
   const char* s2 = (const char*)(memchr(s, 0, len));
   if (s2 != NULL) {

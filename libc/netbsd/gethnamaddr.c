@@ -464,7 +464,7 @@ getanswer(const querybuf *answer, int anslen, const char *qname, int qtype,
 
 int
 gethostbyname_r(const char *name, struct hostent *hp,
-    char *buf __LIBC_UNUSED__, size_t buflen __LIBC_UNUSED__,
+    char *buf __unused, size_t buflen __unused,
     struct hostent**result, int *errorp)
 {
         struct hostent *res;
@@ -795,7 +795,7 @@ _gethtent(void)
 
 /*ARGSUSED*/
 int
-_gethtbyname(void *rv, void *cb_data __LIBC_UNUSED__, va_list ap)
+_gethtbyname(void *rv, void *cb_data __unused, va_list ap)
 {
 	struct hostent *hp;
 	const char *name;
@@ -922,7 +922,7 @@ _gethtbyname2(const char *name, int af)
 
 /*ARGSUSED*/
 static int
-_gethtbyaddr(void *rv, void *cb_data __LIBC_UNUSED__, va_list ap)
+_gethtbyaddr(void *rv, void *cb_data __unused, va_list ap)
 {
 	struct hostent *p;
 	const unsigned char *addr;
@@ -1055,7 +1055,7 @@ gethostent(void)
 
 /*ARGSUSED*/
 static int
-_dns_gethtbyname(void *rv, void *cb_data __LIBC_UNUSED__, va_list ap)
+_dns_gethtbyname(void *rv, void *cb_data __unused, va_list ap)
 {
 	querybuf *buf;
 	int n, type;
@@ -1115,7 +1115,7 @@ _dns_gethtbyname(void *rv, void *cb_data __LIBC_UNUSED__, va_list ap)
 
 /*ARGSUSED*/
 static int
-_dns_gethtbyaddr(void *rv, void	*cb_data __LIBC_UNUSED__, va_list ap)
+_dns_gethtbyaddr(void *rv, void	*cb_data __unused, va_list ap)
 {
 	char qbuf[MAXDNAME + 1], *qp, *ep;
 	int n;

@@ -135,7 +135,7 @@ static void count_relocation(enum RelocationKind kind) {
     ++linker_stats.count[kind];
 }
 #else
-static void count_relocation(enum RelocationKind kind __LIBC_UNUSED__) {
+static void count_relocation(enum RelocationKind kind __unused) {
 }
 #endif
 
@@ -161,10 +161,10 @@ static unsigned bitmask[4096];
         write(2, msg, strlen(msg)); \
         abort(); \
     }
-DISALLOW_ALLOCATION(void*, malloc, (size_t u __LIBC_UNUSED__));
-DISALLOW_ALLOCATION(void, free, (void* u __LIBC_UNUSED__));
-DISALLOW_ALLOCATION(void*, realloc, (void* u1 __LIBC_UNUSED__, size_t u2 __LIBC_UNUSED__));
-DISALLOW_ALLOCATION(void*, calloc, (size_t u1 __LIBC_UNUSED__, size_t u2 __LIBC_UNUSED__));
+DISALLOW_ALLOCATION(void*, malloc, (size_t u __unused));
+DISALLOW_ALLOCATION(void, free, (void* u __unused));
+DISALLOW_ALLOCATION(void*, realloc, (void* u1 __unused, size_t u2 __unused));
+DISALLOW_ALLOCATION(void*, calloc, (size_t u1 __unused, size_t u2 __unused));
 #endif
 
 static char tmp_err_buf[768];
@@ -1273,7 +1273,7 @@ static int mips_relocate_got(soinfo* si, soinfo* needed[]) {
  *
  *   DT_FINI_ARRAY must be parsed in reverse order.
  */
-void soinfo_CallArray(soinfo* si, const char* array_name __LIBC_UNUSED__, linker_function_t* functions, size_t count, bool reverse) {
+void soinfo_CallArray(soinfo* si, const char* array_name __unused, linker_function_t* functions, size_t count, bool reverse) {
   if (functions == NULL) {
     return;
   }
@@ -1293,7 +1293,7 @@ void soinfo_CallArray(soinfo* si, const char* array_name __LIBC_UNUSED__, linker
   TRACE("[ Done calling %s for '%s' ]", array_name, si->name);
 }
 
-void soinfo_CallFunction(soinfo* si, const char* function_name __LIBC_UNUSED__, linker_function_t function) {
+void soinfo_CallFunction(soinfo* si, const char* function_name __unused, linker_function_t function) {
   if (function == NULL || (uintptr_t)(function) == (uintptr_t)(-1)) {
     return;
   }
