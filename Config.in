@@ -153,8 +153,18 @@ endmenu
 menu "Extensions"
 
 config XATTR_SUPPORT
-	bool "Support xattr system call"
+	bool "Linux-specific extended attribute system call"
 	default n
+	help
+	  In Linux, some filesystems support extended attributes (abbreviated
+	  xattr) when enabled in the kernel configuration. Any regular file
+	  or directory may have extended attributes consisting of a name and
+	  associated data. The name must be a null-terminated string prefixed by
+	  a namespace identifier and a dot character. Currently, four namespaces
+	  exist: user, trusted, security and system. The user namespace has no
+	  restrictions with regard to naming or contents. The system namespace
+	  is primarily used by the kernel for access control lists. The security
+	  namespace is used by SELinux, for example.
 
 config USE_AT_SECURE
 	bool "Use the AT_SECURE auxv flag to determine secure mode"
