@@ -51,6 +51,7 @@ extern int sync_file_range(int fd, off64_t offset, off64_t nbytes,
                            unsigned int flags);
 extern int sync_file_range2(int fd, unsigned int flags,
                             off64_t offset, off64_t nbytes);
+extern int  fallocate (int fd, int mode, off_t offset, off_t len);
 
 #if defined(__BIONIC_FORTIFY)
 
