@@ -168,6 +168,8 @@ int         fsetxattr(int, const char *, const void *, size_t, int) 1
 ssize_t     fgetxattr(int, const char *, void *, size_t) 1
 ssize_t     flistxattr(int, char *, size_t) 1
 int         fremovexattr(int, const char *) 1
+ssize_t     splice (int, loff_t *, int, loff_t *, size_t, unsigned int) 1
+ssize_t     vmsplice (int, const struct iovec *, size_t, unsigned int) 1
 
 # file system
 int     link (const char*, const char*)  1

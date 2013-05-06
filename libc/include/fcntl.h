@@ -52,6 +52,11 @@ extern int sync_file_range(int fd, off64_t offset, off64_t nbytes,
 extern int sync_file_range2(int fd, unsigned int flags,
                             off64_t offset, off64_t nbytes);
 extern int  fallocate (int fd, int mode, off_t offset, off_t len);
+extern ssize_t splice (int fd_in, loff_t *off_in,
+                       int fd_out, loff_t *off_out,
+                       size_t len, unsigned int flags);
+extern ssize_t vmsplice(int fd, const struct iovec *iov,
+                        unsigned long nr_segs, unsigned int flags);
 
 #if defined(__BIONIC_FORTIFY)
 
