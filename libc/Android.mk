@@ -237,6 +237,7 @@ libc_bionic_src_files := \
     bionic/raise.c \
     bionic/sbrk.c \
     bionic/scandir.c \
+    bionic/sched_getaffinity.c \
     bionic/__set_errno.c \
     bionic/setlocale.c \
     bionic/signalfd.c \
