@@ -45,9 +45,12 @@ __BEGIN_DECLS
 
 extern int  open(const char*  path, int  mode, ...);
 extern int  openat(int fd, const char*  path, int  mode, ...);
-extern int  unlinkat(int dirfd, const char *pathname, int flags);
 extern int  fcntl(int   fd, int   command, ...);
 extern int  creat(const char*  path, mode_t  mode);
+extern int sync_file_range(int fd, off64_t offset, off64_t nbytes,
+                           unsigned int flags);
+extern int sync_file_range2(int fd, unsigned int flags,
+                            off64_t offset, off64_t nbytes);
 
 #if defined(__BIONIC_FORTIFY)
 

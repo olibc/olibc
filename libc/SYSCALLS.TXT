@@ -151,6 +151,9 @@ int         fdatasync(int) 1
 int         fchown:fchown32(int, uid_t, gid_t)  1,1,-1
 int         fchown:fchown(int, uid_t, gid_t)    -1,-1,1
 void        sync(void)  1
+int         syncfs(int fd) 1
+int         sync_file_range(int fd, off64_t offset, off64_t nbytes, unsigned int flags) -1,1,1
+int         sync_file_range2(int fd, unsigned int flags, off64_t offset, off64_t nbytes) 1,-1,-1
 int         __fcntl64:fcntl64(int, int, void *)  1
 int         __fstatfs64:fstatfs64(int, size_t, struct statfs *)  1
 ssize_t     sendfile(int out_fd, int in_fd, off_t *offset, size_t count)  1
@@ -166,6 +169,7 @@ int         fremovexattr(int, const char *) 1
 
 # file system
 int     link (const char*, const char*)  1
+int     linkat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, int flags) 1
 int     unlink (const char*)             1
 int     unlinkat (int, const char *, int)   1
 int     chdir (const char*)              1
@@ -183,12 +187,14 @@ int     stat:stat64(const char *, struct stat *)  1
 int     lstat:lstat64(const char *, struct stat *)  1
 int     mkdir(const char *, mode_t) 1
 int     readlink(const char *, char *, size_t)  1
+int     readlinkat(int dirfd, const char *pathname, char *buf, size_t bufsiz) 1
 int     rmdir(const char *)  1
 int     rename(const char *, const char *)  1
 int     __getcwd:getcwd(char * buf, size_t size)  1
 int     access(const char *, int)  1
 int     faccessat(int, const char *, int, int)  1
 int     symlink(const char *, const char *)  1
+int     symlinkat(const char *oldpath, int newdirfd, const char *newpath) 1
 int     fchdir(int)    1
 int     truncate(const char*, off_t)    1
 int     setxattr(const char *, const char *, const void *, size_t, int) 1 <XATTR_SUPPORT>
