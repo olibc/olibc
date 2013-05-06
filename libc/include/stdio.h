@@ -285,6 +285,11 @@ int	 vsscanf(const char *, const char *, __va_list)
 		__attribute__((__nonnull__ (2)));
 #endif /* __ISO_C_VISIBLE >= 1999 || __BSD_VISIBLE */
 
+static __inline char * tmpnam_r(char *s)
+{
+    return s ? tmpnam(s) : NULL;
+}
+
 __END_DECLS
 
 
