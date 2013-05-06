@@ -1068,6 +1068,16 @@ include $(BUILD_SHARED_LIBRARY)
 endif   # !EXT_MALLOC_ANDROID_QEMU_INSTRUMENT
 endif	# !EXT_MALLOC_LEAK_CHECK
 
+ifeq ($(SINGLE_BINARY_SUPPORT),true)
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := olibc
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_WHOLE_STATIC_LIBRARIES := libc libm
+LOCAL_SYSTEM_SHARED_LIBRARIES :=
+
+include $(BUILD_STATIC_LIBRARY)
+endif #SINGLE_BINARY_SUPPORT
 
 # ========================================================
 include $(call all-makefiles-under,$(LOCAL_PATH))
