@@ -151,6 +151,8 @@ ifeq ($(XATTR_SUPPORT),true)
 endif
 syscall_src += arch-mips/syscalls/__statfs64.S
 syscall_src += arch-mips/syscalls/unshare.S
+syscall_src += arch-mips/syscalls/swapon.S
+syscall_src += arch-mips/syscalls/swapoff.S
 syscall_src += arch-mips/syscalls/pause.S
 syscall_src += arch-mips/syscalls/gettimeofday.S
 syscall_src += arch-mips/syscalls/settimeofday.S

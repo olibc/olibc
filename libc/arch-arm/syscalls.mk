@@ -148,6 +148,8 @@ ifeq ($(XATTR_SUPPORT),true)
 endif
 syscall_src += arch-arm/syscalls/__statfs64.S
 syscall_src += arch-arm/syscalls/unshare.S
+syscall_src += arch-arm/syscalls/swapon.S
+syscall_src += arch-arm/syscalls/swapoff.S
 syscall_src += arch-arm/syscalls/pause.S
 syscall_src += arch-arm/syscalls/gettimeofday.S
 syscall_src += arch-arm/syscalls/settimeofday.S
