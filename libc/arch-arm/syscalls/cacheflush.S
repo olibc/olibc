@@ -4,12 +4,6 @@
 #include <machine/asm.h>
 
 ENTRY(cacheflush)
-    mov     ip, r7
-    ldr     r7, =__ARM_NR_cacheflush
-    swi     #0
-    mov     r7, ip
-    cmn     r0, #(MAX_ERRNO + 1)
-    bxls    lr
-    neg     r0, r0
-    b       __set_errno
+    ldr     ip, =__ARM_NR_cacheflush
+    b       __bionic_syscall_eabi
 END(cacheflush)

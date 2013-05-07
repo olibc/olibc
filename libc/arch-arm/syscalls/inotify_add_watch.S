@@ -4,12 +4,6 @@
 #include <machine/asm.h>
 
 ENTRY(inotify_add_watch)
-    mov     ip, r7
-    ldr     r7, =__NR_inotify_add_watch
-    swi     #0
-    mov     r7, ip
-    cmn     r0, #(MAX_ERRNO + 1)
-    bxls    lr
-    neg     r0, r0
-    b       __set_errno
+    ldr     ip, =__NR_inotify_add_watch
+    b       __bionic_syscall_eabi
 END(inotify_add_watch)

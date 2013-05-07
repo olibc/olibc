@@ -4,12 +4,6 @@
 #include <machine/asm.h>
 
 ENTRY(socketpair)
-    mov     ip, r7
-    ldr     r7, =__NR_socketpair
-    swi     #0
-    mov     r7, ip
-    cmn     r0, #(MAX_ERRNO + 1)
-    bxls    lr
-    neg     r0, r0
-    b       __set_errno
+    ldr     ip, =__NR_socketpair
+    b       __bionic_syscall_eabi
 END(socketpair)

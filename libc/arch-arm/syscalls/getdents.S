@@ -4,12 +4,6 @@
 #include <machine/asm.h>
 
 ENTRY(getdents)
-    mov     ip, r7
-    ldr     r7, =__NR_getdents64
-    swi     #0
-    mov     r7, ip
-    cmn     r0, #(MAX_ERRNO + 1)
-    bxls    lr
-    neg     r0, r0
-    b       __set_errno
+    ldr     ip, =__NR_getdents64
+    b       __bionic_syscall_eabi
 END(getdents)

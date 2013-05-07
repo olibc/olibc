@@ -4,15 +4,6 @@
 #include <machine/asm.h>
 
 ENTRY(getsockopt)
-    mov     ip, sp
-    .save   {r4, r5, r6, r7}
-    stmfd   sp!, {r4, r5, r6, r7}
-    ldmfd   ip, {r4, r5, r6}
-    ldr     r7, =__NR_getsockopt
-    swi     #0
-    ldmfd   sp!, {r4, r5, r6, r7}
-    cmn     r0, #(MAX_ERRNO + 1)
-    bxls    lr
-    neg     r0, r0
-    b       __set_errno
+    ldr     ip, =__NR_getsockopt
+    b       __bionic_long_syscall_eabi
 END(getsockopt)

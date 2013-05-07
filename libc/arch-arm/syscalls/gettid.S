@@ -4,12 +4,6 @@
 #include <machine/asm.h>
 
 ENTRY(gettid)
-    mov     ip, r7
-    ldr     r7, =__NR_gettid
-    swi     #0
-    mov     r7, ip
-    cmn     r0, #(MAX_ERRNO + 1)
-    bxls    lr
-    neg     r0, r0
-    b       __set_errno
+    ldr     ip, =__NR_gettid
+    b       __bionic_syscall_eabi
 END(gettid)
