@@ -389,6 +389,7 @@ endif
 ifeq ($(TARGET_ARCH),arm)
 libc_common_src_files += \
 	string/strncmp.c \
+	bionic/sync_file_range.c \
 
 # These files need to be arm so that gdbserver
 # can set breakpoints in them without messing
