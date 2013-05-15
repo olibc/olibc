@@ -41,6 +41,7 @@ extern int getitimer(int, struct itimerval *);
 extern int setitimer(int, const struct itimerval *, struct itimerval *);
 
 extern int utimes(const char *, const struct timeval *);
+extern int clock_adjtime (__clockid_t __clock_id, struct timex *__utx);
 
 #define timerclear(a)   \
         ((a)->tv_sec = (a)->tv_usec = 0)

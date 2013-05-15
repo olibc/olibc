@@ -221,6 +221,8 @@ int           pause ()                       1
 int           gettimeofday(struct timeval*, struct timezone*)       1
 int           settimeofday(const struct timeval*, const struct timezone*)   1
 clock_t       times(struct tms *)       1
+int           adjtimex(struct timex *buf) 1
+int           clock_adjtime (clockid_t __clock_id, struct timex *__ntx) 1
 int           nanosleep(const struct timespec *, struct timespec *)   1
 int           clock_gettime(clockid_t clk_id, struct timespec *tp)    1
 int           clock_settime(clockid_t clk_id, const struct timespec *tp)  1
