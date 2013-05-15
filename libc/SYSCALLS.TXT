@@ -214,7 +214,7 @@ int     __statfs64:statfs64(const char *, size_t, struct statfs *)  1
 long    unshare(unsigned long)  1
 int     swapon(const char *path, int swapflags) 1
 int     swapoff(const char *path) 1
-
+int     quotactl(int cmd, const char *special, int id, caddr_t addr) 1
 
 # time
 int           pause ()                       1
