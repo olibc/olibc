@@ -273,11 +273,17 @@ struct ucred {
 # define __socketcall extern
 #endif
 
+struct mmsghdr {
+  struct msghdr msg_hdr;
+  unsigned int  msg_len;
+};
+
 __socketcall int socket(int, int, int);
 __socketcall int bind(int, const struct sockaddr *, int);
 __socketcall int connect(int, const struct sockaddr *, socklen_t);
 __socketcall int listen(int, int);
 __socketcall int accept(int, struct sockaddr *, socklen_t *);
+__socketcall int accept4(int, struct sockaddr *, socklen_t *, int);
 __socketcall int getsockname(int, struct sockaddr *, socklen_t *);
 __socketcall int getpeername(int, struct sockaddr *, socklen_t *);
 __socketcall int socketpair(int, int, int, int *);
@@ -286,6 +292,8 @@ __socketcall int setsockopt(int, int, int, const void *, socklen_t);
 __socketcall int getsockopt(int, int, int, void *, socklen_t *);
 __socketcall int sendmsg(int, const struct msghdr *, unsigned int);
 __socketcall int recvmsg(int, struct msghdr *, unsigned int);
+__socketcall int recvmmsg(int, struct mmsghdr *, unsigned int, unsigned int, struct timespec *);
+__socketcall int sendmmsg(int, struct mmsghdr *, unsigned int, unsigned int);
 
 extern  ssize_t  send(int, const void *, size_t, unsigned int);
 extern  ssize_t  recv(int, void *, size_t, unsigned int);
