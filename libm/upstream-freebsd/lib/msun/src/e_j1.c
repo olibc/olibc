@@ -262,9 +262,9 @@ static const double ps2[5] = {
   8.36463893371618283368e+00, /* 0x4020BAB1, 0xF44E5192 */
 };
 
-	static double pone(double x)
+static double pone(double x)
 {
-	const double *p,*q;
+	const double *p = NULL,*q = NULL;
 	double z,r,s;
         int32_t ix;
 	GET_HIGH_WORD(ix,x);
@@ -278,7 +278,6 @@ static const double ps2[5] = {
         s = one+z*(q[0]+z*(q[1]+z*(q[2]+z*(q[3]+z*q[4]))));
         return one+ r/s;
 }
-		
 
 /* For x >= 8, the asymptotic expansions of qone is
  *	3/8 s - 105/1024 s^3 - ..., where s = 1/x.
@@ -358,9 +357,9 @@ static const double qs2[6] = {
  -4.95949898822628210127e+00, /* 0xC013D686, 0xE71BE86B */
 };
 
-	static double qone(double x)
+static double qone(double x)
 {
-	const double *p,*q;
+	const double *p = NULL,*q = NULL;
 	double  s,r,z;
 	int32_t ix;
 	GET_HIGH_WORD(ix,x);

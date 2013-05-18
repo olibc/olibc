@@ -38,7 +38,7 @@ static const float zero = 0.0;
 float
 log1pf(float x)
 {
-	float hfsq,f,c,s,z,R,u;
+	float hfsq,f,c=0.0,s,z,R,u;
 	int32_t k,hx,hu,ax;
 
 	GET_FLOAT_WORD(hx,x);

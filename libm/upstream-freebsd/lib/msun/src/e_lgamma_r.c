@@ -204,7 +204,7 @@ static const double zero=  0.00000000000000000000e+00;
 double
 __ieee754_lgamma_r(double x, int *signgamp)
 {
-	double t,y,z,nadj,p,p1,p2,p3,q,r,w;
+	double t,y,z,nadj = 0.0f,p,p1,p2,p3,q,r,w;
 	int32_t hx;
 	int i,lx,ix;
 
@@ -289,7 +289,7 @@ __ieee754_lgamma_r(double x, int *signgamp)
 	    y = z*z;
 	    w = w0+z*(w1+y*(w2+y*(w3+y*(w4+y*(w5+y*w6)))));
 	    r = (x-half)*(t-one)+w;
-	} else 
+	} else
     /* 2**58 <= x <= inf */
 	    r =  x*(__ieee754_log(x)-one);
 	if(hx<0) r = nadj - r;
