@@ -140,8 +140,13 @@ __LIBC_HIDDEN__ void log_backtrace(uintptr_t* frames, size_t frame_count) {
 
       free(demangled_symbol);
     } else {
-      __libc_format_log(ANDROID_LOG_ERROR, "libc", "          #%02d  pc %08x  %s",
-                        i, rel_pc, soname);
+      if (mi != NULL) {
+        __libc_format_log(ANDROID_LOG_ERROR, "libc", "          #%02d  pc %08x  %s",
+                          i, rel_pc, soname);
+      } else {
+        __libc_format_log(ANDROID_LOG_ERROR, "libc", "          #%02d  pc  unknown  %s",
+                          i, soname);
+      }
     }
   }
 }
