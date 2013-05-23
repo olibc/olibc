@@ -897,14 +897,8 @@ static int soinfo_unload(soinfo* si) {
     for (d = si->dynamic; d->d_tag != DT_NULL; ++d) {
       if (d->d_tag == DT_NEEDED) {
         const char* library_name = si->strtab + d->d_un.d_val;
-        soinfo* lsi = find_loaded_library(library_name);
-        if (lsi != NULL) {
-          TRACE("%s needs to unload %s", si->name, lsi->name);
-          soinfo_unload(lsi);
-        } else {
-          // TODO: should we return -1 in this case?
-          DL_ERR("\"%s\": could not unload dependent library", si->name);
-        }
+        TRACE("%s needs to unload %s", si->name, library_name);
+        soinfo_unload(find_loaded_library(library_name));
       }
     }
 
@@ -1308,6 +1302,8 @@ void soinfo_CallFunction(soinfo* si, const char* function_name __unused, linker_
 }
 
 void soinfo_CallPreInitConstructors(soinfo *si) {
+  // DT_PREINIT_ARRAY functions are called before any other constructors for executables,
+  // but ignored in a shared library.
   soinfo_CallArray(si, "DT_PREINIT_ARRAY", si->preinit_array, si->preinit_array_count, false);
 }
 
@@ -1328,9 +1324,10 @@ void soinfo_CallConstructors(soinfo *si) {
   //    out above, the libc constructor will be called again (recursively!).
   si->constructors_called = true;
 
-  if (!(si->flags & FLAG_EXE) && si->preinit_array) {
-    DL_ERR("shared library \"%s\" has a preinit_array table @ %p", si->name, si->preinit_array);
-    return;
+  if ((si->flags & FLAG_EXE) == 0 && si->preinit_array != NULL) {
+    // The GNU dynamic linker silently ignores these, but we warn the developer.
+    PRINT("\"%s\": ignoring %d-entry DT_PREINIT_ARRAY in shared library!",
+          si->name, si->preinit_array_count);
   }
 
   if (si->dynamic != NULL) {
@@ -1338,6 +1335,7 @@ void soinfo_CallConstructors(soinfo *si) {
     for (d = si->dynamic; d->d_tag != DT_NULL; ++d) {
       if (d->d_tag == DT_NEEDED) {
         const char* library_name = si->strtab + d->d_un.d_val;
+        TRACE("\"%s\": calling constructors in DT_NEEDED \"%s\"", si->name, library_name);
         soinfo* lsi = find_loaded_library(library_name);
         if (lsi == NULL) {
           DL_ERR("\"%s\": could not initialize dependent library", si->name);
@@ -1348,12 +1346,20 @@ void soinfo_CallConstructors(soinfo *si) {
     }
   }
 
+  TRACE("\"%s\": calling constructors", si->name);
+
+  // DT_INIT should be called before DT_INIT_ARRAY if both are present.
   soinfo_CallFunction(si, "DT_INIT", si->init_func);
   soinfo_CallArray(si, "DT_INIT_ARRAY", si->init_array, si->init_array_count, false);
 }
 
 void soinfo_CallDestructors(soinfo *si) {
+  TRACE("\"%s\": calling destructors", si->name);
+
+  // DT_FINI_ARRAY must be parsed in reverse order.
   soinfo_CallArray(si, "DT_FINI_ARRAY", si->fini_array, si->fini_array_count, true);
+
+  // DT_FINI should be called after DT_FINI_ARRAY if both are present.
   soinfo_CallFunction(si, "DT_FINI", si->fini_func);
 }
 
@@ -1452,7 +1458,7 @@ static bool soinfo_link_image(soinfo* si) {
                                     &si->ARM_exidx, &si->ARM_exidx_count);
 #endif
 
-    /* extract useful information from dynamic section */
+    // Extract useful information from dynamic section.
     uint32_t needed_count = 0;
     Elf32_Dyn* d;
     for (d = si->dynamic; d->d_tag != DT_NULL; ++d) {
@@ -1517,29 +1523,29 @@ static bool soinfo_link_image(soinfo* si) {
             return false;
         case DT_INIT:
             si->init_func = (linker_function_t)(base + d->d_un.d_ptr);
-            DEBUG("%s constructors (init func) found at %p", si->name, si->init_func);
+            DEBUG("%s constructors (DT_INIT) found at %p", si->name, si->init_func);
             break;
         case DT_FINI:
             si->fini_func = (linker_function_t)(base + d->d_un.d_ptr);
-            DEBUG("%s destructors (fini func) found at %p", si->name, si->fini_func);
+            DEBUG("%s destructors (DT_FINI) found at %p", si->name, si->fini_func);
             break;
         case DT_INIT_ARRAY:
             si->init_array = (linker_function_t*)(base + d->d_un.d_ptr);
-            DEBUG("%s constructors (init_array) found at %p", si->name, si->init_array);
+            DEBUG("%s constructors (DT_INIT_ARRAY) found at %p", si->name, si->init_array);
             break;
         case DT_INIT_ARRAYSZ:
             si->init_array_count = ((unsigned)d->d_un.d_val) / sizeof(Elf32_Addr);
             break;
         case DT_FINI_ARRAY:
             si->fini_array = (linker_function_t*)(base + d->d_un.d_ptr);
-            DEBUG("%s destructors (fini_array) found at %p", si->name, si->fini_array);
+            DEBUG("%s destructors (DT_FINI_ARRAY) found at %p", si->name, si->fini_array);
             break;
         case DT_FINI_ARRAYSZ:
             si->fini_array_count = ((unsigned)d->d_un.d_val) / sizeof(Elf32_Addr);
             break;
         case DT_PREINIT_ARRAY:
             si->preinit_array = (linker_function_t*)(base + d->d_un.d_ptr);
-            DEBUG("%s constructors (preinit_array) found at %p", si->name, si->preinit_array);
+            DEBUG("%s constructors (DT_PREINIT_ARRAY) found at %p", si->name, si->preinit_array);
             break;
         case DT_PREINIT_ARRAYSZ:
             si->preinit_array_count = ((unsigned)d->d_un.d_val) / sizeof(Elf32_Addr);

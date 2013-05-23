@@ -195,11 +195,9 @@ libc_common_src_files := \
 	netbsd/nameser/ns_samedomain.c \
 
 ifneq ($(TARGET_ARCH),arm)
-# ARM have arch specific versions for strchr and memchr
+# ARM have arch specific versions for memchr
 libc_common_src_files += \
-	string/strchr.c \
-	bionic/memchr.c \
-
+	bionic/memchr.c
 endif
 
 ifeq ($(MD5_IMPL),true)
@@ -243,7 +241,7 @@ libc_bionic_src_files := \
     bionic/signalfd.c \
     bionic/sigwait.c \
     bionic/__strcat_chk.c \
-    bionic/__strchr_chk.c \
+    bionic/strchr.c \
     bionic/__strcpy_chk.c \
     bionic/strerror.c \
     bionic/strerror_r.c \
@@ -260,7 +258,7 @@ libc_bionic_src_files := \
     bionic/__umask_chk.c \
     bionic/__vsnprintf_chk.c \
     bionic/__vsprintf_chk.c \
-    bionic/wait.c \
+    bionic/wait.c
 
 libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/clrerr.c \

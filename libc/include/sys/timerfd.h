@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,28 +26,20 @@
  * SUCH DAMAGE.
  */
 
-#include <string.h>
-#include <stdlib.h>
-#include "libc_logging.h"
+#ifndef _SYS_TIMERFD_H_
+#define _SYS_TIMERFD_H_
 
-/*
- * Runtime implementation of __builtin____strncpy_chk.
- *
- * See
- *   http://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
- *   http://gcc.gnu.org/ml/gcc-patches/2004-09/msg02055.html
- * for details.
- *
- * This strncpy check is called if _FORTIFY_SOURCE is defined and
- * greater than 0.
- */
-char *__strncpy_chk (char *dest, const char *src,
-              size_t len, size_t dest_len)
-{
-    if (__predict_false(len > dest_len)) {
-        __fortify_chk_fail("strncpy buffer overflow",
-                             BIONIC_EVENT_STRNCPY_BUFFER_OVERFLOW);
-    }
+#include <time.h>
+#include <sys/types.h>
+#include <linux/timerfd.h>
 
-    return strncpy(dest, src, len);
-}
+__BEGIN_DECLS
+
+extern int timerfd_create(clockid_t, int);
+extern int timerfd_settime(int, int, const struct itimerspec*,
+                           struct itimerspec*);
+extern int timerfd_gettime(int, struct itimerspec*);
+
+__END_DECLS
+
+#endif /* _SYS_TIMERFD_H */

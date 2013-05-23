@@ -329,15 +329,18 @@ bool ElfReader_LoadSegments(ElfReader* er) {
 
     Elf32_Addr file_page_start = PAGE_START(file_start);
 
-    void* seg_addr = mmap((void*)seg_page_start,
+    Elf32_Addr file_length = file_end - file_page_start;
+    if (file_length != 0) {
+        void* seg_addr = mmap((void*)seg_page_start,
                           file_end - file_page_start,
                           PFLAGS_TO_PROT(phdr->p_flags),
                           MAP_FIXED|MAP_PRIVATE,
                           er->fd_,
                           file_page_start);
-    if (seg_addr == MAP_FAILED) {
-      DL_ERR("couldn't map \"%s\" segment %d: %s", er->name_, i, strerror(errno));
-      return false;
+        if (seg_addr == MAP_FAILED) {
+          DL_ERR("couldn't map \"%s\" segment %d: %s", er->name_, i, strerror(errno));
+          return false;
+        }
     }
 
     // if the segment is writable, and does not end on a page boundary,
