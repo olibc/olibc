@@ -565,7 +565,7 @@ ifeq ($(TARGET_ARCH),arm)
 endif # !arm
 
 ifeq ($(TARGET_ARCH),x86)
-  libc_common_cflags += -DSOFTFLOAT
+  libc_common_cflags += -DSOFTFLOAT -DHAVE_UNWIND_CONTEXT_STRUCT
   libc_crt_target_cflags :=
   ifeq ($(ARCH_X86_HAVE_SSE2),true)
       libc_crt_target_cflags += -DUSE_SSE2=1
@@ -579,7 +579,7 @@ ifeq ($(TARGET_ARCH),mips)
   ifneq ($(ARCH_MIPS_HAS_FPU),true)
     libc_common_cflags += -DSOFTFLOAT
   endif
-  libc_common_cflags += -fstrict-aliasing
+  libc_common_cflags += -fstrict-aliasing -DHAVE_UNWIND_CONTEXT_STRUCT
   libc_crt_target_cflags := $(TARGET_GLOBAL_CFLAGS)
 endif # mips
 
