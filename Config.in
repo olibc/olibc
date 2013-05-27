@@ -114,6 +114,7 @@ config SINGLE_BINARY_SUPPORT
 config LIBM_USE_ARM_MODE
 	bool "Build libm in ARM mode"
 	default n
+	depends on TARGET_arm
 	help
 	  By default, libm is built in Thumb mode, which reduces about 16KB
 	  compared with ARM mode.
@@ -254,6 +255,7 @@ config ASYNC_UNWIND_TABLE
 
 config DEFAULT_GNU_STYLE_HASH
 	bool "Build olibc with gnu-style hash by default"
+	depends on !TARGET_mips
 	default y
 
 menu "Dynamic linker debugging options"
