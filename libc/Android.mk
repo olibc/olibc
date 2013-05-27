@@ -382,6 +382,24 @@ libc_upstream_freebsd_src_files += \
 
 endif
 
+ifneq ($(TARGET_ARCH),arm)
+  ifeq ($(SYSVIPC_SUPPORT),true)
+    libc_common_src_files += \
+      sysvipc/semctl.c \
+      sysvipc/semget.c \
+      sysvipc/semtimedop.c \
+      sysvipc/semop.c \
+      sysvipc/shmat.c \
+      sysvipc/shmctl.c \
+      sysvipc/shmdt.c \
+      sysvipc/shmget.c \
+      sysvipc/msgctl.c \
+      sysvipc/msgsnd.c \
+      sysvipc/msgrcv.c \
+      sysvipc/msgget.c
+  endif
+endif
+
 # Architecture specific source files go here
 # =========================================================
 ifeq ($(TARGET_ARCH),arm)
@@ -418,21 +436,6 @@ libc_static_common_src_files += \
     bionic/pthread_create.c \
     bionic/pthread_key.c \
 
-  ifeq ($(SYSVIPC_SUPPORT),true)
-    libc_common_src_files += \
-      sysvipc/semctl.c \
-      sysvipc/semget.c \
-      sysvipc/semtimedop.c \
-      sysvipc/semop.c \
-      sysvipc/shmat.c \
-      sysvipc/shmctl.c \
-      sysvipc/shmdt.c \
-      sysvipc/shmget.c \
-      sysvipc/msgctl.c \
-      sysvipc/msgsnd.c \
-      sysvipc/msgrcv.c \
-      sysvipc/msgget.c
-  endif
 endif # x86
 
 ifeq ($(TARGET_ARCH),mips)

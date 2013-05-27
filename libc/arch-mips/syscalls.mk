@@ -244,38 +244,5 @@ syscall_src += arch-mips/syscalls/eventfd.S
 syscall_src += arch-mips/syscalls/_flush_cache.S
 syscall_src += arch-mips/syscalls/syscall.S
 ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/semget.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/semop.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/semtimedop.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/semctl.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/shmat.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/shmdt.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/shmctl.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/shmget.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/msgctl.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/msgget.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/msgrcv.S
-endif
-ifeq ($(SYSVIPC_SUPPORT),true)
-  syscall_src += arch-mips/syscalls/msgsnd.S
+  syscall_src += arch-mips/syscalls/ipc.S
 endif
