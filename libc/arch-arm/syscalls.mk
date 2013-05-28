@@ -234,6 +234,7 @@ syscall_src += arch-arm/syscalls/epoll_ctl.S
 syscall_src += arch-arm/syscalls/epoll_wait.S
 syscall_src += arch-arm/syscalls/epoll_pwait.S
 syscall_src += arch-arm/syscalls/inotify_init.S
+syscall_src += arch-arm/syscalls/inotify_init1.S
 syscall_src += arch-arm/syscalls/inotify_add_watch.S
 syscall_src += arch-arm/syscalls/inotify_rm_watch.S
 syscall_src += arch-arm/syscalls/poll.S

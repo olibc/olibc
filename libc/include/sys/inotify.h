@@ -34,7 +34,17 @@
 
 __BEGIN_DECLS
 
+enum {
+  IN_CLOEXEC = 02000000,
+#define IN_CLOEXEC IN_CLOEXEC
+  IN_NONBLOCK = 04000
+#define IN_NONBLOCK IN_NONBLOCK
+};
+
+
+
 extern int inotify_init(void);
+extern int inotify_init1(int flags);
 extern int inotify_add_watch(int, const char *, __u32);
 extern int inotify_rm_watch(int, __u32);
 

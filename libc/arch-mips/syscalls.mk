@@ -239,6 +239,7 @@ syscall_src += arch-mips/syscalls/epoll_ctl.S
 syscall_src += arch-mips/syscalls/epoll_wait.S
 syscall_src += arch-mips/syscalls/epoll_pwait.S
 syscall_src += arch-mips/syscalls/inotify_init.S
+syscall_src += arch-mips/syscalls/inotify_init1.S
 syscall_src += arch-mips/syscalls/inotify_add_watch.S
 syscall_src += arch-mips/syscalls/inotify_rm_watch.S
 syscall_src += arch-mips/syscalls/poll.S
