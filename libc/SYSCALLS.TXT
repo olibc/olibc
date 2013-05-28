@@ -320,6 +320,9 @@ int     klogctl:syslog(int, char *, int)   1
 int     sysinfo(struct sysinfo *)  1
 int     personality(unsigned long)  1
 long    perf_event_open(struct perf_event_attr *attr_uptr, pid_t pid, int cpu, int group_fd, unsigned long flags) 1
+int     ioperm(unsigned long from, unsigned long num, int turn_on) -1,1,1
+int     iopl(int level) -1,1,1
+
 
 # futex
 int	futex(void *, int, int, void *, void *, int) 1
