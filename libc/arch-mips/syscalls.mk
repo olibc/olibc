@@ -36,6 +36,7 @@ syscall_src += arch-mips/syscalls/__getpriority.S
 syscall_src += arch-mips/syscalls/setpriority.S
 syscall_src += arch-mips/syscalls/setrlimit.S
 syscall_src += arch-mips/syscalls/getrlimit.S
+syscall_src += arch-mips/syscalls/ulimit.S
 syscall_src += arch-mips/syscalls/getrusage.S
 syscall_src += arch-mips/syscalls/setgroups.S
 syscall_src += arch-mips/syscalls/setpgid.S

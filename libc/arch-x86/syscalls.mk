@@ -36,6 +36,7 @@ syscall_src += arch-x86/syscalls/__getpriority.S
 syscall_src += arch-x86/syscalls/setpriority.S
 syscall_src += arch-x86/syscalls/setrlimit.S
 syscall_src += arch-x86/syscalls/getrlimit.S
+syscall_src += arch-x86/syscalls/ulimit.S
 syscall_src += arch-x86/syscalls/getrusage.S
 syscall_src += arch-x86/syscalls/setgroups.S
 syscall_src += arch-x86/syscalls/setpgid.S

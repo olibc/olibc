@@ -91,6 +91,7 @@ int     setpriority(int, int, int)   1
 int     setrlimit(int resource, const struct rlimit *rlp)  1
 int     getrlimit:ugetrlimit(int resource, struct rlimit *rlp)  1,1,-1
 int     getrlimit:getrlimit(int resource, struct rlimit *rlp)  -1,-1,1
+long    ulimit (int __cmd, ...) -1,1,1
 int     getrusage(int who, struct rusage*  r_usage)  1
 int     setgroups:setgroups32(int, const gid_t *)   1,1,-1
 int     setgroups:setgroups(int, const gid_t *)     -1,-1,1
