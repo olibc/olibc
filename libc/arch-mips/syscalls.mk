@@ -248,6 +248,7 @@ syscall_src += arch-mips/syscalls/inotify_init1.S
 syscall_src += arch-mips/syscalls/inotify_add_watch.S
 syscall_src += arch-mips/syscalls/inotify_rm_watch.S
 syscall_src += arch-mips/syscalls/poll.S
+syscall_src += arch-mips/syscalls/ppoll.S
 syscall_src += arch-mips/syscalls/eventfd.S
 syscall_src += arch-mips/syscalls/_flush_cache.S
 syscall_src += arch-mips/syscalls/syscall.S

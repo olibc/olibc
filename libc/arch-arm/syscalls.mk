@@ -242,6 +242,7 @@ syscall_src += arch-arm/syscalls/inotify_init1.S
 syscall_src += arch-arm/syscalls/inotify_add_watch.S
 syscall_src += arch-arm/syscalls/inotify_rm_watch.S
 syscall_src += arch-arm/syscalls/poll.S
+syscall_src += arch-arm/syscalls/ppoll.S
 syscall_src += arch-arm/syscalls/eventfd.S
 syscall_src += arch-arm/syscalls/__set_tls.S
 syscall_src += arch-arm/syscalls/cacheflush.S

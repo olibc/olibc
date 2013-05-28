@@ -37,6 +37,9 @@ typedef unsigned int  nfds_t;
 
 /* POSIX specifies "int" for the timeout, Linux seems to use long... */
 extern int poll(struct pollfd *, nfds_t, long);
+extern int ppoll(struct pollfd *fds, nfds_t nfds,
+                 const struct timespec *timeout_ts,
+                 const sigset_t *sigmask);
 
 __END_DECLS
 

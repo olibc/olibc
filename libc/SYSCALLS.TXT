@@ -345,6 +345,7 @@ int     inotify_add_watch(int, const char *, unsigned int)  1
 int     inotify_rm_watch(int, unsigned int)  1
 
 int     poll(struct pollfd *, unsigned int, long)  1
+int ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *) 1
 
 int     eventfd:eventfd2(unsigned int, int)  1
 
