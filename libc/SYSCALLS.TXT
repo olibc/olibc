@@ -136,6 +136,8 @@ int         mincore(void*  start, size_t  length, unsigned char*  vec)   1
 int         __ioctl:ioctl(int, int, void *)  1
 int         readv(int, const struct iovec *, int)   1
 int         writev(int, const struct iovec *, int)  1
+ssize_t     preadv(int, const struct iovec *, int, off_t) 1
+ssize_t     pwritev(int, const struct iovec *, int, off_t) 1
 int         __fcntl:fcntl(int, int, void*)  1
 int         flock(int, int)   1
 int         fchmod(int, mode_t)  1

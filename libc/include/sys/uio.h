@@ -37,6 +37,11 @@ __BEGIN_DECLS
 int readv(int, const struct iovec *, int);
 int writev(int, const struct iovec *, int);
 
+ssize_t preadv(int fd, const struct iovec *iov, int iovcnt,
+               off_t offset);
+ssize_t pwritev(int fd, const struct iovec *iov, int iovcnt,
+                off_t offset);
+
 __END_DECLS
 
 #endif /* _SYS_UIO_H_ */
