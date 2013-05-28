@@ -63,6 +63,7 @@ syscall_src += arch-arm/syscalls/munlock.S
 syscall_src += arch-arm/syscalls/mlockall.S
 syscall_src += arch-arm/syscalls/munlockall.S
 syscall_src += arch-arm/syscalls/mincore.S
+syscall_src += arch-arm/syscalls/remap_file_pages.S
 syscall_src += arch-arm/syscalls/__ioctl.S
 syscall_src += arch-arm/syscalls/readv.S
 syscall_src += arch-arm/syscalls/writev.S

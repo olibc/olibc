@@ -61,6 +61,9 @@ extern int    munlock(const void *addr, size_t len);
 
 extern int    mincore(void*  start, size_t  length, unsigned char*  vec);
 
+extern int    remap_file_pages(void *addr, size_t size, int prot,
+                               ssize_t pgoff, int flags);
+
 __END_DECLS
 
 #endif /* _SYS_MMAN_H_ */

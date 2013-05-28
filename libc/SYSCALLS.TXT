@@ -133,6 +133,7 @@ int         munlock(const void *addr, size_t len)   1
 int         mlockall(int flags)   1
 int         munlockall()   1
 int         mincore(void*  start, size_t  length, unsigned char*  vec)   1
+int         remap_file_pages(void *, size_t, int, ssize_t , int) 1
 int         __ioctl:ioctl(int, int, void *)  1
 int         readv(int, const struct iovec *, int)   1
 int         writev(int, const struct iovec *, int)  1
