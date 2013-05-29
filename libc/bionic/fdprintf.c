@@ -40,8 +40,8 @@ int vfdprintf(int fd, const char * __restrict format, __va_list ap)
 		goto end;
 
 	ret = write(fd, buf, ret);
-	free(buf);
 end:
+	free(buf);
 	return ret;
 }
 

@@ -510,8 +510,8 @@ android_getaddrinfo_proxy(
 		if (addrinfo_len < sizeof(struct addrinfo)) {
 			break;
 		}
-		struct addrinfo* ai = calloc(1, addrinfo_len +
-					     sizeof(struct sockaddr_storage));
+		ai = calloc(1, addrinfo_len +
+			    sizeof(struct sockaddr_storage));
 		if (ai == NULL) {
 			break;
 		}
