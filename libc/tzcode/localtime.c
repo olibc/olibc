@@ -2097,6 +2097,7 @@ static int __bionic_tzload_cached(const char* name, struct state* const sp, cons
 // Non-standard API: mktime(3) but with an explicit timezone parameter.
 time_t mktime_tz(struct tm* const tmp, const char* tz) {
   struct state st;
+  memset(&st, 0, sizeof(struct state));
   if (__bionic_tzload_cached(tz, &st, TRUE) != 0) {
     // TODO: not sure what's best here, but for now, we fall back to gmt.
     gmtload(&st);
@@ -2107,6 +2108,7 @@ time_t mktime_tz(struct tm* const tmp, const char* tz) {
 // Non-standard API: localtime(3) but with an explicit timezone parameter.
 void localtime_tz(const time_t* const timep, struct tm* tmp, const char* tz) {
   struct state st;
+  memset(&st, 0, sizeof(struct state));
   if (__bionic_tzload_cached(tz, &st, TRUE) != 0) {
     // TODO: not sure what's best here, but for now, we fall back to gmt.
     gmtload(&st);

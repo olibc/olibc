@@ -142,7 +142,7 @@ __LIBC_HIDDEN__ void log_backtrace(uintptr_t* frames, size_t frame_count) {
       symbol = info.dli_sname;
     }
 
-    uintptr_t rel_pc;
+    uintptr_t rel_pc = (uintptr_t)-1;
     const mapinfo_t* mi = (gMapInfo != NULL) ? mapinfo_find(gMapInfo, frames[i], &rel_pc) : NULL;
     const char* soname = (mi != NULL) ? mi->name : info.dli_fname;
     if (soname == NULL) {
