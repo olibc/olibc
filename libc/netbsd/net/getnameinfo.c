@@ -243,13 +243,14 @@ android_gethostbyaddr_proxy(char* nameBuf, size_t nameBufLen, const void *addr, 
 	}
 
 	name_len = ntohl(name_len);
-	if (name_len <= 0 || name_len >= nameBufLen) {
+	if (name_len <= 0 || name_len >= (nameBufLen-1)) {
 		goto exit;
 	}
 
 	if (fread(nameBuf, name_len, 1, proxy) != 1) {
 		goto exit;
 	}
+        nameBuf[name_len] = '\0';
 
 	result = name_len;
 
