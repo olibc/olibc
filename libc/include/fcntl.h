@@ -57,6 +57,9 @@ extern ssize_t splice (int fd_in, loff_t *off_in,
                        size_t len, unsigned int flags);
 extern ssize_t vmsplice(int fd, const struct iovec *iov,
                         unsigned long nr_segs, unsigned int flags);
+extern ssize_t tee (int fdin, int fdout, size_t len,
+                    unsigned int flags);
+
 
 #if defined(__BIONIC_FORTIFY)
 

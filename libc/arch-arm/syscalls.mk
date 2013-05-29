@@ -104,6 +104,7 @@ syscall_src += arch-arm/syscalls/splice.S
 syscall_src += arch-arm/syscalls/vmsplice.S
 syscall_src += arch-arm/syscalls/process_vm_readv.S
 syscall_src += arch-arm/syscalls/process_vm_writev.S
+syscall_src += arch-arm/syscalls/tee.S
 syscall_src += arch-arm/syscalls/link.S
 syscall_src += arch-arm/syscalls/linkat.S
 syscall_src += arch-arm/syscalls/unlink.S

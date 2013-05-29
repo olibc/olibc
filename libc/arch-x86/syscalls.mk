@@ -107,6 +107,7 @@ syscall_src += arch-x86/syscalls/flistxattr.S
 syscall_src += arch-x86/syscalls/fremovexattr.S
 syscall_src += arch-x86/syscalls/splice.S
 syscall_src += arch-x86/syscalls/vmsplice.S
+syscall_src += arch-x86/syscalls/tee.S
 syscall_src += arch-x86/syscalls/link.S
 syscall_src += arch-x86/syscalls/linkat.S
 syscall_src += arch-x86/syscalls/unlink.S

@@ -108,6 +108,7 @@ syscall_src += arch-mips/syscalls/splice.S
 syscall_src += arch-mips/syscalls/vmsplice.S
 syscall_src += arch-mips/syscalls/process_vm_readv.S
 syscall_src += arch-mips/syscalls/process_vm_writev.S
+syscall_src += arch-mips/syscalls/tee.S
 syscall_src += arch-mips/syscalls/link.S
 syscall_src += arch-mips/syscalls/linkat.S
 syscall_src += arch-mips/syscalls/unlink.S
