@@ -46,6 +46,9 @@ choice
 config TARGET_ARM_GENERIC
 	bool "Generic ARM"
 
+config TARGET_ARM_CORTEX_A8
+	bool "Cortex-A8"
+
 config TARGET_ARM_CORTEX_A9
 	bool "Cortex-A9"
 
