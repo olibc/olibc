@@ -59,6 +59,11 @@ extern ssize_t vmsplice(int fd, const struct iovec *iov,
                         unsigned long nr_segs, unsigned int flags);
 extern ssize_t tee (int fdin, int fdout, size_t len,
                     unsigned int flags);
+extern int name_to_handle_at (int dfd, const char *name,
+                              struct file_handle *handle, int *mnt_id,
+                              int flags);
+extern int open_by_handle_at (int mountdirfd, struct file_handle *handle,
+                              int flags);
 
 
 #if defined(__BIONIC_FORTIFY)
