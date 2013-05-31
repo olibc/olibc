@@ -251,6 +251,9 @@ int           utimensat(int, const char *, const struct timespec times[2], int) 
 int           timerfd_create(clockid_t, int)   1
 int           timerfd_settime(int, int, const struct itimerspec *, struct itimerspec *)   1
 int           timerfd_gettime(int, struct itimerspec *)   1
+int           stime(time_t *t) -1,1,1
+
+
 
 # signals
 int     sigaction(int, const struct sigaction *, struct sigaction *)  1

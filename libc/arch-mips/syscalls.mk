@@ -191,6 +191,7 @@ syscall_src += arch-mips/syscalls/utimensat.S
 syscall_src += arch-mips/syscalls/timerfd_create.S
 syscall_src += arch-mips/syscalls/timerfd_settime.S
 syscall_src += arch-mips/syscalls/timerfd_gettime.S
+syscall_src += arch-mips/syscalls/stime.S
 syscall_src += arch-mips/syscalls/sigaction.S
 syscall_src += arch-mips/syscalls/sigprocmask.S
 syscall_src += arch-mips/syscalls/__sigsuspend.S

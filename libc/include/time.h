@@ -119,6 +119,8 @@ extern time_t timegm(struct tm* tm);
 extern time_t time2posix(time_t ti);
 extern time_t posix2time(time_t ti);
 
+extern int stime(time_t *t);
+
 __END_DECLS
 
 #endif /* _TIME_H_ */
