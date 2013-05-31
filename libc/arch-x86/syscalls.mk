@@ -242,6 +242,7 @@ syscall_src += arch-x86/syscalls/perf_event_open.S
 syscall_src += arch-x86/syscalls/ioperm.S
 syscall_src += arch-x86/syscalls/iopl.S
 syscall_src += arch-x86/syscalls/vhangup.S
+syscall_src += arch-x86/syscalls/bdflush.S
 syscall_src += arch-x86/syscalls/futex.S
 syscall_src += arch-x86/syscalls/epoll_create.S
 syscall_src += arch-x86/syscalls/epoll_create1.S
