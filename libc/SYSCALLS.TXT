@@ -45,6 +45,7 @@ pid_t   wait4(pid_t pid, int *status, int options, struct rusage *rusage)   1
 #       to have __NR_clone properly defined.
 #
 pid_t   __sys_clone:clone (int, void*, int*, void*, int*) 1
+int     setns(int fd, int nstype) 1
 
 int     execve (const char*, char* const*, char* const*)  1
 
@@ -332,7 +333,7 @@ int     personality(unsigned long)  1
 long    perf_event_open(struct perf_event_attr *attr_uptr, pid_t pid, int cpu, int group_fd, unsigned long flags) 1
 int     ioperm(unsigned long from, unsigned long num, int turn_on) -1,1,1
 int     iopl(int level) -1,1,1
-
+int     vhangup(void) 1
 
 # futex
 int	futex(void *, int, int, void *, void *, int) 1

@@ -51,6 +51,8 @@ extern int sched_setparam(pid_t, const struct sched_param *);
 extern int sched_getparam(pid_t, struct sched_param *);
 extern int sched_rr_get_interval(pid_t pid, struct timespec *tp);
 
+extern int setns(int fd, int nstype);
+
 #define CLONE_VM             0x00000100
 #define CLONE_FS             0x00000200
 #define CLONE_FILES          0x00000400
