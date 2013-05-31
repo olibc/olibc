@@ -338,6 +338,9 @@ int     ioperm(unsigned long from, unsigned long num, int turn_on) -1,1,1
 int     iopl(int level) -1,1,1
 int     vhangup(void) 1
 int     bdflush (int, long int) 1
+int     profil(unsigned short *, size_t, size_t, unsigned int) -1,1,1
+
+
 
 # futex
 int	futex(void *, int, int, void *, void *, int) 1

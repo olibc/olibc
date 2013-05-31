@@ -196,6 +196,8 @@ extern pid_t tcgetpgrp(int fd);
 extern int   tcsetpgrp(int fd, pid_t _pid);
 
 extern int vhangup();
+extern int profil(unsigned short *buf, size_t bufsiz,
+                  size_t offset, unsigned int scale);
 
 #if 0 /* MISSING FROM BIONIC */
 extern int execvpe(const char *, char * const *, char * const *);

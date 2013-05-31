@@ -245,6 +245,7 @@ syscall_src += arch-mips/syscalls/ioperm.S
 syscall_src += arch-mips/syscalls/iopl.S
 syscall_src += arch-mips/syscalls/vhangup.S
 syscall_src += arch-mips/syscalls/bdflush.S
+syscall_src += arch-mips/syscalls/profil.S
 syscall_src += arch-mips/syscalls/futex.S
 syscall_src += arch-mips/syscalls/epoll_create.S
 syscall_src += arch-mips/syscalls/epoll_create1.S
