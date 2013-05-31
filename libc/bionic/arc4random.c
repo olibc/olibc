@@ -102,6 +102,7 @@ arc4_stir(void)
 {
 #if 1  /* BIONIC-BEGIN */
 	int     i, fd;
+	int     rnd_inited = 0;
 	union {
 		struct timeval tv;
 		u_int rnd[128 / sizeof(u_int)];
@@ -114,11 +115,12 @@ arc4_stir(void)
 
 	fd = open("/dev/urandom", O_RDONLY);
 	if (fd != -1) {
-		read(fd, rdat.rnd, sizeof(rdat.rnd));
+		if (read(fd, rdat.rnd, sizeof(rdat.rnd)) == sizeof(rdat.rnd)) {
+			rnd_inited = 1;
+		}
 		close(fd);
 	}
-        else
-        {
+	if (!rnd_inited) {
 	    /* fd < 0 ?  Ah, what the heck. We'll just take
 	     * whatever was on the stack. just add a little more
              * time-based randomness though
