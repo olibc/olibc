@@ -56,3 +56,7 @@ int fdprintf(int fd, const char * __restrict format, ...)
 
 	return ret;
 }
+
+/* For glibc compatible */
+__strong_alias(dprintf, fdprintf);
+__strong_alias(vdprintf, vfdprintf);
