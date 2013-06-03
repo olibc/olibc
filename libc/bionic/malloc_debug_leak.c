@@ -71,7 +71,6 @@ extern HashTable gHashTable;
 #define MALLOC_ALIGNMENT    ((size_t)8U)
 #endif
 #define GUARD               0x48151642
-#define DEBUG               0
 
 // =============================================================================
 // Structures

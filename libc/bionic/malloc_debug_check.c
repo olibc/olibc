@@ -329,8 +329,6 @@ static inline void add_to_backlog(hdr_t *hdr) {
 }
 
 void* chk_malloc(size_t size) {
-//  log_message("%s: %s\n", __FILE__, __FUNCTION__);
-
     hdr_t* hdr = (hdr_t*) dlmalloc(sizeof(hdr_t) + size + sizeof(ftr_t));
     if (hdr) {
         hdr->bt_depth = get_backtrace(hdr->bt, MAX_BACKTRACE_DEPTH);
@@ -340,15 +338,12 @@ void* chk_malloc(size_t size) {
     return NULL;
 }
 
-void* chk_memalign(size_t unused, size_t bytes) {
-//  log_message("%s: %s\n", __FILE__, __FUNCTION__);
+void* chk_memalign(size_t __unused unused, size_t bytes) {
     // XXX: it's better to use malloc, than being wrong
     return chk_malloc(bytes);
 }
 
 void chk_free(void *ptr) {
-//  log_message("%s: %s\n", __FILE__, __FUNCTION__);
-
     if (!ptr) /* ignore free(NULL) */
         return;
 
@@ -382,8 +377,6 @@ void chk_free(void *ptr) {
 }
 
 void *chk_realloc(void *ptr, size_t size) {
-//  log_message("%s: %s\n", __FILE__, __FUNCTION__);
-
     if (!ptr) {
         return chk_malloc(size);
     }
@@ -440,7 +433,6 @@ void *chk_realloc(void *ptr, size_t size) {
 }
 
 void *chk_calloc(int nmemb, size_t size) {
-//  log_message("%s: %s\n", __FILE__, __FUNCTION__);
     size_t total_size = nmemb * size;
     hdr_t* hdr = (hdr_t*) dlcalloc(1, sizeof(hdr_t) + total_size + sizeof(ftr_t));
     if (hdr) {
