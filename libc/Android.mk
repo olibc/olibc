@@ -201,6 +201,12 @@ libc_common_src_files += \
 
 endif
 
+ifeq ($(STRCHRNUL_IMPL), true)
+libc_common_src_files += \
+	string/strchrnul.c
+
+endif
+
 ifneq ($(TARGET_ARCH),arm)
 # ARM have arch specific versions for memchr
 libc_common_src_files += \

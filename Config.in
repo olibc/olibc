@@ -159,13 +159,18 @@ menu "String and Stdio Support"
 config STRING_STDIO_GLIBC_FULL_COMPATIBLE
 	bool "Enable all glibc-compatibility stdio/string functions"
 	select STPCPY_IMPL
+	select STRCHRNUL_IMPL
 
 menu "glibc extensions"
 config STPCPY_IMPL
 	bool "stpcpy and stpncpy function"
 	default n
-endmenu
 
+config STRCHRNUL_IMPL
+	bool "strchrnul function"
+	default y
+
+endmenu
 endmenu
 
 menu "Extensions"

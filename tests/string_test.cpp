@@ -249,6 +249,48 @@ TEST(string, strchr) {
   }
 }
 
+#ifdef STRCHRNUL_IMPL
+TEST(string, strchrnul_with_0) {
+  char buf[10];
+  const char* s = "01234";
+  memcpy(buf, s, strlen(s) + 1);
+  EXPECT_TRUE(strchrnul(buf, '\0') == (buf + strlen(buf)));
+}
+
+TEST(string, strchrnul) {
+  int seek_char = random() & 255;
+
+  StringTestState state(SMALL);
+  for (size_t i = 1; i < state.n; i++) {
+    for (size_t j = 0; j < POS_ITER; j++) {
+      state.NewIteration();
+
+      if (~seek_char > 0) {
+        memset(state.ptr1, ~seek_char, state.len[i]);
+      } else {
+        memset(state.ptr1, '\1', state.len[i]);
+      }
+      state.ptr1[state.len[i] - 1] = '\0';
+
+      int pos = random() % state.MAX_LEN;
+      char* expected;
+      if (pos >= state.len[i] - 1) {
+        if (seek_char == 0) {
+          expected = state.ptr1 + state.len[i] - 1;
+        } else {
+          expected = state.ptr1 + strlen(state.ptr1);
+        }
+      } else {
+        state.ptr1[pos] = seek_char;
+        expected = state.ptr1 + pos;
+      }
+
+      ASSERT_TRUE(strchrnul(state.ptr1, seek_char) == expected);
+    }
+  }
+}
+#endif
+
 TEST(string, strcmp) {
   StringTestState state(SMALL);
   for (size_t i = 1; i < state.n; i++) {
