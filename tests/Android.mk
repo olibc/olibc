@@ -81,6 +81,10 @@ test_src_files = \
     time_test.cpp \
     unistd_test.cpp \
 
+ifeq ($(STPCPY_IMPL),true)
+  test_c_flags += -DSTPCPY_IMPL
+endif
+
 ifeq ($(SYSVIPC_SUPPORT),true)
   test_src_files += sysvipc_test.cpp
 endif

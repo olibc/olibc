@@ -194,6 +194,13 @@ libc_common_src_files := \
 	netbsd/nameser/ns_print.c \
 	netbsd/nameser/ns_samedomain.c \
 
+ifeq ($(STPCPY_IMPL),true)
+libc_common_src_files += \
+	string/stpcpy.c \
+	string/stpncpy.c \
+
+endif
+
 ifneq ($(TARGET_ARCH),arm)
 # ARM have arch specific versions for memchr
 libc_common_src_files += \

@@ -51,6 +51,7 @@ extern char*  strrchr(const char *, int) __purefunc;
 extern size_t strlen(const char *) __purefunc;
 extern int    strcmp(const char *, const char *) __purefunc;
 extern char*  strcpy(char* __restrict, const char* __restrict);
+extern char*  stpcpy(char* __restrict, const char* __restrict);
 extern char*  strcat(char* __restrict, const char* __restrict);
 
 extern int    strcasecmp(const char *, const char *) __purefunc;
@@ -70,6 +71,7 @@ extern char*  strncat(char* __restrict, const char* __restrict, size_t);
 extern char*  strndup(const char *, size_t);
 extern int    strncmp(const char *, const char *, size_t) __purefunc;
 extern char*  strncpy(char* __restrict, const char* __restrict, size_t);
+extern char*  stpncpy(char* __restrict, const char* __restrict, size_t);
 
 extern size_t strlcat(char* __restrict, const char* __restrict, size_t);
 extern size_t strlcpy(char* __restrict, const char* __restrict, size_t);

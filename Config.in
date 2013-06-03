@@ -154,6 +154,20 @@ config SYSVIPC_SUPPORT
 
 endmenu
 
+menu "String and Stdio Support"
+
+config STRING_STDIO_GLIBC_FULL_COMPATIBLE
+	bool "Enable all glibc-compatibility stdio/string functions"
+	select STPCPY_IMPL
+
+menu "glibc extensions"
+config STPCPY_IMPL
+	bool "stpcpy and stpncpy function"
+	default n
+endmenu
+
+endmenu
+
 menu "Extensions"
 
 config XATTR_SUPPORT

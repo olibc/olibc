@@ -312,6 +312,33 @@ TEST(string, strcpy) {
   }
 }
 
+#ifdef STPCPY_IMPL
+TEST(string, stpcpy) {
+  StringTestState state(SMALL);
+  for (size_t j = 0; j < POS_ITER; j++) {
+    state.NewIteration();
+
+    size_t pos = random() % state.MAX_LEN;
+
+    memset(state.ptr1, '\2', pos);
+    state.ptr1[pos] = '\0';
+    state.ptr1[state.MAX_LEN - 1] = '\0';
+
+    memcpy(state.ptr, state.ptr1, state.MAX_LEN);
+
+    memset(state.ptr2, '\1', state.MAX_LEN);
+    state.ptr2[state.MAX_LEN - 1] = '\0';
+
+    memset(state.ptr + state.MAX_LEN, '\1', state.MAX_LEN);
+    memcpy(state.ptr + state.MAX_LEN, state.ptr1, pos + 1);
+    state.ptr[2 * state.MAX_LEN - 1] = '\0';
+
+    ASSERT_TRUE(stpcpy(state.ptr2, state.ptr1) == (state.ptr2 + strlen(state.ptr1)));
+    ASSERT_FALSE((memcmp(state.ptr1, state.ptr, state.MAX_LEN)) != 0 ||
+                 (memcmp(state.ptr2, state.ptr + state.MAX_LEN, state.MAX_LEN) != 0));
+  }
+}
+#endif
 
 #if __BIONIC__
 TEST(string, strlcat) {
@@ -466,6 +493,36 @@ TEST(string, strncpy) {
                  memcmp(state.ptr2, state.ptr + state.MAX_LEN, state.MAX_LEN) != 0);
   }
 }
+
+#ifdef STPCPY_IMPL
+TEST(string, stpncpy) {
+  StringTestState state(SMALL);
+  for (size_t j = 0; j < ITER; j++) {
+    state.NewIteration();
+
+    memset(state.ptr1, random() & 255, state.MAX_LEN);
+    state.ptr1[random () % state.MAX_LEN] = '\0';
+    memcpy(state.ptr, state.ptr1, state.MAX_LEN);
+
+    memset(state.ptr2, '\1', state.MAX_LEN);
+
+    size_t pos;
+    if (memchr(state.ptr1, 0, state.MAX_LEN)) {
+      pos = strlen(state.ptr1);
+    } else {
+      pos = state.MAX_LEN - 1;
+    }
+
+    memset(state.ptr + state.MAX_LEN, '\0', state.MAX_LEN);
+    memcpy(state.ptr + state.MAX_LEN, state.ptr1, pos + 1);
+
+    char *ret = stpncpy(state.ptr2, state.ptr1, state.MAX_LEN);
+    ASSERT_TRUE(ret == (state.ptr2 + strlen(state.ptr2)));
+    ASSERT_FALSE(memcmp(state.ptr1, state.ptr, state.MAX_LEN) != 0 ||
+                 memcmp(state.ptr2, state.ptr + state.MAX_LEN, state.MAX_LEN) != 0);
+  }
+}
+#endif
 
 TEST(string, strrchr) {
   int seek_char = random() & 255;
