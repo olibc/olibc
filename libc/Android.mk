@@ -884,6 +884,27 @@ include $(BUILD_STATIC_LIBRARY)
 
 
 # ========================================================
+# libdlmalloc.a
+# ========================================================
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := \
+	bionic/dlmalloc.c \
+
+LOCAL_CFLAGS := $(libc_common_cflags) \
+                -std=gnu99 \
+                -fno-strict-aliasing
+LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_MODULE := libdlmalloc
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_SYSTEM_SHARED_LIBRARIES :=
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+# ========================================================
+
+# ========================================================
 # libc.a
 # ========================================================
 include $(CLEAR_VARS)
@@ -892,7 +913,6 @@ LOCAL_SRC_FILES := \
 	$(libc_arch_static_src_files) \
 	$(libc_static_common_src_files) \
 	$(malloc_debug_commom_file) \
-	bionic/dlmalloc.c \
 	bionic/libc_init_static.c
 
 LOCAL_CFLAGS := $(libc_common_cflags) \
@@ -901,7 +921,7 @@ LOCAL_CFLAGS := $(libc_common_cflags) \
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_MODULE := libc
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
-LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
+LOCAL_WHOLE_STATIC_LIBRARIES := libc_common libdlmalloc
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
 
 include $(BUILD_STATIC_LIBRARY)
@@ -925,7 +945,6 @@ LOCAL_SRC_FILES := \
 	$(libc_arch_dynamic_src_files) \
 	$(libc_static_common_src_files) \
 	$(malloc_debug_commom_file) \
-	bionic/dlmalloc.c \
 	bionic/pthread_debug.c \
 	bionic/libc_init_dynamic.c
 
@@ -953,7 +972,7 @@ LOCAL_REQUIRED_MODULES := tzdata
 # you wanted!
 
 LOCAL_SHARED_LIBRARIES := libdl
-LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
+LOCAL_WHOLE_STATIC_LIBRARIES := libc_common libdlmalloc
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
 
 include $(BUILD_SHARED_LIBRARY)
@@ -972,7 +991,6 @@ LOCAL_SRC_FILES := \
 	$(libc_arch_dynamic_src_files) \
 	$(libc_static_common_src_files) \
 	$(malloc_debug_commom_file) \
-	bionic/dlmalloc.c \
 	bionic/pthread_debug.c \
 	bionic/libc_init_dynamic.c
 
@@ -992,7 +1010,7 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_REQUIRED_MODULES := tzdata
 
 LOCAL_SHARED_LIBRARIES :=
-LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
+LOCAL_WHOLE_STATIC_LIBRARIES := libc_common libdlmalloc
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
 
 include $(BUILD_STATIC_LIBRARY)
@@ -1033,7 +1051,7 @@ else
   LOCAL_SHARED_LIBRARIES := libc libdl
   LOCAL_SYSTEM_SHARED_LIBRARIES :=
 endif
-LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
+LOCAL_WHOLE_STATIC_LIBRARIES := libc_common libdlmalloc
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 
 # Don't install on release build
@@ -1067,7 +1085,7 @@ else
   LOCAL_SYSTEM_SHARED_LIBRARIES :=
 endif
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-LOCAL_WHOLE_STATIC_LIBRARIES := libc_common
+LOCAL_WHOLE_STATIC_LIBRARIES := libc_common libdlmalloc
 
 # Don't install on release build
 LOCAL_MODULE_TAGS := eng debug
