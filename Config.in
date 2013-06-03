@@ -257,6 +257,10 @@ config TARGET_TOOLS_PREFIX
 	  'arm-none-eabi-gcc' here
 endif
 
+config OLIBC_GCC_WRAPPER
+	bool "Generate a gcc wrapper toolchain"
+	default n
+
 config DEBUG_BIONIC_LIBC
 	bool "Enable olibc debugging"
 	default n
