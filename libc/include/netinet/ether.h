@@ -25,4 +25,5 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#include <netinet/if_ether.h>
 #include <net/if_ether.h>
