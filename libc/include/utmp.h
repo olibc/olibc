@@ -40,7 +40,30 @@
 #define	UT_LINESIZE	8
 #define	UT_HOSTSIZE	16
 
-#define USER_PROCESS 7
+enum {
+  EMPTY = 0,
+#define EMPTY           EMPTY
+  RUN_LVL = 1,
+#define RUN_LVL         RUN_LVL
+  BOOT_TIME = 2,
+#define BOOT_TIME       BOOT_TIME
+  NEW_TIME = 3,
+#define NEW_TIME        NEW_TIME
+  OLD_TIME = 4,
+#define OLD_TIME        OLD_TIME
+  INIT_PROCESS = 5,
+#define INIT_PROCESS    INIT_PROCESS
+  LOGIN_PROCESS = 6,
+#define LOGIN_PROCESS   LOGIN_PROCESS
+  USER_PROCESS = 7,
+#define USER_PROCESS    USER_PROCESS
+  DEAD_PROCESS = 8,
+#define DEAD_PROCESS    DEAD_PROCESS
+  ACCOUNTING = 9,
+#define ACCOUNTING      ACCOUNTING
+  UT_UNKNOWN = EMPTY
+#define UT_UNKNOWN      UT_UNKNOWN
+};
 
 struct lastlog
 {
