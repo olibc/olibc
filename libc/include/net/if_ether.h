@@ -35,6 +35,7 @@
 #define _NET_IF_ETHER_H_
 
 #include <sys/types.h>
+#include <net/if_arp.h>
 
 #ifdef _KERNEL
 #ifdef _KERNEL_OPT
