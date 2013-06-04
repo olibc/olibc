@@ -39,6 +39,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <resolv.h>
 #include "resolv_static.h"
 
 struct servent*  getservent_r(res_static rs);
