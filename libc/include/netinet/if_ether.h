@@ -32,4 +32,24 @@
 #ifndef ETHER_ADDR_LEN
 #define ETHER_ADDR_LEN ETH_ALEN
 #include <net/ethertypes.h>
+
+__BEGIN_DECLS
+
+struct ether_arp {
+  struct arphdr ea_hdr;
+  u_int8_t arp_sha[ETH_ALEN];
+  u_int8_t arp_spa[4];
+  u_int8_t arp_tha[ETH_ALEN];
+  u_int8_t arp_tpa[4];
+};
+
+#define arp_hrd ea_hdr.ar_hrd
+#define arp_pro ea_hdr.ar_pro
+#define arp_hln ea_hdr.ar_hln
+#define arp_pln ea_hdr.ar_pln
+#define arp_op  ea_hdr.ar_op
+
+
+__END_DECLS
+
 #endif
