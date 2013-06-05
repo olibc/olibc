@@ -30,6 +30,7 @@
 
 #include <sys/cdefs.h>
 #include <linux/poll.h>
+#include <signal.h>
 
 __BEGIN_DECLS
 
