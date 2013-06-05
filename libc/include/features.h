@@ -55,4 +55,6 @@
 #define  __USE_POSIX2  1
 #define  __USE_XPG     1
 
+#define __GNU_LIBRARY__ 1
+
 #endif /* _FEATURES_H_ */
