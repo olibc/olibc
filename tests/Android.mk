@@ -89,6 +89,9 @@ ifeq ($(STRCHRNUL_IMPL),true)
   test_c_flags += -DSTRCHRNUL_IMPL
 endif
 
+ifeq ($(MEMPCPY_IMPL),true)
+  test_c_flags += -DMEMPCPY_IMPL
+endif
 
 ifeq ($(SYSVIPC_SUPPORT),true)
   test_src_files += sysvipc_test.cpp

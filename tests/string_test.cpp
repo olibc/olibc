@@ -688,6 +688,30 @@ TEST(string, memcpy) {
   }
 }
 
+#ifdef MEMPCPY_IMPL
+TEST(string, mempcpy) {
+  StringTestState state(LARGE);
+  int rand = random() & 255;
+  for (size_t i = 0; i < state.n - 1; i++) {
+    for (size_t j = 0; j < POS_ITER; j++) {
+      state.NewIteration();
+
+      size_t pos = random() % (state.MAX_LEN - state.len[i]);
+
+      memset(state.ptr1, rand, state.len[i]);
+      memset(state.ptr1 + state.len[i], ~rand, state.MAX_LEN - state.len[i]);
+
+      memset(state.ptr2, rand, state.len[i]);
+      memset(state.ptr2 + state.len[i], ~rand, state.MAX_LEN - state.len[i]);
+      memset(state.ptr2 + pos, '\0', state.len[i]);
+
+      ASSERT_FALSE(mempcpy(state.ptr2 + pos, state.ptr1 + pos, state.len[i]) != state.ptr2 + pos + state.len[i]);
+      ASSERT_EQ(0, memcmp(state.ptr1, state.ptr2, state.MAX_LEN));
+    }
+  }
+}
+#endif
+
 TEST(string, memset) {
   StringTestState state(LARGE);
   char ch = random () & 255;

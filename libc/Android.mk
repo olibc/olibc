@@ -201,6 +201,12 @@ libc_common_src_files += \
 
 endif
 
+ifeq ($(MEMPCPY_IMPL),true)
+libc_common_src_files += \
+	bionic/mempcpy.c \
+
+endif
+
 ifeq ($(STRCHRNUL_IMPL), true)
 libc_common_src_files += \
 	string/strchrnul.c

@@ -39,6 +39,7 @@ extern void*  memchr(const void *, int, size_t) __purefunc;
 extern void*  memrchr(const void *, int, size_t) __purefunc;
 extern int    memcmp(const void *, const void *, size_t) __purefunc;
 extern void*  memcpy(void* __restrict, const void* __restrict, size_t);
+extern void*  mempcpy (void *__restrict, const void *__restrict, size_t);
 extern void*  memmove(void *, const void *, size_t);
 extern void*  memset(void *, int, size_t);
 extern void*  memmem(const void *, size_t, const void *, size_t) __purefunc;

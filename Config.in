@@ -160,6 +160,7 @@ config STRING_STDIO_GLIBC_FULL_COMPATIBLE
 	bool "Enable all glibc-compatibility stdio/string functions"
 	select STPCPY_IMPL
 	select STRCHRNUL_IMPL
+	select MEMPCPY_IMPL
 
 menu "glibc extensions"
 config STPCPY_IMPL
@@ -169,6 +170,10 @@ config STPCPY_IMPL
 config STRCHRNUL_IMPL
 	bool "strchrnul function"
 	default y
+
+config MEMPCPY_IMPL
+	bool "mempcpy function"
+	default n
 
 endmenu
 endmenu
