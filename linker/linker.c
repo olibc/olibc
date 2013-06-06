@@ -506,17 +506,14 @@ static Elf32_Sym *soinfo_gnu_lookup(soinfo *si, unsigned gnu_hash, const char *n
 }
 
 static Elf32_Sym* soinfo_elf_lookup(soinfo* si, unsigned hash, const char* name) {
-    Elf32_Sym* s;
     Elf32_Sym* symtab = si->symtab;
     const char* strtab = si->strtab;
     unsigned n;
-
     TRACE_TYPE(LOOKUP, "SEARCH %s in %s@0x%08x %08x %d",
                name, si->name, si->base, hash, hash % si->nbucket);
-    n = hash % si->nbucket;
 
     for (n = si->bucket[hash % si->nbucket]; n != 0; n = si->chain[n]) {
-        s = symtab + n;
+        Elf32_Sym* s = symtab + n;
         if (strcmp(strtab + s->st_name, name)) continue;
 
             /* only concern ourselves with global and weak symbol definitions */

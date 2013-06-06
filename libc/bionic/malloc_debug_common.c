@@ -196,7 +196,7 @@ struct mallinfo mallinfo() {
     return dlmallinfo();
 }
 
-size_t malloc_usable_size(void* mem) {
+size_t malloc_usable_size(const void* mem) {
     return dlmalloc_usable_size(mem);
 }
 

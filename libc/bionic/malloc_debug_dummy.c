@@ -39,7 +39,7 @@ void* memalign(size_t alignment, size_t bytes) {
     return dlmemalign(alignment, bytes);
 }
 
-size_t malloc_usable_size(void* mem) {
+size_t malloc_usable_size(const void* mem) {
     return dlmalloc_usable_size(mem);
 }
 
