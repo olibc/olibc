@@ -132,22 +132,20 @@ extern char *   tzname[];
 #define FORCE_LOWER_CASE 0x100
 
 size_t
-strftime(s, maxsize, format, t)
-char * const        s;
-const size_t        maxsize;
-const char * const  format;
-const struct tm * const t;
+strftime(char * const        s,
+         const size_t        maxsize,
+         const char * const  format,
+         const struct tm * const t)
 {
     return strftime_tz(s, maxsize, format, t, Locale);
 }
 
 size_t
-strftime_tz(s, maxsize, format, t, locale)
-char * const        s;
-const size_t        maxsize;
-const char * const  format;
-const struct tm * const t;
-const struct strftime_locale *locale;
+strftime_tz(char * const        s,
+            const size_t        maxsize,
+            const char * const  format,
+            const struct tm * const t,
+            const struct strftime_locale *locale)
 {
     char *  p;
     int warn;
@@ -194,13 +192,12 @@ static char *getformat(int modifier, char *normal, char *underscore,
 }
 
 static char *
-_fmt(format, t, pt, ptlim, warnp, locale)
-const char *        format;
-const struct tm * const t;
-char *          pt;
-const char * const  ptlim;
-int *           warnp;
-const struct strftime_locale* locale;
+_fmt(const char *        format,
+     const struct tm * const t,
+     char *          pt,
+     const char * const  ptlim,
+     int *           warnp,
+     const struct strftime_locale* locale)
 {
     for ( ; *format; ++format) {
         if (*format == '%') {
@@ -668,11 +665,10 @@ label:
 }
 
 static char *
-_conv(n, format, pt, ptlim)
-const int       n;
-const char * const  format;
-char * const        pt;
-const char * const  ptlim;
+_conv(const int       n,
+      const char * const  format,
+      char * const        pt,
+      const char * const  ptlim)
 {
     char    buf[INT_STRLEN_MAXIMUM(int) + 1];
 
@@ -681,11 +677,10 @@ const char * const  ptlim;
 }
 
 static char *
-_add(str, pt, ptlim, modifier)
-const char *        str;
-char *          pt;
-const char * const  ptlim;
-int                     modifier;
+_add(const char *        str,
+     char *          pt,
+     const char * const  ptlim,
+     int                     modifier)
 {
         int c;
 
@@ -733,14 +728,13 @@ int                     modifier;
 */
 
 static char *
-_yconv(a, b, convert_top, convert_yy, pt, ptlim, modifier)
-const int       a;
-const int       b;
-const int       convert_top;
-const int       convert_yy;
-char *          pt;
-const char * const  ptlim;
-int                     modifier;
+_yconv(const int       a,
+       const int       b,
+       const int       convert_top,
+       const int       convert_yy,
+       char *          pt,
+       const char * const  ptlim,
+       int                     modifier)
 {
     register int    lead;
     register int    trail;

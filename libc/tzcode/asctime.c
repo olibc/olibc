@@ -75,9 +75,7 @@ static char buf_asctime[MAX_ASCTIME_BUF_SIZE];
 */
 
 char *
-asctime_r(timeptr, buf)
-register const struct tm *  timeptr;
-char *              buf;
+asctime_r(const struct tm *timeptr, char *buf)
 {
     static const char   wday_name[][3] = {
         "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
@@ -91,6 +89,10 @@ char *              buf;
     char            year[INT_STRLEN_MAXIMUM(int) + 2];
     char            result[MAX_ASCTIME_BUF_SIZE];
 
+    if (timeptr == NULL) {
+        errno = EINVAL;
+        return strcpy(buf, "??? ??? ?? ??:??:?? ????\n");
+    }
     if (timeptr->tm_wday < 0 || timeptr->tm_wday >= DAYSPERWEEK)
         wn = "???";
     else    wn = wday_name[timeptr->tm_wday];
@@ -104,18 +106,15 @@ char *              buf;
     ** (e.g., timeptr->tm_mday) when processing "%Y".
     */
     (void) strftime(year, sizeof year, "%Y", timeptr);
-    /*
-    ** We avoid using snprintf since it's not available on all systems.
-    */
-    (void) sprintf(result,
-        ((strlen(year) <= 4) ? ASCTIME_FMT : ASCTIME_FMT_B),
-        wn, mn,
-        timeptr->tm_mday, timeptr->tm_hour,
-        timeptr->tm_min, timeptr->tm_sec,
-        year);
+    (void) snprintf(result,
+             sizeof(result),
+             ((strlen(year) <= 4) ? ASCTIME_FMT : ASCTIME_FMT_B),
+             wn, mn,
+             timeptr->tm_mday, timeptr->tm_hour,
+             timeptr->tm_min, timeptr->tm_sec,
+             year);
     if (strlen(result) < STD_ASCTIME_BUF_SIZE || buf == buf_asctime) {
-        (void) strcpy(buf, result);
-        return buf;
+        return strcpy(buf, result);
     } else {
 #ifdef EOVERFLOW
         errno = EOVERFLOW;
@@ -131,8 +130,7 @@ char *              buf;
 */
 
 char *
-asctime(timeptr)
-register const struct tm *  timeptr;
+asctime(const struct tm *timeptr)
 {
     return asctime_r(timeptr, buf_asctime);
 }

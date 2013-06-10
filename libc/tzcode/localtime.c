@@ -291,8 +291,7 @@ time_t          altzone = 0;
 #endif /* defined ALTZONE */
 
 static long
-detzcode(codep)
-const char * const  codep;
+detzcode(const char *const codep)
 {
     register long   result;
     register int    i;
@@ -304,13 +303,12 @@ const char * const  codep;
 }
 
 static time_t
-detzcode64(codep)
-const char * const  codep;
+detzcode64(const char *const codep)
 {
     register time_t result;
     register int    i;
 
-    result = (codep[0] & 0x80) ?  (~(int_fast64_t) 0) : 0;
+    result = (time_t)((codep[0] & 0x80) ? (~(int_fast64_t) 0) : 0);
     for (i = 0; i < 8; ++i)
         result = result * 256 + (codep[i] & 0xff);
     return result;
@@ -665,8 +663,7 @@ static const int    year_lengths[2] = {
 */
 
 static const char *
-getzname(strp)
-register const char *   strp;
+getzname(const char *strp)
 {
     register char   c;
 
@@ -686,7 +683,7 @@ register const char *   strp;
 */
 
 static const char *
-getqzname(register const char *strp, const int delim)
+getqzname(const char *strp, const int delim)
 {
     register int    c;
 
@@ -703,26 +700,28 @@ getqzname(register const char *strp, const int delim)
 */
 
 static const char *
-getnum(strp, nump, min, max)
-register const char *   strp;
-int * const     nump;
-const int       min;
-const int       max;
+getnum(const char *strp, int *const nump, const int min, const int max)
 {
     register char   c;
     register int    num;
 
-    if (strp == NULL || !is_digit(c = *strp))
+    if (strp == NULL || !is_digit(c = *strp)) {
+        errno = EINVAL;
         return NULL;
+    }
     num = 0;
     do {
         num = num * 10 + (c - '0');
-        if (num > max)
+        if (num > max) {
+            errno = EOVERFLOW;
             return NULL;    /* illegal value */
+        }
         c = *++strp;
     } while (is_digit(c));
-    if (num < min)
+    if (num < min) {
+        errno = EINVAL;
         return NULL;        /* illegal value */
+    }
     *nump = num;
     return strp;
 }
@@ -736,9 +735,7 @@ const int       max;
 */
 
 static const char *
-getsecs(strp, secsp)
-register const char *   strp;
-long * const        secsp;
+getsecs(const char *strp, long *const secsp)
 {
     int num;
 
@@ -778,9 +775,7 @@ long * const        secsp;
 */
 
 static const char *
-getoffset(strp, offsetp)
-register const char *   strp;
-long * const        offsetp;
+getoffset(const char *strp, long *const offsetp)
 {
     register int    neg = 0;
 
@@ -805,9 +800,7 @@ long * const        offsetp;
 */
 
 static const char *
-getrule(strp, rulep)
-const char *            strp;
-register struct rule * const    rulep;
+getrule(const char *strp, struct rule *const rulep)
 {
     if (*strp == 'J') {
         /*
@@ -859,11 +852,8 @@ register struct rule * const    rulep;
 */
 
 static time_t
-transtime(janfirst, year, rulep, offset)
-const time_t                janfirst;
-const int               year;
-register const struct rule * const  rulep;
-const long              offset;
+transtime(const time_t janfirst, const int year, const struct rule *const rulep,
+    const long offset)
 {
     register int    leapyear;
     register time_t value;
@@ -882,7 +872,7 @@ const long              offset;
         ** add SECSPERDAY times the day number-1 to the time of
         ** January 1, midnight, to get the day.
         */
-        value = janfirst + (rulep->r_day - 1) * SECSPERDAY;
+        value = (time_t)(janfirst + (rulep->r_day - 1) * SECSPERDAY);
         if (leapyear && rulep->r_day >= 60)
             value += SECSPERDAY;
         break;
@@ -893,7 +883,7 @@ const long              offset;
         ** Just add SECSPERDAY times the day number to the time of
         ** January 1, midnight, to get the day.
         */
-        value = janfirst + rulep->r_day * SECSPERDAY;
+        value = (time_t)(janfirst + rulep->r_day * SECSPERDAY);
         break;
 
     case MONTH_NTH_DAY_OF_WEEK:
@@ -902,7 +892,7 @@ const long              offset;
         */
         value = janfirst;
         for (i = 0; i < rulep->r_mon - 1; ++i)
-            value += mon_lengths[leapyear][i] * SECSPERDAY;
+            value += (time_t)(mon_lengths[leapyear][i] * SECSPERDAY);
 
         /*
         ** Use Zeller's Congruence to get day-of-week of first day of
@@ -935,7 +925,7 @@ const long              offset;
         /*
         ** "d" is the day-of-month (zero-origin) of the day we want.
         */
-        value += d * SECSPERDAY;
+        value += (time_t)(d * SECSPERDAY);
         break;
     }
 
@@ -945,7 +935,7 @@ const long              offset;
     ** time on that day, add the transition time and the current offset
     ** from UTC.
     */
-    return value + rulep->r_time + offset;
+    return (time_t)(value + rulep->r_time + offset);
 }
 
 /*
@@ -954,10 +944,9 @@ const long              offset;
 */
 
 static int
-tzparse(name, sp, lastditch)
-const char *            name;
-register struct state * const   sp;
-const int           lastditch;
+tzparse(const char *            name,
+        struct state * const   sp,
+        const int           lastditch)
 {
     const char *            stdname;
     const char *            dstname;
@@ -1000,7 +989,6 @@ const int           lastditch;
     load_result = tzload(TZDEFRULES, sp, FALSE);
     if (load_result != 0)
         sp->leapcnt = 0;        /* so, we're off a little */
-    sp->timecnt = 0;
     if (*name != '\0') {
         if (*name == '<') {
             dstname = ++name;
@@ -1042,15 +1030,17 @@ const int           lastditch;
             /*
             ** Two transitions per year, from EPOCH_YEAR forward.
             */
+            memset(sp->ttis, 0, sizeof(sp->ttis));
             sp->ttis[0].tt_gmtoff = -dstoffset;
             sp->ttis[0].tt_isdst = 1;
-            sp->ttis[0].tt_abbrind = stdlen + 1;
+            sp->ttis[0].tt_abbrind = (int)(stdlen + 1);
             sp->ttis[1].tt_gmtoff = -stdoffset;
             sp->ttis[1].tt_isdst = 0;
             sp->ttis[1].tt_abbrind = 0;
             atp = sp->ats;
             typep = sp->types;
             janfirst = 0;
+            sp->timecnt = 0;
             for (year = EPOCH_YEAR;
                 sp->timecnt + 2 <= TZ_MAX_TIMES;
                 ++year) {
@@ -1073,8 +1063,8 @@ const int           lastditch;
                 }
                 sp->timecnt += 2;
                 newfirst = janfirst;
-                newfirst += year_lengths[isleap(year)] *
-                    SECSPERDAY;
+                newfirst += (time_t)
+                    (year_lengths[isleap(year)] * SECSPERDAY);
                 if (newfirst <= janfirst)
                     break;
                 janfirst = newfirst;
@@ -1140,11 +1130,11 @@ const int           lastditch;
                     ** offset.
                     */
                     if (isdst && !sp->ttis[j].tt_ttisstd) {
-                        sp->ats[i] += dstoffset -
-                            theirdstoffset;
+                        sp->ats[i] += (time_t)
+                            (dstoffset - theirdstoffset);
                     } else {
-                        sp->ats[i] += stdoffset -
-                            theirstdoffset;
+                        sp->ats[i] += (time_t)
+                            (stdoffset - theirstdoffset);
                     }
                 }
                 theiroffset = -sp->ttis[j].tt_gmtoff;
@@ -1156,25 +1146,27 @@ const int           lastditch;
             ** Finally, fill in ttis.
             ** ttisstd and ttisgmt need not be handled.
             */
+            memset(sp->ttis, 0, sizeof(sp->ttis));
             sp->ttis[0].tt_gmtoff = -stdoffset;
             sp->ttis[0].tt_isdst = FALSE;
             sp->ttis[0].tt_abbrind = 0;
             sp->ttis[1].tt_gmtoff = -dstoffset;
             sp->ttis[1].tt_isdst = TRUE;
-            sp->ttis[1].tt_abbrind = stdlen + 1;
+            sp->ttis[1].tt_abbrind = (int)(stdlen + 1);
             sp->typecnt = 2;
         }
     } else {
         dstlen = 0;
         sp->typecnt = 1;        /* only standard time */
         sp->timecnt = 0;
+        memset(sp->ttis, 0, sizeof(sp->ttis));
         sp->ttis[0].tt_gmtoff = -stdoffset;
         sp->ttis[0].tt_isdst = 0;
         sp->ttis[0].tt_abbrind = 0;
     }
-    sp->charcnt = stdlen + 1;
+    sp->charcnt = (int)(stdlen + 1);
     if (dstlen != 0)
-        sp->charcnt += dstlen + 1;
+        sp->charcnt += (int)(dstlen + 1);
     if ((size_t) sp->charcnt > sizeof sp->chars)
         return -1;
     cp = sp->chars;
@@ -1189,8 +1181,7 @@ const int           lastditch;
 }
 
 static void
-gmtload(sp)
-struct state * const    sp;
+gmtload(struct state * const sp)
 {
     if (tzload(gmt, sp, TRUE) != 0)
         (void) tzparse(gmt, sp, TRUE);
@@ -1240,7 +1231,7 @@ tzset_locked P((void))
         return;
     lcl_is_set = strlen(name) < sizeof lcl_TZname;
     if (lcl_is_set)
-        (void) strcpy(lcl_TZname, name);
+        (void) strlcpy(lcl_TZname, name, sizeof(lcl_TZname));
 
 #ifdef ALL_STATE
     if (lclptr == NULL) {
@@ -1261,7 +1252,7 @@ tzset_locked P((void))
         lclptr->ttis[0].tt_isdst = 0;
         lclptr->ttis[0].tt_gmtoff = 0;
         lclptr->ttis[0].tt_abbrind = 0;
-        (void) strcpy(lclptr->chars, gmt);
+        (void) strlcpy(lclptr->chars, gmt, sizeof(lclptr->chars));
     } else if (tzload(name, lclptr, TRUE) != 0)
         if (name[0] == ':' || tzparse(name, lclptr, FALSE) != 0)
             (void) gmtload(lclptr);
@@ -1287,11 +1278,10 @@ tzset P((void))
 
 /*ARGSUSED*/
 static struct tm *
-localsub(timep, offset, tmp, sp) // android-changed: added sp.
-const time_t * const    timep;
-const long      offset;
-struct tm * const   tmp;
-const struct state * sp; // android-added: added sp.
+localsub(const time_t * const timep,
+         const long offset,
+         struct tm * const tmp,
+         const struct state * sp) // android-added: added sp.
 {
     register const struct ttinfo *  ttisp;
     register int            i;
@@ -1318,12 +1308,13 @@ const struct state * sp; // android-added: added sp.
                 seconds = sp->ats[0] - t;
             else    seconds = t - sp->ats[sp->timecnt - 1];
             --seconds;
-            tcycles = seconds / YEARSPERREPEAT / AVGSECSPERYEAR;
+            tcycles = (time_t)
+                (seconds / YEARSPERREPEAT / AVGSECSPERYEAR);
             ++tcycles;
             icycles = tcycles;
             if (tcycles - icycles >= 1 || icycles - tcycles >= 1)
                 return NULL;
-            seconds = icycles;
+            seconds = (time_t) icycles;
             seconds *= YEARSPERREPEAT;
             seconds *= AVGSECSPERYEAR;
             if (t < sp->ats[0])
@@ -1338,9 +1329,9 @@ const struct state * sp; // android-added: added sp.
 
                 newy = tmp->tm_year;
                 if (t < sp->ats[0])
-                    newy -= icycles * YEARSPERREPEAT;
-                else    newy += icycles * YEARSPERREPEAT;
-                tmp->tm_year = newy;
+                    newy -= (time_t)icycles * YEARSPERREPEAT;
+                else    newy += (time_t)icycles * YEARSPERREPEAT;
+                tmp->tm_year = (int)newy;
                 if (tmp->tm_year != newy)
                     return NULL;
             }
@@ -1383,8 +1374,7 @@ const struct state * sp; // android-added: added sp.
 }
 
 struct tm *
-localtime(timep)
-const time_t * const    timep;
+localtime(const time_t * const    timep)
 {
     return localtime_r(timep, &tmGlobal);
 }
@@ -1394,9 +1384,7 @@ const time_t * const    timep;
 */
 
 struct tm *
-localtime_r(timep, tmp)
-const time_t * const    timep;
-struct tm *     tmp;
+localtime_r(const time_t * __restrict timep, struct tm *tmp)
 {
     struct tm*  result;
 
@@ -1413,11 +1401,10 @@ struct tm *     tmp;
 */
 
 static struct tm *
-gmtsub(timep, offset, tmp, sp) // android-changed: added sp.
-const time_t * const    timep;
-const long      offset;
-struct tm * const   tmp;
-const struct state * sp; // android-changed: added sp.
+gmtsub(const time_t * const timep,
+       const long offset,
+       struct tm * const tmp,
+       const struct state * sp) // android-changed: added sp.
 {
     register struct tm *    result;
 
@@ -1455,10 +1442,13 @@ const struct state * sp; // android-changed: added sp.
 }
 
 struct tm *
-gmtime(timep)
-const time_t * const    timep;
+gmtime(const time_t *const timep)
 {
-    return gmtime_r(timep, &tmGlobal);
+    struct tm *tmp = gmtime_r(timep, &tmGlobal);
+    if (tmp == NULL)
+        errno = EOVERFLOW;
+
+    return tmp;
 }
 
 /*
@@ -1466,15 +1456,15 @@ const time_t * const    timep;
 */
 
 struct tm *
-gmtime_r(timep, tmp)
-const time_t * const    timep;
-struct tm *     tmp;
+gmtime_r(const time_t * const timep, struct tm *tmp)
 {
     struct tm*  result;
 
     _tzLock();
     result = gmtsub(timep, 0L, tmp, NULL); // android-changed: extra parameter.
     _tzUnlock();
+    if (result == NULL)
+        errno = EOVERFLOW;
 
     return result;
 }
@@ -1482,12 +1472,18 @@ struct tm *     tmp;
 #ifdef STD_INSPIRED
 #if 0 /* disabled because there is no good documentation for this function */
 struct tm *
-offtime(timep, offset)
-const time_t * const    timep;
-const long      offset;
+offtime(const time_t *const timep, long offset)
 {
-    return gmtsub(timep, offset, &tmGlobal, NULL); // android-changed: extra parameter.
+    struct tm*  result;
+    result gmtsub(timep, offset, &tmGlobal, NULL); // android-changed: extra parameter.
+
+
+    if (result == NULL)
+        errno = EOVERFLOW;
+
+    return result;
 }
+
 #endif /* 0 */
 #endif /* defined STD_INSPIRED */
 
@@ -1497,19 +1493,17 @@ const long      offset;
 */
 
 static int
-leaps_thru_end_of(y)
-register const int  y;
+leaps_thru_end_of(const int y)
 {
     return (y >= 0) ? (y / 4 - y / 100 + y / 400) :
         -(leaps_thru_end_of(-(y + 1)) + 1);
 }
 
 static struct tm *
-timesub(timep, offset, sp, tmp)
-const time_t * const            timep;
-const long              offset;
-register const struct state * const sp;
-register struct tm * const      tmp;
+timesub(const time_t * const timep,
+        const long offset,
+        const struct state * const sp,
+        struct tm * const tmp)
 {
     register const struct lsinfo *  lp;
     register time_t         tdays;
@@ -1550,8 +1544,8 @@ register struct tm * const      tmp;
         }
     }
     y = EPOCH_YEAR;
-    tdays = *timep / SECSPERDAY;
-    rem = *timep - tdays * SECSPERDAY;
+    tdays = (time_t)(*timep / SECSPERDAY);
+    rem = (long) (*timep - tdays * SECSPERDAY);
     while (tdays < 0 || tdays >= year_lengths[isleap(y)]) {
         int     newy;
         register time_t tdelta;
@@ -1559,7 +1553,7 @@ register struct tm * const      tmp;
         register int    leapdays;
 
         tdelta = tdays / DAYSPERLYEAR;
-        idelta = tdelta;
+        idelta = (int) tdelta;
         if (tdelta - idelta >= 1 || idelta - tdelta >= 1)
             return NULL;
         if (idelta == 0)
@@ -1577,13 +1571,13 @@ register struct tm * const      tmp;
         register long   seconds;
 
         seconds = tdays * SECSPERDAY + 0.5;
-        tdays = seconds / SECSPERDAY;
-        rem += seconds - tdays * SECSPERDAY;
+        tdays = (time_t)(seconds / SECSPERDAY);
+        rem += (long) (seconds - tdays * SECSPERDAY);
     }
     /*
     ** Given the range, we can now fearlessly cast...
     */
-    idays = tdays;
+    idays = (int) tdays;
     rem += offset - corr;
     while (rem < 0) {
         rem += SECSPERDAY;
@@ -1639,8 +1633,7 @@ register struct tm * const      tmp;
 }
 
 char *
-ctime(timep)
-const time_t * const    timep;
+ctime(const time_t *const timep)
 {
 /*
 ** Section 4.12.3.2 of X3.159-1989 requires that
@@ -1652,9 +1645,7 @@ const time_t * const    timep;
 }
 
 char *
-ctime_r(timep, buf)
-const time_t * const    timep;
-char *          buf;
+ctime_r(const time_t *const timep, char *buf)
 {
     struct tm   mytm;
 
@@ -1671,7 +1662,7 @@ char *          buf;
 */
 
 #ifndef WRONG
-#define WRONG   (-1)
+#define WRONG   ((time_t)-1)
 #endif /* !defined WRONG */
 
 /*
@@ -1679,44 +1670,35 @@ char *          buf;
 */
 
 static int
-increment_overflow(number, delta)
-int *   number;
-int delta;
+increment_overflow(int *const ip, int j)
 {
-    unsigned  number0 = (unsigned)*number;
-    unsigned  number1 = (unsigned)(number0 + delta);
+    int	i = *ip;
 
-    *number = (int)number1;
-
-    if (delta >= 0) {
-        return ((int)number1 < (int)number0);
-    } else {
-        return ((int)number1 > (int)number0);
-    }
+    /*
+    ** If i >= 0 there can only be overflow if i + j > INT_MAX
+    ** or if j > INT_MAX - i; given i >= 0, INT_MAX - i cannot overflow.
+    ** If i < 0 there can only be overflow if i + j < INT_MIN
+    ** or if j < INT_MIN - i; given i < 0, INT_MIN - i cannot overflow.
+    */
+    if ((i >= 0) ? (j > INT_MAX - i) : (j < INT_MIN - i))
+        return TRUE;
+    *ip += j;
+    return FALSE;
 }
 
 static int
-long_increment_overflow(number, delta)
-long *  number;
-int delta;
+long_increment_overflow(long *const lp, int m)
 {
-    unsigned long  number0 = (unsigned long)*number;
-    unsigned long  number1 = (unsigned long)(number0 + delta);
+    long l = *lp;
 
-    *number = (long)number1;
-
-    if (delta >= 0) {
-        return ((long)number1 < (long)number0);
-    } else {
-        return ((long)number1 > (long)number0);
-    }
+    if ((l >= 0) ? (m > LONG_MAX - l) : (m < LONG_MIN - l))
+        return TRUE;
+    *lp += m;
+    return FALSE;
 }
 
 static int
-normalize_overflow(tensptr, unitsptr, base)
-int * const tensptr;
-int * const unitsptr;
-const int   base;
+normalize_overflow(int *const tensptr, int *const unitsptr, const int base)
 {
     register int    tensdelta;
 
@@ -1728,10 +1710,8 @@ const int   base;
 }
 
 static int
-long_normalize_overflow(tensptr, unitsptr, base)
-long * const    tensptr;
-int * const unitsptr;
-const int   base;
+long_normalize_overflow(long *const tensptr, int *const unitsptr,
+    const int base)
 {
     register int    tensdelta;
 
@@ -1743,9 +1723,7 @@ const int   base;
 }
 
 static int
-tmcomp(atmp, btmp)
-register const struct tm * const atmp;
-register const struct tm * const btmp;
+tmcomp(const struct tm *const atmp, const struct tm *const btmp)
 {
     register int    result;
 
@@ -1759,13 +1737,14 @@ register const struct tm * const btmp;
 }
 
 static time_t
-time2sub(tmp, funcp, offset, okayp, do_norm_secs, sp) // android-changed: added sp
-struct tm * const   tmp;
-struct tm * (* const    funcp) P((const time_t*, long, struct tm*, const struct state*)); // android-changed: added state*
-const long      offset;
-int * const     okayp;
-const int       do_norm_secs;
-const struct state * sp; // android-changed: added sp
+time2sub(struct tm * const tmp,
+         struct tm * (* const funcp) P((const time_t*,
+                                        long, struct tm*,
+                                        const struct state*)), // android-changed: added state*
+         const long offset,
+         int * const okayp,
+         const int do_norm_secs,
+         const struct state * sp) // android-changed: added sp
 {
     register int            dir;
     register int            i, j;
@@ -1952,12 +1931,13 @@ label:
 
 // BEGIN android-changed: added sp.
 static time_t
-time2(tmp, funcp, offset, okayp, sp)
-struct tm * const   tmp;
-struct tm * (* const    funcp) P((const time_t*, long, struct tm*, const struct state*));
-const long      offset;
-int * const     okayp;
-const struct state * sp;
+time2(struct tm * const tmp,
+      struct tm * (* const    funcp) P((const time_t*,
+                                        long, struct tm*,
+                                        const struct state*)),
+      const long offset,
+      int * const okayp,
+      const struct state * sp)
 {
     time_t  t;
 
@@ -1972,11 +1952,12 @@ const struct state * sp;
 // END android-changed
 
 static time_t
-time1(tmp, funcp, offset, sp) // android-changed: added sp.
-struct tm * const   tmp;
-struct tm * (* const    funcp) P((const time_t *, long, struct tm *, const struct state *));
-const long      offset;
-const struct state * sp; // android-changed: added sp.
+time1(struct tm * const tmp,
+      struct tm * (* const    funcp) P((const time_t *,
+                                        long, struct tm *,
+                                        const struct state *)),
+      const long offset,
+      const struct state * sp) // android-changed: added sp.
 {
     register time_t         t;
     register int            samei, otheri;
@@ -1987,6 +1968,10 @@ const struct state * sp; // android-changed: added sp.
     int             types[TZ_MAX_TYPES];
     int             okay;
 
+    if (tmp == NULL) {
+        errno = EINVAL;
+        return WRONG;
+    }
     if (tmp->tm_isdst > 1)
         tmp->tm_isdst = 1;
     t = time2(tmp, funcp, offset, &okay, sp); // android-changed: added sp.
@@ -2019,8 +2004,10 @@ const struct state * sp; // android-changed: added sp.
     }
     // BEGIN android-changed
 #ifdef ALL_STATE
-    if (sp == NULL)
+    if (sp == NULL) {
+        errno = EINVAL;
         return WRONG;
+    }
 #endif /* defined ALL_STATE */
     for (i = 0; i < sp->typecnt; ++i)
         seen[i] = FALSE;
@@ -2038,8 +2025,8 @@ const struct state * sp; // android-changed: added sp.
             otheri = types[otherind];
             if (sp->ttis[otheri].tt_isdst == tmp->tm_isdst)
                 continue;
-            tmp->tm_sec += sp->ttis[otheri].tt_gmtoff -
-                    sp->ttis[samei].tt_gmtoff;
+            tmp->tm_sec += (int)(sp->ttis[otheri].tt_gmtoff -
+                    sp->ttis[samei].tt_gmtoff);
             tmp->tm_isdst = !tmp->tm_isdst;
             t = time2(tmp, funcp, offset, &okay, sp); // android-changed: added sp.
             if (okay)
@@ -2053,8 +2040,7 @@ const struct state * sp; // android-changed: added sp.
 }
 
 time_t
-mktime(tmp)
-struct tm * const   tmp;
+mktime(struct tm * const tmp)
 {
     time_t  result;
     _tzLock();
@@ -2067,7 +2053,11 @@ struct tm * const   tmp;
 // BEGIN android-added
 
 // Caches the most recent timezone (http://b/8270865).
-static int __bionic_tzload_cached(const char* name, struct state* const sp, const int doextend) {
+static int
+__bionic_tzload_cached(const char* name,
+                       struct state* const sp,
+                       const int doextend)
+{
   _tzLock();
 
   // Our single-item cache.
@@ -2095,7 +2085,8 @@ static int __bionic_tzload_cached(const char* name, struct state* const sp, cons
 }
 
 // Non-standard API: mktime(3) but with an explicit timezone parameter.
-time_t mktime_tz(struct tm* const tmp, const char* tz) {
+time_t
+mktime_tz(struct tm* const tmp, const char* tz) {
   struct state st;
   memset(&st, 0, sizeof(struct state));
   if (__bionic_tzload_cached(tz, &st, TRUE) != 0) {
@@ -2106,7 +2097,8 @@ time_t mktime_tz(struct tm* const tmp, const char* tz) {
 }
 
 // Non-standard API: localtime(3) but with an explicit timezone parameter.
-void localtime_tz(const time_t* const timep, struct tm* tmp, const char* tz) {
+void
+localtime_tz(const time_t* const timep, struct tm* tmp, const char* tz) {
   struct state st;
   memset(&st, 0, sizeof(struct state));
   if (__bionic_tzload_cached(tz, &st, TRUE) != 0) {
@@ -2121,20 +2113,20 @@ void localtime_tz(const time_t* const timep, struct tm* tmp, const char* tz) {
 #ifdef STD_INSPIRED
 
 time_t
-timelocal(tmp)
-struct tm * const   tmp;
+timelocal(struct tm *const tmp)
 {
-    tmp->tm_isdst = -1; /* in case it wasn't initialized */
+    if (tmp != NULL)
+        tmp->tm_isdst = -1; /* in case it wasn't initialized */
     return mktime(tmp);
 }
 
 time_t
-timegm(tmp)
-struct tm * const   tmp;
+timegm(struct tm *const tmp)
 {
     time_t  result;
 
-    tmp->tm_isdst = 0;
+    if (tmp != NULL)
+        tmp->tm_isdst = 0;
     _tzLock();
     result = time1(tmp, gmtsub, 0L, NULL); // android-changed: extra parameter.
     _tzUnlock();
@@ -2144,13 +2136,12 @@ struct tm * const   tmp;
 
 #if 0 /* disable due to lack of clear documentation on this function */
 time_t
-timeoff(tmp, offset)
-struct tm * const   tmp;
-const long      offset;
+timeoff(struct tm *const tmp, const long offset)
 {
     time_t  result;
 
-    tmp->tm_isdst = 0;
+    if (tmp != NULL)
+        tmp->tm_isdst = 0;
     _tzLock();
     result = time1(tmp, gmtsub, offset, NULL); // android-changed: extra parameter.
     _tzUnlock();
@@ -2169,8 +2160,7 @@ const long      offset;
 */
 
 long
-gtime(tmp)
-struct tm * const   tmp;
+gtime(struct tm *const tmp)
 {
     const time_t    t = mktime(tmp);
 
@@ -2196,8 +2186,7 @@ struct tm * const   tmp;
 */
 
 static long
-leapcorr(timep)
-time_t *    timep;
+leapcorr(time_t *    timep)
 {
     register struct state *     sp;
     register struct lsinfo *    lp;
@@ -2214,16 +2203,14 @@ time_t *    timep;
 }
 
 time_t
-time2posix(t)
-time_t  t;
+time2posix(time_t  t)
 {
     tzset();
-    return t - leapcorr(&t);
+    return (time_t)(t - leapcorr(&t));
 }
 
 time_t
-posix2time(t)
-time_t  t;
+posix2time(time_t  t)
 {
     time_t  x;
     time_t  y;
@@ -2261,7 +2248,11 @@ time_t  t;
 #include <stdint.h>
 #include <arpa/inet.h> // For ntohl(3).
 
-static int __bionic_open_tzdata_path(const char* path, const char* olson_id, int* data_size) {
+static int
+__bionic_open_tzdata_path(const char* path,
+                          const char* olson_id,
+                          int* data_size)
+{
   int fd = TEMP_FAILURE_RETRY(open(path, OPEN_MODE));
   if (fd == -1) {
     XLOG(("%s: could not open \"%s\": %s\n", __FUNCTION__, path, strerror(errno)));
@@ -2343,20 +2334,25 @@ static int __bionic_open_tzdata_path(const char* path, const char* olson_id, int
     return -1;
   }
 
-  // TODO: check that there's TZ_MAGIC at this offset, so we can fall back to the other file if not.
+  // TODO: check that there's TZ_MAGIC at this offset, so we can fall back to
+  //       the other file if not.
 
   return fd;
 }
 
-static int __bionic_open_tzdata(const char* olson_id, int* data_size) {
-  // TODO: use $ANDROID_DATA and $ANDROID_ROOT like libcore, to support bionic on the host.
+static int
+__bionic_open_tzdata(const char* olson_id, int* data_size) {
+  // TODO: use $ANDROID_DATA and $ANDROID_ROOT like libcore, to support
+  //       bionic on the host.
   int fd = __bionic_open_tzdata_path("/data/misc/zoneinfo/tzdata", olson_id, data_size);
   if (fd < 0) {
     fd = __bionic_open_tzdata_path("/system/usr/share/zoneinfo/tzdata", olson_id, data_size);
     if (fd == -2) {
       // The first thing that 'recovery' does is try to format the current time. It doesn't have
       // any tzdata available, so we must not abort here --- doing so breaks the recovery image!
-      fprintf(stderr, "%s: couldn't find any tzdata when looking for %s!\n", __FUNCTION__, olson_id);
+      fprintf(stderr, "%s: couldn't find any tzdata when looking for %s!\n",
+              __FUNCTION__,
+              olson_id);
     }
   }
   return fd;
