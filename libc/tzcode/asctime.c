@@ -84,8 +84,8 @@ asctime_r(const struct tm *timeptr, char *buf)
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
-    register const char *   wn;
-    register const char *   mn;
+    const char *   wn;
+    const char *   mn;
     char            year[INT_STRLEN_MAXIMUM(int) + 2];
     char            result[MAX_ASCTIME_BUF_SIZE];
 

@@ -736,8 +736,8 @@ _yconv(const int       a,
        const char * const  ptlim,
        int                     modifier)
 {
-    register int    lead;
-    register int    trail;
+    int    lead;
+    int    trail;
 
 #define DIVISOR 100
     trail = a % DIVISOR + b % DIVISOR;
