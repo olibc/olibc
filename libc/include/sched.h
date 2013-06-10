@@ -37,6 +37,10 @@ __BEGIN_DECLS
 #define SCHED_OTHER             0
 #define SCHED_FIFO              1
 #define SCHED_RR                2
+#define SCHED_BATCH             3
+#define SCHED_IDLE              5
+
+#define SCHED_RESET_ON_FORK     0x40000000
 
 struct sched_param {
     int sched_priority;
@@ -70,6 +74,12 @@ extern int setns(int fd, int nstype);
 #define CLONE_UNTRACED       0x00800000
 #define CLONE_CHILD_SETTID   0x01000000
 #define CLONE_STOPPED        0x02000000
+# define CLONE_NEWUTS        0x04000000
+# define CLONE_NEWIPC        0x08000000
+# define CLONE_NEWUSER       0x10000000
+# define CLONE_NEWPID        0x20000000
+# define CLONE_NEWNET        0x40000000
+# define CLONE_IO            0x80000000
 
 #ifdef _GNU_SOURCE
 extern int clone(int (*fn)(void *), void *child_stack, int flags, void*  arg, ...);
