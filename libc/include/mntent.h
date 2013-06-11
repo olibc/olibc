@@ -56,8 +56,17 @@ struct mntent
 
 __BEGIN_DECLS
 
+FILE *setmntent(const char *filename, const char *type);
+int endmntent(FILE *fp);
 
-struct mntent* getmntent(FILE*);
+int addmntent(FILE *fp, const struct mntent *mnt);
+char *hasmntopt(const struct mntent *mnt, const char *opt);
+
+struct mntent *getmntent(FILE *fp);
+struct mntent *getmntent_r(FILE *fp, struct mntent *mntbuf,
+                           char *buf, int buflen);
+
+
 
 __END_DECLS
 

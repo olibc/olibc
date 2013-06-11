@@ -213,6 +213,19 @@ libc_common_src_files += \
 
 endif
 
+
+ifeq ($(MNTENT_SUPPORT), true)
+libc_common_src_files += \
+	bionic/addmntent.c \
+	bionic/getmntent_r.c \
+	bionic/getmntent.c \
+	bionic/endmntent.c \
+	bionic/hasmntopt.c \
+	bionic/setmntent.c \
+
+
+endif
+
 ifneq ($(TARGET_ARCH),arm)
 # ARM have arch specific versions for memchr
 libc_common_src_files += \

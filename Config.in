@@ -152,6 +152,13 @@ config SYSVIPC_SUPPORT
 	bool "SysV IPC support"
 	default y
 
+config MNTENT_SUPPORT
+	bool "File system descriptor file entry support"
+	default n
+	help
+	  Including getmntent, setmntent, addmntent, endmntent, hasmntopt,
+	  getmntent_r functions.
+
 endmenu
 
 menu "String and Stdio Support"

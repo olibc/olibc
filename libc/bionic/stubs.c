@@ -460,11 +460,6 @@ void endpwent() {
   UNIMPLEMENTED;
 }
 
-mntent* getmntent(FILE* f __unused) {
-  UNIMPLEMENTED;
-  return NULL;
-}
-
 char* ttyname(int fd __unused) { // NOLINT: implementing bad function.
   UNIMPLEMENTED;
   return NULL;
