@@ -39,3 +39,9 @@ fputc(int c, FILE *fp)
 {
 	return (putc(c, fp));
 }
+
+int
+fputc_unlocked(int c, FILE *fp)
+{
+	return (putc_unlocked(c, fp));
+}

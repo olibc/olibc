@@ -54,6 +54,22 @@ fflush(FILE *fp)
 }
 
 int
+fflush_unlocked(FILE *fp)
+{
+	int r;
+
+	if (fp == NULL)
+		return (_fwalk(__sflush));
+	if ((fp->_flags & (__SWR | __SRW)) == 0) {
+		errno = EBADF;
+		r = EOF;
+	} else {
+		r = __sflush(fp);
+	}
+	return (r);
+}
+
+int
 __sflush(FILE *fp)
 {
 	unsigned char *p;

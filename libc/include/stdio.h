@@ -319,9 +319,16 @@ void	 funlockfile(FILE *);
  * requires functions as well.
  */
 int	 getc_unlocked(FILE *);
+int	 fgetc_unlocked(FILE *);
 int	 getchar_unlocked(void);
 int	 putc_unlocked(int, FILE *);
 int	 putchar_unlocked(int);
+int	 fputs_unlocked(const char * __restrict, FILE * __restrict);
+char*	 fgets_unlocked(char *, int, FILE *);
+size_t	 fwrite_unlocked(const void * __restrict, size_t,
+                         size_t, FILE * __restrict);
+size_t	 fread_unlocked(void *, size_t, size_t, FILE *);
+int	 fflush_unlocked(FILE *);
 #endif /* __POSIX_VISIBLE >= 199506 */
 
 #if __XPG_VISIBLE

@@ -38,3 +38,9 @@ fgetc(FILE *fp)
 {
 	return (getc(fp));
 }
+
+int
+fgetc_unlocked(FILE *fp)
+{
+        return (getc_unlocked(fp));
+}

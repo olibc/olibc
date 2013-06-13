@@ -47,6 +47,15 @@ lflush(FILE *fp)
 size_t
 fread(void *buf, size_t size, size_t count, FILE *fp)
 {
+    FLOCKFILE(fp);
+    size_t retval = fread_unlocked(buf, size, count, fp);
+    FUNLOCKFILE(fp);
+    return retval;
+}
+
+size_t
+fread_unlocked(void *buf, size_t size, size_t count, FILE *fp)
+{
     size_t resid;
     char *p;
     int r;
@@ -59,7 +68,6 @@ fread(void *buf, size_t size, size_t count, FILE *fp)
      */
     if ((resid = count * size) == 0)
         return (0);
-    FLOCKFILE(fp);
     if (fp->_r < 0)
         fp->_r = 0;
     total = resid;
@@ -80,7 +88,6 @@ fread(void *buf, size_t size, size_t count, FILE *fp)
 
         /* SysV does not make this test; take it out for compatibility */
         if (fp->_flags & __SEOF) {
-            FUNLOCKFILE(fp);
             return (EOF);
         }
 
@@ -88,14 +95,12 @@ fread(void *buf, size_t size, size_t count, FILE *fp)
         if ((fp->_flags & __SRD) == 0) {
             if ((fp->_flags & __SRW) == 0) {
                 fp->_flags |= __SERR;
-                FUNLOCKFILE(fp);
                 errno = EBADF;
                 return (EOF);
             }
             /* switch to reading */
             if (fp->_flags & __SWR) {
                 if (__sflush(fp)) {
-                    FUNLOCKFILE(fp);
                     return (EOF);
                 }
                 fp->_flags &= ~__SWR;
@@ -141,13 +146,11 @@ fread(void *buf, size_t size, size_t count, FILE *fp)
                 else {
                     fp->_flags |= __SERR;
                 }
-                FUNLOCKFILE(fp);
                 return ((total - resid) / size);
             }
             p     += len;
             resid -= len;
         }
-        FUNLOCKFILE(fp);
         return (count);
     }
     else
@@ -161,7 +164,6 @@ fread(void *buf, size_t size, size_t count, FILE *fp)
             resid -= r;
             if (__srefill(fp)) {
                 /* no more input: return partial result */
-                FUNLOCKFILE(fp);
                 return ((total - resid) / size);
             }
         }
@@ -170,6 +172,5 @@ fread(void *buf, size_t size, size_t count, FILE *fp)
     (void)memcpy((void *)p, (void *)fp->_p, resid);
     fp->_r -= resid;
     fp->_p += resid;
-    FUNLOCKFILE(fp);
     return (count);
 }

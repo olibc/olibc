@@ -51,6 +51,17 @@ __FBSDID("$FreeBSD$");
 char *
 fgets(char * __restrict buf, int n, FILE * __restrict fp)
 {
+	FLOCKFILE(fp);
+	char *retval = fgets_unlocked(buf, n, fp);
+	FUNLOCKFILE(fp);
+	return (retval);
+}
+
+
+char *
+fgets_unlocked(char * __restrict buf, int n, FILE * __restrict fp)
+{
+
 	size_t len;
 	char *s;
 	unsigned char *p, *t;
