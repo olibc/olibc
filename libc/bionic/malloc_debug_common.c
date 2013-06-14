@@ -195,11 +195,6 @@ void free_malloc_leak_info(uint8_t* info) {
 struct mallinfo mallinfo() {
     return dlmallinfo();
 }
-
-size_t malloc_usable_size(const void* mem) {
-    return dlmalloc_usable_size(mem);
-}
-
 void* valloc(size_t bytes) {
     return dlvalloc(bytes);
 }
@@ -221,8 +216,9 @@ int posix_memalign(void** memptr, size_t alignment, size_t size) {
 
 /* Table for dispatching malloc calls, initialized with default dispatchers. */
 extern const MallocDebug __libc_malloc_default_dispatch;
-const MallocDebug __libc_malloc_default_dispatch __attribute__((aligned(32))) = {
-    dlmalloc, dlfree, dlcalloc, dlrealloc, dlmemalign
+const MallocDebug __libc_malloc_default_dispatch __attribute__((aligned(32))) =
+{
+    dlmalloc, dlfree, dlcalloc, dlrealloc, dlmemalign, dlmalloc_usable_size,
 };
 
 /* Selector of dispatch table to use for dispatching malloc calls. */
@@ -248,6 +244,10 @@ void* memalign(size_t alignment, size_t bytes) {
     return __libc_malloc_dispatch->memalign(alignment, bytes);
 }
 
+size_t malloc_usable_size(const void* mem) {
+    return __libc_malloc_dispatch->malloc_usable_size(mem);
+}
+
 /* We implement malloc debugging only in libc.so, so code below
  * must be excluded if we compile this file for static libc.a
  */
@@ -259,7 +259,7 @@ void* memalign(size_t alignment, size_t bytes) {
 
 /* Table for dispatching malloc calls, depending on environment. */
 static MallocDebug gMallocUse __attribute__((aligned(32))) = {
-    dlmalloc, dlfree, dlcalloc, dlrealloc, dlmemalign
+    dlmalloc, dlfree, dlcalloc, dlrealloc, dlmemalign, dlmalloc_usable_size
 };
 
 extern const char* __progname;
@@ -282,14 +282,9 @@ extern const char* __progname;
  * Actual functionality for debug levels 1-10 is implemented in
  * libc_malloc_debug_leak.so, while functionality for emultor's instrumented
  * allocations is implemented in libc_malloc_debug_qemu.so and can be run inside
-  * the emulator only.
+ * the emulator only.
  */
 static void* libc_malloc_impl_handle = NULL;
-
-// This must match the alignment used by dlmalloc.
-#ifndef MALLOC_ALIGNMENT
-#define MALLOC_ALIGNMENT ((size_t)(2 * sizeof(void *)))
-#endif
 
 /* This variable is set to the value of property libc.debug.malloc.backlog,
  * when the value of libc.debug.malloc = 10.  It determines the size of the
@@ -302,38 +297,38 @@ unsigned int gMallocDebugBacklog;
 /* The value of libc.debug.malloc. */
 int gMallocDebugLevel;
 
-static void InitMalloc(MallocDebug* table, const char* prefix) {
+static void InitMalloc(void* malloc_impl_handler, MallocDebug* table, const char* prefix) {
   __libc_format_log(ANDROID_LOG_INFO, "libc", "%s: using libc.debug.malloc %d (%s)\n",
                     __progname, gMallocDebugLevel, prefix);
 
   char symbol[128];
 
   snprintf(symbol, sizeof(symbol), "%s_malloc", prefix);
-  table->malloc = (MallocDebugMalloc)(dlsym(libc_malloc_impl_handle, symbol));
+  table->malloc = (MallocDebugMalloc)(dlsym(malloc_impl_handler, symbol));
   if (table->malloc == NULL) {
       error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
   }
 
   snprintf(symbol, sizeof(symbol), "%s_free", prefix);
-  table->free = (MallocDebugFree)(dlsym(libc_malloc_impl_handle, symbol));
+  table->free = (MallocDebugFree)(dlsym(malloc_impl_handler, symbol));
   if (table->free == NULL) {
       error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
   }
 
   snprintf(symbol, sizeof(symbol), "%s_calloc", prefix);
-  table->calloc = (MallocDebugCalloc)(dlsym(libc_malloc_impl_handle, symbol));
+  table->calloc = (MallocDebugCalloc)(dlsym(malloc_impl_handler, symbol));
   if (table->calloc == NULL) {
       error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
   }
 
   snprintf(symbol, sizeof(symbol), "%s_realloc", prefix);
-  table->realloc = (MallocDebugRealloc)(dlsym(libc_malloc_impl_handle, symbol));
+  table->realloc = (MallocDebugRealloc)(dlsym(malloc_impl_handler, symbol));
   if (table->realloc == NULL) {
       error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
   }
 
   snprintf(symbol, sizeof(symbol), "%s_memalign", prefix);
-  table->memalign = (MallocDebugMemalign)(dlsym(libc_malloc_impl_handle, symbol));
+  table->memalign = (MallocDebugMemalign)(dlsym(malloc_impl_handler, symbol));
   if (table->memalign == NULL) {
       error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
   }
@@ -448,24 +443,24 @@ static void malloc_init_impl() {
     }
 
     // Load .so that implements the required malloc debugging functionality.
-    libc_malloc_impl_handle = dlopen(so_name, RTLD_LAZY);
-    if (libc_malloc_impl_handle == NULL) {
+    void* malloc_impl_handle = dlopen(so_name, RTLD_LAZY);
+    if (malloc_impl_handle == NULL) {
         error_log("%s: Missing module %s required for malloc debug level %d: %s",
                   __progname, so_name, gMallocDebugLevel, dlerror());
         return;
     }
 
     // Initialize malloc debugging in the loaded module.
-    malloc_debug_initialize = (MallocDebugInit)(dlsym(libc_malloc_impl_handle,
+    malloc_debug_initialize = (MallocDebugInit)(dlsym(malloc_impl_handle,
                                                                       "malloc_debug_initialize"));
     if (malloc_debug_initialize == NULL) {
         error_log("%s: Initialization routine is not found in %s\n",
                   __progname, so_name);
-        dlclose(libc_malloc_impl_handle);
+        dlclose(malloc_impl_handle);
         return;
     }
     if (malloc_debug_initialize() == -1) {
-        dlclose(libc_malloc_impl_handle);
+        dlclose(malloc_impl_handle);
         return;
     }
 
@@ -473,34 +468,35 @@ static void malloc_init_impl() {
         // For memory checker we need to do extra initialization.
         typedef int (*MemCheckInit)(int, const char*);
         MemCheckInit memcheck_initialize =
-            (MemCheckInit)(dlsym(libc_malloc_impl_handle,
+            (MemCheckInit)(dlsym(malloc_impl_handle,
                                                  "memcheck_initialize"));
         if (memcheck_initialize == NULL) {
             error_log("%s: memcheck_initialize routine is not found in %s\n",
                       __progname, so_name);
-            dlclose(libc_malloc_impl_handle);
+            dlclose(malloc_impl_handle);
             return;
         }
 
         if (memcheck_initialize(MALLOC_ALIGNMENT, memcheck_tracing)) {
-            dlclose(libc_malloc_impl_handle);
+            dlclose(malloc_impl_handle);
             return;
         }
     }
 
+
     // Initialize malloc dispatch table with appropriate routines.
     switch (gMallocDebugLevel) {
         case 1:
-            InitMalloc(&gMallocUse, "leak");
+            InitMalloc(malloc_impl_handle, &gMallocUse, "leak");
             break;
         case 5:
-            InitMalloc(&gMallocUse, "fill");
+            InitMalloc(malloc_impl_handle, &gMallocUse, "fill");
             break;
         case 10:
-            InitMalloc(&gMallocUse, "chk");
+            InitMalloc(malloc_impl_handle, &gMallocUse, "chk");
             break;
         case 20:
-            InitMalloc(&gMallocUse, "qemu_instrumented");
+            InitMalloc(malloc_impl_handle, &gMallocUse, "qemu_instrumented");
             break;
         default:
             break;
@@ -511,13 +507,14 @@ static void malloc_init_impl() {
         (gMallocUse.free == NULL) ||
         (gMallocUse.calloc == NULL) ||
         (gMallocUse.realloc == NULL) ||
-        (gMallocUse.memalign == NULL)) {
+        (gMallocUse.memalign == NULL) ||
+        (gMallocUse.malloc_usable_size == NULL)) {
         error_log("%s: some symbols for libc.debug.malloc level %d were not found (see above)",
                   __progname, gMallocDebugLevel);
-        dlclose(libc_malloc_impl_handle);
-        libc_malloc_impl_handle = NULL;
+        dlclose(malloc_impl_handle);
     } else {
         __libc_malloc_dispatch = &gMallocUse;
+        libc_malloc_impl_handle = malloc_impl_handle;
     }
 }
 

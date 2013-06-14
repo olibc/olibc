@@ -6,7 +6,6 @@ include $(LOCAL_PATH)/arch-$(TARGET_ARCH)/syscalls.mk
 # =========================================================
 libc_common_src_files := \
 	$(syscall_src) \
-	unistd/abort.c \
 	unistd/alarm.c \
 	unistd/exec.c \
 	unistd/fnmatch.c \
@@ -27,13 +26,11 @@ libc_common_src_files := \
 	stdio/ftell.c \
 	stdio/fvwrite.c \
 	stdio/gets.c \
-	stdio/makebuf.c \
 	stdio/mktemp.c \
 	stdio/printf.c \
 	stdio/refill.c \
 	stdio/rewind.c \
 	stdio/scanf.c \
-	stdio/setvbuf.c \
 	stdio/snprintf.c\
 	stdio/sprintf.c \
 	stdio/sscanf.c \
@@ -63,17 +60,11 @@ libc_common_src_files := \
 	stdlib/strtoumax.c \
 	stdlib/tolower_.c \
 	stdlib/toupper_.c \
-	string/index.c \
 	string/strcasecmp.c \
-	string/strcat.c \
 	string/strcspn.c \
 	string/strdup.c \
-	string/strlcat.c \
-	string/strlcpy.c \
-	string/strncat.c \
-	string/strncpy.c \
 	string/strpbrk.c \
-	string/strrchr.c \
+	string/__strrchr_chk.c \
 	string/strsep.c \
 	string/strspn.c \
 	string/strstr.c \
@@ -117,7 +108,6 @@ libc_common_src_files := \
 	bionic/ldexp.c \
 	bionic/lseek64.c \
 	bionic/memmem.c \
-	bionic/memrchr.c \
 	bionic/memswap.c \
 	bionic/mmap.c \
 	bionic/openat.c \
@@ -153,7 +143,6 @@ libc_common_src_files := \
 	bionic/sleep.c \
 	bionic/statfs.c \
 	bionic/strndup.c \
-	bionic/strnlen.c \
 	bionic/strntoimax.c \
 	bionic/strntoumax.c \
 	bionic/strtotimeval.c \
@@ -226,18 +215,13 @@ libc_common_src_files += \
 
 endif
 
-ifneq ($(TARGET_ARCH),arm)
-# ARM have arch specific versions for memchr
-libc_common_src_files += \
-	bionic/memchr.c
-endif
-
 ifeq ($(MD5_IMPL),true)
 libc_common_src_files += \
 	bionic/md5.c
 endif
 
 libc_bionic_src_files := \
+    bionic/abort.c \
     bionic/assert.c \
     bionic/brk.c \
     bionic/dirent.c \
@@ -273,7 +257,7 @@ libc_bionic_src_files := \
     bionic/signalfd.c \
     bionic/sigwait.c \
     bionic/__strcat_chk.c \
-    bionic/strchr.c \
+    bionic/__strchr_chk.c \
     bionic/__strcpy_chk.c \
     bionic/strerror.c \
     bionic/strerror_r.c \
@@ -312,6 +296,7 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/fwrite.c \
     upstream-freebsd/lib/libc/stdio/getc.c \
     upstream-freebsd/lib/libc/stdio/getchar.c \
+    upstream-freebsd/lib/libc/stdio/makebuf.c \
     upstream-freebsd/lib/libc/stdio/putc.c \
     upstream-freebsd/lib/libc/stdio/putchar.c \
     upstream-freebsd/lib/libc/stdio/puts.c \
@@ -320,6 +305,7 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/rget.c \
     upstream-freebsd/lib/libc/stdio/setbuf.c \
     upstream-freebsd/lib/libc/stdio/setbuffer.c \
+    upstream-freebsd/lib/libc/stdio/setvbuf.c \
     upstream-freebsd/lib/libc/stdio/tempnam.c \
     upstream-freebsd/lib/libc/stdio/tmpnam.c \
     upstream-freebsd/lib/libc/stdio/wsetup.c \
@@ -387,30 +373,36 @@ libc_upstream_freebsd_src_files += \
     upstream-freebsd/lib/libc/string/wcpcpy.c \
     upstream-freebsd/lib/libc/string/wcpncpy.c \
     upstream-freebsd/lib/libc/string/wcscasecmp.c \
-    upstream-freebsd/lib/libc/string/wcscat.c \
-    upstream-freebsd/lib/libc/string/wcschr.c \
-    upstream-freebsd/lib/libc/string/wcscmp.c \
-    upstream-freebsd/lib/libc/string/wcscpy.c \
     upstream-freebsd/lib/libc/string/wcscspn.c \
     upstream-freebsd/lib/libc/string/wcsdup.c \
     upstream-freebsd/lib/libc/string/wcslcat.c \
     upstream-freebsd/lib/libc/string/wcslcpy.c \
-    upstream-freebsd/lib/libc/string/wcslen.c \
     upstream-freebsd/lib/libc/string/wcsncasecmp.c \
     upstream-freebsd/lib/libc/string/wcsncat.c \
     upstream-freebsd/lib/libc/string/wcsncmp.c \
     upstream-freebsd/lib/libc/string/wcsncpy.c \
     upstream-freebsd/lib/libc/string/wcsnlen.c \
     upstream-freebsd/lib/libc/string/wcspbrk.c \
-    upstream-freebsd/lib/libc/string/wcsrchr.c \
     upstream-freebsd/lib/libc/string/wcsspn.c \
     upstream-freebsd/lib/libc/string/wcsstr.c \
     upstream-freebsd/lib/libc/string/wcstok.c \
     upstream-freebsd/lib/libc/string/wmemchr.c \
-    upstream-freebsd/lib/libc/string/wmemcmp.c \
     upstream-freebsd/lib/libc/string/wmemcpy.c \
     upstream-freebsd/lib/libc/string/wmemmove.c \
     upstream-freebsd/lib/libc/string/wmemset.c \
+
+
+  ifneq ($(TARGET_ARCH),x86)
+    libc_upstream_freebsd_src_files += \
+      upstream-freebsd/lib/libc/string/wcscat.c \
+      upstream-freebsd/lib/libc/string/wcschr.c \
+      upstream-freebsd/lib/libc/string/wcscmp.c \
+      upstream-freebsd/lib/libc/string/wcslen.c \
+      upstream-freebsd/lib/libc/string/wcsrchr.c \
+      upstream-freebsd/lib/libc/string/wmemcmp.c \
+      upstream-freebsd/lib/libc/string/wcscpy.c \
+
+  endif
 
 endif
 
@@ -436,7 +428,17 @@ endif
 # =========================================================
 ifeq ($(TARGET_ARCH),arm)
 libc_common_src_files += \
-	string/strncmp.c \
+        string/strncmp.c \
+        string/strcat.c \
+        string/strncat.c \
+        string/strncpy.c \
+        bionic/strchr.c \
+        string/strrchr.c \
+        bionic/memrchr.c \
+        string/index.c \
+        bionic/strnlen.c \
+        string/strlcat.c \
+        string/strlcpy.c \
 	bionic/sync_file_range.c \
 
 # These files need to be arm so that gdbserver
@@ -461,7 +463,6 @@ libc_common_src_files += \
     bionic/pthread-rwlocks.c \
     bionic/pthread-timers.c \
     bionic/ptrace.c \
-    string/strcpy.c \
 
 libc_static_common_src_files += \
     bionic/pthread.c \
@@ -476,7 +477,18 @@ libc_common_src_files += \
 	string/bcopy.c \
 	string/strcmp.c \
 	string/strcpy.c \
-	string/strncmp.c
+	string/strncmp.c \
+	string/strcat.c \
+	string/strncat.c \
+	string/strncpy.c \
+	bionic/strchr.c \
+	string/strrchr.c \
+	bionic/memchr.c \
+	bionic/memrchr.c \
+	string/index.c \
+	bionic/strnlen.c \
+	string/strlcat.c \
+	string/strlcpy.c \
 
 libc_common_src_files += \
 	bionic/pthread-atfork.c \

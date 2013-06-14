@@ -1820,7 +1820,7 @@ static Elf32_Addr __linker_init_post_relocation(KernelArgumentBlock* args, Elf32
      * for certain executables (e.g. some in the NDK unit test suite)
      */
     si->base = 0;
-    si->size = phdr_table_get_load_size(si->phdr, si->phnum);
+    si->size = phdr_table_get_load_size(si->phdr, si->phnum, NULL, NULL);
     si->load_bias = 0;
     size_t i;
     for (i = 0; i < si->phnum; ++i) {
@@ -1946,7 +1946,7 @@ Elf32_Addr __linker_init(void* raw_args) {
   memset(&linker_so, 0, sizeof(soinfo));
 
   linker_so.base = linker_addr;
-  linker_so.size = phdr_table_get_load_size(phdr, elf_hdr->e_phnum);
+  linker_so.size = phdr_table_get_load_size(phdr, elf_hdr->e_phnum, NULL, NULL);
   linker_so.load_bias = get_elf_exec_load_bias(elf_hdr);
   linker_so.dynamic = NULL;
   linker_so.phdr = phdr;

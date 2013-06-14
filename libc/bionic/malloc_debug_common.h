@@ -45,6 +45,11 @@
 
 #define MAX_SIZE_T           (~(size_t)0)
 
+// This must match the alignment used by dlmalloc.
+#ifndef MALLOC_ALIGNMENT
+#define MALLOC_ALIGNMENT ((size_t)(2 * sizeof(void *)))
+#endif
+
 // =============================================================================
 // Structures
 // =============================================================================
@@ -74,6 +79,7 @@ typedef void (*MallocDebugFree)(void*);
 typedef void* (*MallocDebugCalloc)(size_t, size_t);
 typedef void* (*MallocDebugRealloc)(void*, size_t);
 typedef void* (*MallocDebugMemalign)(size_t, size_t);
+typedef size_t (*MallocDebugMallocUsableSize)(const void*);
 typedef struct MallocDebug MallocDebug;
 struct MallocDebug {
   MallocDebugMalloc malloc;
@@ -81,6 +87,7 @@ struct MallocDebug {
   MallocDebugCalloc calloc;
   MallocDebugRealloc realloc;
   MallocDebugMemalign memalign;
+  MallocDebugMallocUsableSize malloc_usable_size;
 };
 
 /* Malloc debugging initialization and finalization routines.

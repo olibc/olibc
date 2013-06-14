@@ -139,7 +139,7 @@ struct MallocDescQuery {
      * will respond with information about allocated block that contains this
      * pointer.
      */
-    void*       ptr;
+    const void*       ptr;
 
     /* Id of the process that initialized libc instance, in which this query
      * is called. This field is used by the emulator to report errors in
@@ -472,7 +472,7 @@ static inline int notify_qemu_free(void* ptr_to_free) {
  * Return:
  *  Zero on success, or -1 on failure.
  */
-static inline int query_qemu_malloc_info(void* ptr, MallocDesc* desc, uint32_t routine) {
+static inline int query_qemu_malloc_info(const void* ptr, MallocDesc* desc, uint32_t routine) {
     volatile MallocDescQuery query;
 
     query.ptr = ptr;
@@ -582,6 +582,7 @@ void  qemu_instrumented_free(void* mem);
 void* qemu_instrumented_calloc(size_t n_elements, size_t elem_size);
 void* qemu_instrumented_realloc(void* mem, size_t bytes);
 void* qemu_instrumented_memalign(size_t alignment, size_t bytes);
+size_t qemu_instrumented_malloc_usable_size(const void* mem);
 
 /* Initializes malloc debugging instrumentation for the emulator.
  * This routine is called from malloc_init_impl routine implemented in
@@ -969,4 +970,28 @@ void* qemu_instrumented_memalign(size_t alignment, size_t bytes) {
     log_mdesc(info, &desc, "@@@ <libc_pid=%03u, pid=%03u> memalign(%X, %u) -> ",
               malloc_pid, getpid(), alignment, bytes);
     return mallocdesc_user_ptr(&desc);
+}
+
+size_t qemu_instrumented_malloc_usable_size(const void* mem) {
+    MallocDesc cur_desc;
+
+    // Query emulator for the reallocating block information.
+    if (query_qemu_malloc_info(mem, &cur_desc, 2)) {
+        // Note that this violation should be already caught in the emulator.
+        error_log("<libc_pid=%03u, pid=%03u>: malloc_usable_size(%p) query_info failed.",
+                  malloc_pid, getpid(), mem);
+        return 0;
+    }
+
+    /* Make sure that reallocating pointer value is what we would expect
+     * for this memory block. Note that this violation should be already caught
+     * in the emulator.*/
+    if (mem != mallocdesc_user_ptr(&cur_desc)) {
+        log_mdesc(error, &cur_desc, "<libc_pid=%03u, pid=%03u>: malloc_usable_size(%p) is invalid for ",
+                  malloc_pid, getpid(), mem);
+        return 0;
+    }
+
+    /* during instrumentation, we can't really report anything more than requested_bytes */
+    return cur_desc.requested_bytes;
 }

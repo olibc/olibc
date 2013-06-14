@@ -98,7 +98,12 @@ bool ElfReader_LoadSegments(ElfReader* er);
 bool ElfReader_FindPhdr(ElfReader* er);
 bool ElfReader_CheckPhdr(ElfReader* er, Elf32_Addr);
 
-Elf32_Addr phdr_table_get_load_size(const Elf32_Phdr* phdr, size_t phnum);
+
+size_t
+phdr_table_get_load_size(const Elf32_Phdr* phdr_table,
+                         size_t phdr_count,
+                         Elf32_Addr* min_vaddr,
+                         Elf32_Addr* max_vaddr);
 
 int
 phdr_table_protect_segments(const Elf32_Phdr* phdr_table,

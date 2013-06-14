@@ -232,18 +232,25 @@ bool ElfReader_ReadProgramHeader(ElfReader* er) {
   return true;
 }
 
-/* Compute the extent of all loadable segments in an ELF program header
- * table. This corresponds to the page-aligned size in bytes that needs to be
- * reserved in the process' address space
+/* Returns the size of the extent of all the possibly non-contiguous
+ * loadable segments in an ELF program header table. This corresponds
+ * to the page-aligned size in bytes that needs to be reserved in the
+ * process' address space. If there are no loadable segments, 0 is
+ * returned.
  *
- * This returns 0 if there are no loadable segments.
+ * If out_min_vaddr or out_max_vaddr are non-NULL, they will be
+ * set to the minimum and maximum addresses of pages to be reserved,
+ * or 0 if there is nothing to load.
  */
-Elf32_Addr phdr_table_get_load_size(const Elf32_Phdr* phdr_table,
-                                    size_t phdr_count)
+size_t phdr_table_get_load_size(const Elf32_Phdr* phdr_table,
+                                size_t phdr_count,
+                                Elf32_Addr* out_min_vaddr,
+                                Elf32_Addr* out_max_vaddr)
 {
     Elf32_Addr min_vaddr = 0xFFFFFFFFU;
     Elf32_Addr max_vaddr = 0x00000000U;
 
+    bool found_pt_load = false;
     size_t i;
     for (i = 0; i < phdr_count; ++i) {
         const Elf32_Phdr* phdr = &phdr_table[i];
@@ -251,6 +258,7 @@ Elf32_Addr phdr_table_get_load_size(const Elf32_Phdr* phdr_table,
         if (phdr->p_type != PT_LOAD) {
             continue;
         }
+        found_pt_load = true;
 
         if (phdr->p_vaddr < min_vaddr) {
             min_vaddr = phdr->p_vaddr;
@@ -260,14 +268,19 @@ Elf32_Addr phdr_table_get_load_size(const Elf32_Phdr* phdr_table,
             max_vaddr = phdr->p_vaddr + phdr->p_memsz;
         }
     }
-
-    if (min_vaddr > max_vaddr) {
-        return 0;
+    if (!found_pt_load) {
+        min_vaddr = 0x00000000U;
     }
 
     min_vaddr = PAGE_START(min_vaddr);
     max_vaddr = PAGE_END(max_vaddr);
 
+    if (out_min_vaddr != NULL) {
+        *out_min_vaddr = min_vaddr;
+    }
+    if (out_max_vaddr != NULL) {
+        *out_max_vaddr = max_vaddr;
+    }
     return max_vaddr - min_vaddr;
 }
 
@@ -275,12 +288,14 @@ Elf32_Addr phdr_table_get_load_size(const Elf32_Phdr* phdr_table,
 // segments of a program header table. This is done by creating a
 // private anonymous mmap() with PROT_NONE.
 bool ElfReader_ReserveAddressSpace(ElfReader* er) {
-  er->load_size_ = phdr_table_get_load_size(er->phdr_table_, er->phdr_num_);
+  Elf32_Addr min_vaddr;
+  er->load_size_ = phdr_table_get_load_size(er->phdr_table_, er->phdr_num_, &min_vaddr, NULL);
   if (er->load_size_ == 0) {
     DL_ERR("\"%s\" has no loadable segments", er->name_);
     return false;
   }
 
+  uint8_t* addr = (uint8_t*)(min_vaddr);
   int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS;
   void* start = mmap(NULL, er->load_size_, PROT_NONE, mmap_flags, -1, 0);
   if (start == MAP_FAILED) {
@@ -289,15 +304,7 @@ bool ElfReader_ReserveAddressSpace(ElfReader* er) {
   }
 
   er->load_start_ = start;
-  er->load_bias_ = 0;
-  size_t i;
-  for (i = 0; i < er->phdr_num_; ++i) {
-    const Elf32_Phdr* phdr = &er->phdr_table_[i];
-    if (phdr->p_type == PT_LOAD) {
-      er->load_bias_ = (Elf32_Addr)(start) - PAGE_START(phdr->p_vaddr);
-      break;
-    }
-  }
+  er->load_bias_ = (uint8_t*)(start) - addr;
   return true;
 }
 

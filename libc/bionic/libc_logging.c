@@ -364,7 +364,7 @@ static void out_vformat(Out *o, const char* format, va_list args) {
             buffer[0] = '0';
             buffer[1] = 'x';
             format_integer(buffer + 2, sizeof(buffer) - 2, value, 'x');
-        } else if (c == 'd' || c == 'i' || c == 'o' || c == 'x' || c == 'X') {
+        } else if (c == 'd' || c == 'i' || c == 'o' || c == 'u' || c == 'x' || c == 'X') {
             /* integers - first read value from stack */
             uint64_t value;
             int is_signed = (c == 'd' || c == 'i' || c == 'o');
@@ -521,17 +521,15 @@ void __fortify_chk_fail(const char *msg, uint32_t tag) {
   __libc_fatal("FORTIFY_SOURCE: %s. Calling abort().", msg);
 }
 
-void __libc_fatal(const char* format, ...) {
+static void __libc_fatal(const char* format, va_list args) {
   char msg[1024];
   BufferOutputStream os;
   BufferOutputStream_init(&os, msg, sizeof(msg));
-  va_list args;
-  va_start(args, format);
+
   Out o;
   o.Send = (SendFunc)BufferOutputStream_Sendder;
   o.out = (void*)&os;
   out_vformat(&o, format, args);
-  va_end(args);
 
   // TODO: log to stderr for the benefit of "adb shell" users.
 
@@ -539,7 +537,20 @@ void __libc_fatal(const char* format, ...) {
   __libc_write_log(ANDROID_LOG_FATAL, "libc", msg);
 
   __libc_set_abort_message(msg);
+}
 
+void __libc_fatal_no_abort(const char* format, ...) {
+  va_list args;
+  va_start(args, format);
+  __libc_fatal(format, args);
+  va_end(args);
+}
+
+void __libc_fatal(const char* format, ...) {
+  va_list args;
+  va_start(args, format);
+  __libc_fatal(format, args);
+  va_end(args);
   abort();
 }
 
