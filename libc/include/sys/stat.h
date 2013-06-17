@@ -59,6 +59,9 @@ struct stat {
 
     long long           st_size;
 
+#if 0
+    /* TODO: We need a option to switch a glibc compatible
+     *       or linux kernel style sturct stat. */
     unsigned long       st_atime;
     unsigned long       st_atime_nsec;
 
@@ -67,6 +70,15 @@ struct stat {
 
     unsigned long       st_ctime;
     unsigned long       st_ctime_nsec;
+#else
+
+    struct timespec st_atim;
+    struct timespec st_mtim;
+    struct timespec st_ctim;
+  #define st_atime st_atim.tv_sec
+  #define st_mtime st_mtim.tv_sec
+  #define st_ctime st_ctim.tv_sec
+#endif
 
     unsigned long       st_blksize;
     unsigned long       __pad2;
@@ -92,6 +104,7 @@ struct stat {
     unsigned long	st_blksize;
     unsigned long long  st_blocks;
 
+#if 0
     unsigned long       st_atime;
     unsigned long       st_atime_nsec;
 
@@ -100,6 +113,14 @@ struct stat {
 
     unsigned long       st_ctime;
     unsigned long       st_ctime_nsec;
+#else
+    struct timespec st_atim;
+    struct timespec st_mtim;
+    struct timespec st_ctim;
+  #define st_atime st_atim.tv_sec
+  #define st_mtime st_mtim.tv_sec
+  #define st_ctime st_ctim.tv_sec
+#endif
 
     unsigned long long  st_ino;
 };
