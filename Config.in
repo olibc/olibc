@@ -159,6 +159,10 @@ config MNTENT_SUPPORT
 	  Including getmntent, setmntent, addmntent, endmntent, hasmntopt,
 	  getmntent_r functions.
 
+config UTMPX_SUPPORT
+	bool "utmpx based support for tracking login/logouts to/from the system"
+	default n
+
 endmenu
 
 menu "String and Stdio Support"

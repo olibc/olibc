@@ -577,6 +577,12 @@ else
 	bionic/libc_logging_stderr.c
 endif
 
+ifeq ($(UTMPX_SUPPORT),true)
+  libc_common_src_files += \
+	bionic/utmpx.c
+  libc_common_cflags += -DUTMPX_SUPPORT
+endif
+
 # To customize dlmalloc's alignment, set BOARD_MALLOC_ALIGNMENT in
 # the appropriate BoardConfig.mk file.
 #

@@ -91,3 +91,13 @@ utmpname(const char *fname)
 	endutent();
 	return 1;
 }
+
+#ifdef UTMPX_SUPPORT
+__strong_alias(setutxent, setutent);
+__strong_alias(endutxent, endutent);
+__strong_alias(getutxent, getutent);
+__strong_alias(getutxid, getutid);
+__strong_alias(getutxline, getutline);
+__strong_alias(pututxline, pututline);
+__strong_alias(utmpxname, utmpname);
+#endif
