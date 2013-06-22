@@ -60,7 +60,7 @@ typedef off_t fpos_t;		/* stdio file position type */
 /* stdio buffers */
 struct __sbuf {
 	unsigned char *_base;
-	int	_size;
+	size_t	_size;
 };
 
 /*
