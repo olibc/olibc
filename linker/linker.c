@@ -1625,19 +1625,19 @@ static bool soinfo_link_image(soinfo* si) {
         return false;
     }
 
-    /* if this is the main executable, then load all of the preloads now */
+    // If this is the main executable, then load all of the libraries from LD_PRELOAD now.
     if (si->flags & FLAG_EXE) {
         memset(gLdPreloads, 0, sizeof(gLdPreloads));
-        size_t i;
+        size_t preload_count = 0, i;
         for (i = 0; gLdPreloadNames[i] != NULL; i++) {
             soinfo* lsi = find_library(gLdPreloadNames[i]);
-            if (lsi == NULL) {
-                strlcpy(tmp_err_buf, linker_get_error_buffer(), sizeof(tmp_err_buf));
-                DL_ERR("could not load library \"%s\" needed by \"%s\"; caused by %s",
-                       gLdPreloadNames[i], si->name, tmp_err_buf);
-                return false;
+            if (lsi != NULL) {
+                gLdPreloads[preload_count++] = lsi;
+            } else {
+                // As with glibc, failure to load an LD_PRELOAD library is just a warning.
+                DL_WARN("could not load library \"%s\" from LD_PRELOAD for \"%s\"; caused by %s",
+                        gLdPreloadNames[i], si->name, linker_get_error_buffer());
             }
-            gLdPreloads[i] = lsi;
         }
     }
 
@@ -1666,6 +1666,8 @@ static bool soinfo_link_image(soinfo* si) {
          * phdr_table_protect_segments() after all of them are applied
          * and all constructors are run.
          */
+        DL_WARN("%s has text relocations. This is wasting memory and is "
+                "a security risk. Please fix.", si->name);
         if (phdr_table_unprotect_segments(si->phdr, si->phnum, si->load_bias) < 0) {
             DL_ERR("can't unprotect loadable segments for \"%s\": %s",
                    si->name, strerror(errno));
