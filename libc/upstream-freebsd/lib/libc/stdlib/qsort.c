@@ -177,7 +177,7 @@ loop:	SWAPINIT(a, es);
 	pn = (char *)a + n * es;
 	r = min(pa - (char *)a, pb - pa);
 	vecswap(a, pb - r, r);
-	r = min(pd - pc, pn - pd - es);
+	r = min((size_t)(pd - pc), (size_t)(pn - pd - es));
 	vecswap(pb, pn - r, r);
 	if ((r = pb - pa) > es)
 #ifdef I_AM_QSORT_R

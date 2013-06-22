@@ -96,7 +96,7 @@ fgets_unlocked(char * __restrict buf, int n, FILE * __restrict fp)
 		 * newline, and stop.  Otherwise, copy entire chunk
 		 * and loop.
 		 */
-		if (len > n)
+		if (len > (size_t)n)
 			len = n;
 		t = memchr((void *)p, '\n', len);
 		if (t != NULL) {

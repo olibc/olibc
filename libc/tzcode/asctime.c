@@ -9,14 +9,6 @@
 ** whereas the output of asctime is supposed to be constant.
 */
 
-#ifndef lint
-#ifndef NOID
-static char elsieid[] = "@(#)asctime.c  8.2";
-#endif /* !defined NOID */
-#endif /* !defined lint */
-
-/*LINTLIBRARY*/
-
 #include "private.h"
 #include "tzfile.h"
 

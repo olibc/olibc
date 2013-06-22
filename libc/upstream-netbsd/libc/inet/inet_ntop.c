@@ -221,7 +221,7 @@ inet_ntop6(const u_char *src, char *dst, socklen_t size)
 	/*
 	 * Check for overflow, copy, and we're done.
 	 */
-	if ((size_t)(tp - tmp) > size) {
+	if ((ssize_t)(tp - tmp) > size) {
 		errno = ENOSPC;
 		return (NULL);
 	}

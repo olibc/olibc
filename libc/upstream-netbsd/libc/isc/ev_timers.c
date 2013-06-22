@@ -36,6 +36,7 @@ __RCSID("$NetBSD: ev_timers.c,v 1.11 2012/03/21 00:34:54 christos Exp $");
 #include "fd_setsize.h"
 
 #include <errno.h>
+#include <time.h>
 
 #include <isc/assertions.h>
 #include <isc/eventlib.h>

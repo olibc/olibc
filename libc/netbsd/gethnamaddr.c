@@ -662,7 +662,7 @@ gethostbyaddr(const void *addr,
 	    (IN6_IS_ADDR_V4MAPPED((const struct in6_addr *)(const void *)uaddr) ||
 	     IN6_IS_ADDR_V4COMPAT((const struct in6_addr *)(const void *)uaddr))) {
 		/* Unmap. */
-		addr += IN6ADDRSZ - INADDRSZ;
+		addr = (char*)addr + IN6ADDRSZ - INADDRSZ;
 		uaddr += IN6ADDRSZ - INADDRSZ;
 		af = AF_INET;
 		len = INADDRSZ;

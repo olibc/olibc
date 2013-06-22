@@ -1247,7 +1247,7 @@ _cache_check_pending_request_locked( struct resolv_cache* cache, Entry* key )
         } else {
             struct timespec ts = {0,0};
             ts.tv_sec = _time_now() + PENDING_REQUEST_TIMEOUT;
-            int rv = pthread_cond_timedwait(&ri->cond, &cache->lock, &ts);
+            pthread_cond_timedwait(&ri->cond, &cache->lock, &ts);
         }
     }
 
@@ -1301,7 +1301,6 @@ static void
 _cache_flush_locked( Cache*  cache )
 {
     int     nn;
-    time_t  now = _time_now();
 
     for (nn = 0; nn < cache->max_entries; nn++)
     {
@@ -1335,7 +1334,9 @@ static int
 _res_cache_get_max_entries( void )
 {
     int result = -1;
+#if defined(PROPERTY_SYSTEM_SUPPORT)
     char cache_size[PROP_VALUE_MAX];
+#endif
 
     const char* cache_mode = getenv("ANDROID_DNS_MODE");
 
@@ -1574,9 +1575,7 @@ _resolv_cache_lookup( struct resolv_cache*  cache,
                       int                   answersize,
                       int                  *answerlen )
 {
-    DnsPacket  pack[1];
     Entry      key[1];
-    int        index;
     Entry**    lookup;
     Entry*     e;
     time_t     now;
@@ -1749,8 +1748,6 @@ static struct resolv_cache_info* _create_cache_info( void );
 static struct resolv_cache* _find_named_cache_locked(const char* ifname);
 /* gets a resolv_cache_info associated with an interface name, or NULL if not found */
 static struct resolv_cache_info* _find_cache_info_locked(const char* ifname);
-/* free dns name server list of a resolv_cache_info structure */
-static void _free_nameservers(struct resolv_cache_info* cache_info);
 /* look up the named cache, and creates one if needed */
 static struct resolv_cache* _get_res_cache_for_iface_locked(const char* ifname);
 /* empty the named cache */
@@ -2123,7 +2120,9 @@ _resolv_set_addr_of_iface(const char* ifname, struct in_addr* addr)
         memcpy(&cache_info->ifaddr, addr, sizeof(*addr));
 
         if (DEBUG) {
+#if DEBUG
             char* addr_s = inet_ntoa(cache_info->ifaddr);
+#endif
             XLOG("address of interface %s is %s\n", ifname, addr_s);
         }
     }

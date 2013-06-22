@@ -247,7 +247,7 @@ Time64_T timegm64(const struct TM *date) {
     return(seconds);
 }
 
-
+#ifndef NDEBUG
 static int check_tm(struct TM *tm __unused)
 {
     /* Don't forget leap seconds */
@@ -268,7 +268,7 @@ static int check_tm(struct TM *tm __unused)
 
     assert(tm->tm_wday >= 0);
     assert(tm->tm_wday <= 6);
-   
+
     assert(tm->tm_yday >= 0);
     assert(tm->tm_yday <= length_of_year[IS_LEAP(tm->tm_year)]);
 
@@ -279,6 +279,7 @@ static int check_tm(struct TM *tm __unused)
 
     return 1;
 }
+#endif
 
 
 /* The exceptional centuries without leap years cause the cycle to
@@ -427,7 +428,7 @@ static void copy_TM_to_tm(const struct TM *src, struct tm *dest) {
     }
 }
 
-
+#ifndef HAS_LOCALTIME_R
 /* Simulate localtime_r() to the best of our ability */
 static struct tm * fake_localtime_r(const time_t *clock, struct tm *result) {
     const struct tm *static_result = localtime(clock);
@@ -443,9 +444,10 @@ static struct tm * fake_localtime_r(const time_t *clock, struct tm *result) {
         return result;
     }
 }
+#endif
 
 
-
+#ifndef HAS_LOCALTIME_R
 /* Simulate gmtime_r() to the best of our ability */
 static struct tm * fake_gmtime_r(const time_t *clock, struct tm *result) {
     const struct tm *static_result = gmtime(clock);
@@ -461,7 +463,7 @@ static struct tm * fake_gmtime_r(const time_t *clock, struct tm *result) {
         return result;
     }
 }
-
+#endif
 
 static Time64_T seconds_between_years(Year left_year, Year right_year) {
     int increment = (left_year > right_year) ? 1 : -1;

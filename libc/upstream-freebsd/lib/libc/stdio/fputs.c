@@ -60,7 +60,6 @@ fputs(const char * __restrict s, FILE * __restrict fp)
 int
 fputs_unlocked(const char * __restrict s, FILE * __restrict fp)
 {
-	int retval;
 	struct __suio uio;
 	struct __siov iov;
 

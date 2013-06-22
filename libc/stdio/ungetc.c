@@ -109,7 +109,7 @@ error:			FUNLOCKFILE(fp);
 	 * This may require expanding the current ungetc buffer.
 	 */
 	if (HASUB(fp)) {
-		if (fp->_r >= _UB(fp)._size && __submore(fp))
+		if ((size_t)fp->_r >= _UB(fp)._size && __submore(fp))
 			goto error;
 		*--fp->_p = c;
 inc_ret:	fp->_r++;

@@ -111,6 +111,8 @@ __RCSID("$NetBSD: res_init.c,v 1.8 2006/03/19 03:10:08 christos Exp $");
 /* ensure that sockaddr_in6 and IN6ADDR_ANY_INIT are declared / defined */
 #ifdef ANDROID_CHANGES
 #include "resolv_private.h"
+#endif
+#if defined(ANDROID_CHANGES) && defined(PROPERTY_SYSTEM_SUPPORT)
 #define MAX_DNS_PROPERTIES 8
 #define DNS_PROP_NAME_PREFIX "net.dns"
 #define DNS_CHANGE_PROP_NAME "net.dnschange"
@@ -220,7 +222,7 @@ __res_vinit(res_state statp, int preinit) {
 	char *net;
 	int dots;
 	union res_sockaddr_union u[2];
-#if defined(ANDROID_CHANGES) && ANDROID_CHANGES
+#if defined(ANDROID_CHANGES) && ANDROID_CHANGES && defined(PROPERTY_SYSTEM_SUPPORT)
         pid_t mypid = getpid();
         int use_proc_props = 0;
         int found_prop;
@@ -455,7 +457,7 @@ __res_vinit(res_state statp, int preinit) {
 		if (MATCH(buf, "nameserver") && nserv < MAXNS) {
 		    struct addrinfo hints, *ai;
 		    char sbuf[NI_MAXSERV];
-		    const size_t minsiz =
+		    const ssize_t minsiz =
 		        sizeof(statp->_u._ext.ext->nsaddrs[0]);
 
 		    cp = buf + sizeof("nameserver") - 1;
@@ -475,7 +477,7 @@ __res_vinit(res_state statp, int preinit) {
 				    ai->ai_addr, ai->ai_addrlen);
 			    }
 			    if (ai->ai_addrlen <=
-			        sizeof(statp->nsaddr_list[nserv])) {
+			        (ssize_t)sizeof(statp->nsaddr_list[nserv])) {
 				memcpy(&statp->nsaddr_list[nserv],
 				    ai->ai_addr, ai->ai_addrlen);
 			    } else
@@ -729,7 +731,7 @@ real_randomid(u_int *random_value) {
 
 	/* read from the random device, returning -1 on failure (or too many retries)*/
 	u_int retry = 5;
-	for (retry; retry > 0; retry--) {
+	for (; retry > 0; retry--) {
 		int retval = read(random_device, random_value, sizeof(u_int));
 		if (retval == sizeof(u_int)) {
 			*random_value &= 0xffff;

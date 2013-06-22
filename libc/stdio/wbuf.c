@@ -43,7 +43,7 @@
 int
 __swbuf(int c, FILE *fp)
 {
-	int n;
+	size_t n;
 
 	_SET_ORIENTATION(fp, -1);
 	/*

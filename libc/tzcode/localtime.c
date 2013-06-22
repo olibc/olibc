@@ -3,12 +3,6 @@
 ** 1996-06-05 by Arthur David Olson.
 */
 
-#ifndef lint
-#ifndef NOID
-static char elsieid[] = "@(#)localtime.c    8.3";
-#endif /* !defined NOID */
-#endif /* !defined lint */
-
 /*
 ** Leap second handling from Bradley White.
 ** POSIX-style TZ environment variable handling from Guy Harris.
@@ -1366,7 +1360,7 @@ localsub(const time_t * const timep,
     */
     result = timesub(&t, ttisp->tt_gmtoff, sp, tmp);
     tmp->tm_isdst = ttisp->tt_isdst;
-    tzname[tmp->tm_isdst] = &sp->chars[ttisp->tt_abbrind];
+    tzname[tmp->tm_isdst] = (char*)&sp->chars[ttisp->tt_abbrind];
 #ifdef TM_ZONE
     tmp->TM_ZONE = &sp->chars[ttisp->tt_abbrind];
 #endif /* defined TM_ZONE */
