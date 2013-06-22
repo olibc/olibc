@@ -163,6 +163,10 @@ config UTMPX_SUPPORT
 	bool "utmpx based support for tracking login/logouts to/from the system"
 	default n
 
+config SHADOW_PASSWD_FILE_IMPL
+	bool "Shadow password file entry manipulation functions"
+	default n
+
 endmenu
 
 menu "String and Stdio Support"

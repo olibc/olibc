@@ -192,6 +192,21 @@ libc_common_src_files += \
 
 endif
 
+ifeq ($(SHADOW_PASSWD_FILE_IMPL),true)
+libc_common_src_files += \
+	passwd/fgetspent.c \
+	passwd/fgetspent_r.c \
+	passwd/getspent.c \
+	passwd/getspent_r.c \
+	passwd/getspnam.c \
+	passwd/getspnam_r.c \
+	passwd/lckpwdf.c \
+	passwd/sgetspent.c \
+	passwd/sgetspent_r.c \
+	passwd/putspent.c \
+
+endif
+
 ifeq ($(MEMPCPY_IMPL),true)
 libc_common_src_files += \
 	bionic/mempcpy.c \
