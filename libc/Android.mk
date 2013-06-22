@@ -154,7 +154,6 @@ libc_common_src_files := \
 	bionic/unlockpt.c \
 	bionic/usleep.c \
 	bionic/utmp.c \
-	netbsd/gethnamaddr.c \
 	netbsd/inet/nsap_addr.c \
 	netbsd/resolv/__dn_comp.c \
 	netbsd/resolv/__res_close.c \
@@ -166,12 +165,9 @@ libc_common_src_files := \
 	netbsd/resolv/res_init.c \
 	netbsd/resolv/res_mkquery.c \
 	netbsd/resolv/res_query.c \
-	netbsd/resolv/res_send.c \
 	netbsd/resolv/res_state.c \
 	netbsd/resolv/res_cache.c \
 	netbsd/net/nsdispatch.c \
-	netbsd/net/getaddrinfo.c \
-	netbsd/net/getnameinfo.c \
 	netbsd/net/getservbyname.c \
 	netbsd/net/getservent.c \
 	netbsd/net/base64.c \
@@ -182,6 +178,12 @@ libc_common_src_files := \
 	netbsd/nameser/ns_netint.c \
 	netbsd/nameser/ns_print.c \
 	netbsd/nameser/ns_samedomain.c \
+
+libc_common_no_strict_alias_src_files += \
+	netbsd/gethnamaddr.c \
+	netbsd/resolv/res_send.c \
+	netbsd/net/getaddrinfo.c \
+	netbsd/net/getnameinfo.c \
 
 ifeq ($(STPCPY_IMPL),true)
 libc_common_src_files += \
@@ -878,6 +880,24 @@ include $(BUILD_STATIC_LIBRARY)
 
 
 # ========================================================
+# libc_common_no_strict_alias.a
+# ========================================================
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := $(libc_common_no_strict_alias_src_files)
+LOCAL_CFLAGS := $(libc_common_cflags) \
+    -std=gnu99 \
+    -fno-strict-aliasing \
+    -I$(LOCAL_PATH)/upstream-netbsd/libc/include # for netbsd private headers
+LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_MODULE := libc_common_no_strict_alias
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_SYSTEM_SHARED_LIBRARIES :=
+
+include $(BUILD_STATIC_LIBRARY)
+
+# ========================================================
 # libc_common.a
 # ========================================================
 
@@ -890,7 +910,9 @@ LOCAL_CFLAGS := $(libc_common_cflags) \
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_MODULE := libc_common
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
-LOCAL_WHOLE_STATIC_LIBRARIES := libbionic_ssp libc_bionic libc_freebsd libc_netbsd
+LOCAL_WHOLE_STATIC_LIBRARIES := libbionic_ssp libc_bionic \
+                                libc_freebsd libc_netbsd \
+                                libc_common_no_strict_alias
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
 
 include $(BUILD_STATIC_LIBRARY)
