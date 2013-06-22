@@ -261,7 +261,7 @@ size_t fill_malloc_usable_size(const void* mem) {
 // malloc leak functions
 // =============================================================================
 
-static void* MEMALIGN_GUARD = (void*)(0xA1A41520);
+static uint32_t MEMALIGN_GUARD = (uint32_t)(0xA1A41520u);
 
 void* leak_malloc(size_t bytes) {
     // allocate enough space infront of the allocation to store the pointer for
