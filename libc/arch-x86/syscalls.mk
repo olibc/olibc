@@ -168,6 +168,7 @@ syscall_src += arch-x86/syscalls/swapon.S
 syscall_src += arch-x86/syscalls/swapoff.S
 syscall_src += arch-x86/syscalls/quotactl.S
 syscall_src += arch-x86/syscalls/mknodat.S
+syscall_src += arch-x86/syscalls/futimesat.S
 syscall_src += arch-x86/syscalls/pause.S
 syscall_src += arch-x86/syscalls/gettimeofday.S
 syscall_src += arch-x86/syscalls/settimeofday.S
