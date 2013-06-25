@@ -542,6 +542,7 @@ libc_arch_dynamic_src_files := $(_LIBC_ARCH_DYNAMIC_SRC_FILES)
 # Define some common cflags
 # ========================================================
 libc_common_cflags := \
+    -Werror \
     -DWITH_ERRLIST \
     -DANDROID_CHANGES \
     -D_LIBC=1 \
