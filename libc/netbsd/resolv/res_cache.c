@@ -163,6 +163,9 @@
 /****************************************************************************/
 
 /* set to 1 to debug cache operations */
+#ifdef DEBUG
+#undef DEBUG
+#endif
 #define  DEBUG       0
 
 /* set to 1 to debug query data */
