@@ -55,7 +55,7 @@
 #endif
 
 /* This is the Android signature */
-int cacheflush (long start, long end, long flags)
+int cacheflush (long start, long end, long flags __unused)
 {
 	if (end < start) {
 		/*

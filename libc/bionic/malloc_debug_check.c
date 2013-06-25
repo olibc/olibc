@@ -86,12 +86,12 @@ struct hdr_t {
     uintptr_t freed_bt[MAX_BACKTRACE_DEPTH];
     int freed_bt_depth;
     size_t size;
-    char front_guard[FRONT_GUARD_LEN];
+    unsigned char front_guard[FRONT_GUARD_LEN];
 } __attribute__((packed, aligned(MALLOC_ALIGNMENT)));
 
 typedef struct ftr_t ftr_t;
 struct ftr_t {
-    char rear_guard[REAR_GUARD_LEN];
+    unsigned char rear_guard[REAR_GUARD_LEN];
 } __attribute__((packed));
 
 static inline ftr_t* to_ftr(hdr_t* hdr) {
@@ -216,7 +216,7 @@ static inline void poison(hdr_t* hdr) {
 
 static int was_used_after_free(hdr_t* hdr) {
     unsigned i;
-    const char* data = (const char *)(user(hdr));
+    const unsigned char* data = (const unsigned char *)(user(hdr));
     for (i = 0; i < hdr->size; i++)
         if (data[i] != FREE_POISON)
             return 1;

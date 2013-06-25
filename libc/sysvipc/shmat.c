@@ -21,7 +21,7 @@
 void *shmat(int shmid, const void *shmaddr, int shmflg) {
   void *addr;
   int ret;
-  ret = ipc(SHMAT, shmid, shmflg, &addr, shmaddr, 0);
+  ret = ipc(SHMAT, shmid, shmflg, (int)&addr, (void*)shmaddr, 0);
   if ((unsigned long int)ret > -(unsigned long int) SHMLBA) {
     return (void*)ret;
   } else {

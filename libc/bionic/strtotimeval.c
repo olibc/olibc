@@ -32,7 +32,7 @@
 
 char * strtotimeval (const char *str, struct timeval *ts)
 {
-    char *s, *s0;
+    char *s;
     long  fs;	/* Fractional seconds */
 
     ts->tv_sec = strtoumax(str, &s, 10);
@@ -40,8 +40,6 @@ char * strtotimeval (const char *str, struct timeval *ts)
 
     if ( *s == '.' ) {
 	int  count;
-
-        s0 = s+1;
 
 	/* read up to 6 digits */
 	fs    = 0;

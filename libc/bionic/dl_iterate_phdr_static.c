@@ -47,7 +47,8 @@ dl_iterate_phdr(int (*cb)(struct dl_phdr_info *info, size_t size, void *data),
                 void *data)
 {
     struct dl_phdr_info dl_info;
-    Elf32_Ehdr *ehdr = (Elf32_Ehdr *) &__executable_start;
+    void *ptr = (void*)&__executable_start;
+    Elf32_Ehdr *ehdr = (Elf32_Ehdr *) ptr;
     Elf32_Phdr *phdr = (Elf32_Phdr *)((unsigned long)ehdr + ehdr->e_phoff);
 
     /* TODO: again, copied from linker.c. Find a better home for this

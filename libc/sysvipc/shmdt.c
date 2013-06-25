@@ -19,5 +19,5 @@
 #include "ipc_private.h"
 
 int shmdt(const void *shmaddr) {
-  return ipc(SHMDT, 0, 0, 0, shmaddr, 0);
+  return ipc(SHMDT, 0, 0, 0, (void*)shmaddr, 0);
 }
