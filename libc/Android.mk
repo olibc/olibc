@@ -9,7 +9,6 @@ libc_common_src_files := \
 	unistd/alarm.c \
 	unistd/exec.c \
 	unistd/fnmatch.c \
-	unistd/getopt_long.c \
 	unistd/syslog.c \
 	unistd/system.c \
 	unistd/time.c \
@@ -326,6 +325,7 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/tempnam.c \
     upstream-freebsd/lib/libc/stdio/tmpnam.c \
     upstream-freebsd/lib/libc/stdio/wsetup.c \
+    upstream-freebsd/lib/libc/stdlib/getopt_long.c \
     upstream-freebsd/lib/libc/stdlib/qsort.c \
     upstream-freebsd/lib/libc/stdlib/realpath.c \
 
@@ -582,6 +582,7 @@ endif
 
 ifeq ($(PROPERTY_SYSTEM_SUPPORT),true)
   libc_common_src_files += \
+	bionic/system_properties_compat.c \
 	bionic/system_properties.c
   libc_common_cflags += -DPROPERTY_SYSTEM_SUPPORT
 endif

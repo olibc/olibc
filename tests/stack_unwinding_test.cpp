@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 olibc developers
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _SYS_SWAP_H_
-#define _SYS_SWAP_H_
 
-#include <sys/cdefs.h>
+/*
+ * Contributed by: Intel Corporation
+ */
 
-__BEGIN_DECLS
+#include <gtest/gtest.h>
 
-enum {
-  SWAP_FLAG_PREFER     = 0x8000,
-  SWAP_FLAG_PRIO_MASK  = 0x7fff,
-  SWAP_FLAG_PRIO_SHIFT = 0x0000,
-  SWAP_FLAG_DISCARD    = 0x10000
-};
+#if defined(i386) // Only our x86 unwinding is good enough. Switch to libunwind?
 
-extern int swapon(const char *path, int swapflags) __attribute__((__nonnull__(1)));
-extern int swapoff(const char *path) __attribute__((__nonnull__(1)));
+extern "C" {
+  void do_test();
+}
 
-__END_DECLS
+// We have to say "DeathTest" here so gtest knows to run this test (which exits)
+// in its own process.
+TEST(stack_unwinding_DeathTest, unwinding_through_signal_frame) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  ASSERT_EXIT(do_test(), ::testing::ExitedWithCode(42), "");
+}
 
-#endif /* _SYS_SWAP_H_ */
+#endif

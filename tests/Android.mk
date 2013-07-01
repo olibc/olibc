@@ -67,8 +67,6 @@ test_src_files = \
     dirent_test.cpp \
     eventfd_test.cpp \
     fenv_test.cpp \
-    fortify1_test.cpp \
-    fortify2_test.cpp \
     getauxval_test.cpp \
     getcwd_test.cpp \
     libc_logging_test.cpp \
@@ -80,6 +78,7 @@ test_src_files = \
     regex_test.cpp \
     signal_test.cpp \
     stack_protector_test.cpp \
+    stack_unwinding_test.cpp \
     stdio_test.cpp \
     stdlib_test.cpp \
     string_test.cpp \
@@ -114,6 +113,23 @@ test_dynamic_ldflags = -Wl,--export-dynamic -Wl,-u,DlSymTestFunction
 test_dynamic_src_files = \
     dlfcn_test.cpp \
 
+test_fortify_static_libraries = \
+    fortify1-tests-gcc fortify2-tests-gcc
+# disable this unit test for clang on olibc
+#    fortify1-tests-clang fortify2-tests-clang
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := bionic-unit-tests-unwind-test-impl
+LOCAL_CFLAGS += $(test_c_flags) -fexceptions -fnon-call-exceptions
+LOCAL_SRC_FILES := stack_unwinding_test_impl.c
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := bionic-unit-tests-unwind-test-impl-host
+LOCAL_CFLAGS += $(test_c_flags) -fexceptions -fnon-call-exceptions
+LOCAL_SRC_FILES := stack_unwinding_test_impl.c
+include $(BUILD_HOST_STATIC_LIBRARY)
+
 # Build tests for the device (with bionic's .so). Run with:
 #   adb shell /data/nativetest/bionic-unit-tests/bionic-unit-tests
 ifneq ($(EXTRA_STLPORT_SUPPORT),)
@@ -124,8 +140,8 @@ LOCAL_CFLAGS += $(test_c_flags)
 LOCAL_LDFLAGS += $(test_dynamic_ldflags)
 LOCAL_SHARED_LIBRARIES += libdl
 LOCAL_SRC_FILES := $(test_src_files) $(test_dynamic_src_files)
-# disable this unit test on olibc
-# LOCAL_WHOLE_STATIC_LIBRARIES := bionic-unit-tests-clang
+LOCAL_WHOLE_STATIC_LIBRARIES := $(test_fortify_static_libraries)
+LOCAL_STATIC_LIBRARIES += bionic-unit-tests-unwind-test-impl
 include $(BUILD_NATIVE_TEST)
 endif
 
@@ -138,9 +154,8 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_CFLAGS += $(test_c_flags)
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_SRC_FILES := $(test_src_files)
-LOCAL_STATIC_LIBRARIES += libstlport_static libstdc++ libm libc
-# disable this unit test on olibc
-# LOCAL_WHOLE_STATIC_LIBRARIES := bionic-unit-tests-clang
+LOCAL_STATIC_LIBRARIES += libstlport_static libstdc++ libm libc bionic-unit-tests-unwind-test-impl
+LOCAL_WHOLE_STATIC_LIBRARIES := $(test_fortify_static_libraries)
 include $(BUILD_NATIVE_TEST)
 endif
 
@@ -175,27 +190,57 @@ LOCAL_CFLAGS += $(test_c_flags)
 LOCAL_LDFLAGS += -lpthread -ldl
 LOCAL_LDFLAGS += $(test_dynamic_ldflags)
 LOCAL_SRC_FILES := $(test_src_files) $(test_dynamic_src_files)
+LOCAL_STATIC_LIBRARIES += bionic-unit-tests-unwind-test-impl-host
 include $(BUILD_HOST_NATIVE_TEST)
 endif
 
 # -----------------------------------------------------------------------------
-# Unit tests which depend on clang as the compiler
+# FORTIFY_SOURCE tests
 # -----------------------------------------------------------------------------
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := fortify1_test_clang.cpp fortify2_test_clang.cpp
-LOCAL_MODULE := bionic-unit-tests-clang
-LOCAL_CLANG := true
+
+fortify_c_includes = \
+    bionic \
+    bionic/libstdc++/include \
+    external/stlport/stlport \
+    external/gtest/include
+fortify_test_files = fortify_test.cpp
 
 # -Wno-error=unused-parameter needed as
 # external/stlport/stlport/stl/_threads.c (included from
 # external/gtest/include/gtest/gtest.h) does not compile cleanly under
 # clang. TODO: fix this.
-LOCAL_CFLAGS += $(test_c_flags) -Wno-error=unused-parameter
+fortify_c_flags = $(test_c_flags) -Wno-error=unused-parameter
 
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := $(fortify_test_files)
+LOCAL_MODULE := fortify1-tests-gcc
+LOCAL_CFLAGS += $(fortify_c_flags) -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 -DTEST_NAME=Fortify1_Gcc
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
-LOCAL_C_INCLUDES += bionic \
-                    bionic/libstdc++/include \
-                    external/stlport/stlport \
-                    external/gtest/include
-# disable this unit test on olibc
-# include $(BUILD_STATIC_LIBRARY)
+LOCAL_C_INCLUDES += $(fortify_c_includes)
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := $(fortify_test_files)
+LOCAL_MODULE := fortify2-tests-gcc
+LOCAL_CFLAGS += $(fortify_c_flags) -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -DTEST_NAME=Fortify2_Gcc
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_C_INCLUDES += $(fortify_c_includes)
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := $(fortify_test_files)
+LOCAL_MODULE := fortify1-tests-clang
+LOCAL_CLANG := true
+LOCAL_CFLAGS += $(fortify_c_flags) -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 -DTEST_NAME=Fortify1_Clang
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_C_INCLUDES += $(fortify_c_includes)
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := $(fortify_test_files)
+LOCAL_MODULE := fortify2-tests-clang
+LOCAL_CLANG := true
+LOCAL_CFLAGS += $(fortify_c_flags) -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -DTEST_NAME=Fortify2_Clang
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_C_INCLUDES += $(fortify_c_includes)
+include $(BUILD_STATIC_LIBRARY)

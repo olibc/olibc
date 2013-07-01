@@ -1719,6 +1719,29 @@ static bool soinfo_link_image(soinfo* si) {
 }
 
 /*
+ * This function add vdso to internal dso list.
+ * It helps to stack unwinding through signal handlers.
+ * Also, it makes bionic more like glibc.
+ */
+static void add_vdso(KernelArgumentBlock* args __unused) {
+#ifdef AT_SYSINFO_EHDR
+    Elf32_Ehdr* ehdr_vdso = (Elf32_Ehdr*)(KernelArgumentBlock_getauxval(args, AT_SYSINFO_EHDR, NULL));
+
+    soinfo* si = soinfo_alloc("[vdso]");
+    si->phdr = (Elf32_Phdr*)((char*)(ehdr_vdso) + ehdr_vdso->e_phoff);
+    si->phnum = ehdr_vdso->e_phnum;
+    si->link_map.l_name = si->name;
+    size_t i;
+    for (i = 0; i < si->phnum; ++i) {
+        if (si->phdr[i].p_type == PT_LOAD) {
+            si->link_map.l_addr = (Elf32_Addr)(ehdr_vdso) - si->phdr[i].p_vaddr;
+            break;
+        }
+    }
+#endif
+}
+
+/*
  * This code is called after the linker has linked itself and
  * fixed it's own GOT. It is safe to make references to externs
  * and other non-local data at this point.
@@ -1845,6 +1868,8 @@ static Elf32_Addr __linker_init_post_relocation(KernelArgumentBlock* args, Elf32
         __libc_format_fd(2, "CANNOT LINK EXECUTABLE: %s\n", linker_get_error_buffer());
         exit(EXIT_FAILURE);
     }
+
+    add_vdso(args);
 
     soinfo_CallPreInitConstructors(si);
 

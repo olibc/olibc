@@ -462,7 +462,7 @@ int vfdprintf(int, const char*, __va_list)
 __END_DECLS
 #endif /* _GNU_SOURCE */
 
-#if defined(__BIONIC_FORTIFY) && !defined(__clang__)
+#if defined(__BIONIC_FORTIFY)
 
 __BEGIN_DECLS
 
@@ -480,14 +480,21 @@ int vsprintf(char *dest, const char *format, __va_list ap)
     return __builtin___vsprintf_chk(dest, 0, __bos(dest), format, ap);
 }
 
+#if defined(__clang__)
+#define snprintf(dest, size, ...) __builtin___snprintf_chk(dest, size, 0, __bos(dest), __VA_ARGS__)
+#else
 __BIONIC_FORTIFY_INLINE
 __printflike(3, 4)
-int snprintf(char *str, size_t size, const char *format, ...)
+int snprintf(char *dest, size_t size, const char *format, ...)
 {
-    return __builtin___snprintf_chk(str, size, 0,
-        __bos(str), format, __builtin_va_arg_pack());
+    return __builtin___snprintf_chk(dest, size, 0,
+        __bos(dest), format, __builtin_va_arg_pack());
 }
+#endif
 
+#if defined(__clang__)
+#define sprintf(dest, ...) __builtin___sprintf_chk(dest, 0, __bos(dest), __VA_ARGS__)
+#else
 __BIONIC_FORTIFY_INLINE
 __printflike(2, 3)
 int sprintf(char *dest, const char *format, ...)
@@ -495,7 +502,9 @@ int sprintf(char *dest, const char *format, ...)
     return __builtin___sprintf_chk(dest, 0,
         __bos(dest), format, __builtin_va_arg_pack());
 }
+#endif
 
+#if !defined(__clang__)
 extern char *__fgets_real(char *, int, FILE *)
     __asm__(__USER_LABEL_PREFIX__ "fgets");
 __errordecl(__fgets_too_big_error, "fgets called with size bigger than buffer");
@@ -533,8 +542,10 @@ char *fgets(char *dest, int size, FILE *stream)
     return __fgets_chk(dest, size, stream, bos);
 }
 
+#endif /* !defined(__clang__) */
+
 __END_DECLS
 
-#endif /* defined(__BIONIC_FORTIFY) && !defined(__clang__) */
+#endif /* defined(__BIONIC_FORTIFY) */
 
 #endif /* _STDIO_H_ */

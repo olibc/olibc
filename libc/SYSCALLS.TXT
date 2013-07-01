@@ -223,8 +223,8 @@ int     removexattr(const char *, const char *) 1 <XATTR_SUPPORT>
 int     lremovexattr(const char *, const char *) 1 <XATTR_SUPPORT>
 int     __statfs64:statfs64(const char *, size_t, struct statfs *)  1
 long    unshare(unsigned long)  1
-int     swapon(const char *path, int swapflags) 1
-int     swapoff(const char *path) 1
+int     swapon(const char *, int) 1
+int     swapoff(const char *) 1
 int     quotactl(int cmd, const char *special, int id, caddr_t addr) 1
 int     mknodat(int fd, const char *path, mode_t mode, dev_t dev) 1
 int     futimesat(int, const char *, const struct timeval[2]) 1
