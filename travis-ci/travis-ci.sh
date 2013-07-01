@@ -6,12 +6,6 @@ chmod a+x ./repo
 
 ./repo init -u https://github.com/olibc/manifest.git
 ./repo sync
-echo "OLIBC_CONF:=.config-olibc" > Makefile
-echo "-include \$(OLIBC_CONF)" >> Makefile
-echo "include build/core/olibc.mk" >> Makefile
-echo "include build/core/main.mk" >> Makefile
-echo "build/core/BUILD-real.sh \$@" > BUILD.sh
-chmod +x BUILD.sh
 for config in configs/*
 do
   x=`grep EXT_MALLOC_LEAK_CHECK=true $config`
@@ -33,7 +27,7 @@ do
   fi
 
 
-  ./BUILD.sh -j10 OLIBC_CONF=$config \
+  make -j10 CONFIG=$config \
              bionic-unit-tests-static bionic-unit-tests \
              bionic-benchmarks \
              $MALLOC_LEAK \
