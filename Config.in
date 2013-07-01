@@ -2,16 +2,9 @@
 
 mainmenu "olibc C Library Configurations"
 
-config DESIRED_TARGET_PRODUCT
-	string
-	option env="TARGET_PRODUCT"
-
 choice
 	prompt "Architecture"
-	default TARGET_arm if DESIRED_TARGET_PRODUCT="mini_armv7a_neon"
-	default TARGET_arm if DESIRED_TARGET_PRODUCT="mini_armv7a"
-	default TARGET_mips if DESIRED_TARGET_PRODUCT="mini_mips"
-	default TARGET_x86 if DESIRED_TARGET_PRODUCT="mini_x86"
+	default TARGET_arm
 	help
 	  The architecture of your target.
 
@@ -282,20 +275,22 @@ config TARGET_TOOLS_PREFIX
 	  'arm-none-eabi-gcc' here
 endif
 
+if TARGET_arm
 choice
 	prompt "Generate olibc toolchain"
+	default OLIBC_NO_BUILD_TOOLCHAIN
+
 	config OLIBC_NO_BUILD_TOOLCHAIN
 		bool "Do not generate toolchain"
 
 	config OLIBC_GCC_WRAPPER
 		bool "GCC wrapper-style toolchain"
-		default n
 
 	config OLIBC_STANDALONG_TOOLCHAIN
 		bool "Build from source (experimental)"
 		depends on TARGET_arm
-		default n
 endchoice
+endif
 
 config DEBUG_BIONIC_LIBC
 	bool "Enable olibc debugging"
