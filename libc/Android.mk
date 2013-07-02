@@ -232,7 +232,7 @@ libc_common_src_files += \
 endif
 
 ifeq ($(MD5_IMPL),true)
-libc_common_src_files += \
+libc_common_no_strict_alias_src_files += \
 	bionic/md5.c
 endif
 
