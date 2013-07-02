@@ -10,7 +10,7 @@ TARGET_arm=true
 # Target Architecture Features and Options
 #
 TARGET_CPU_SMP=true
-TARGET_ARCH="arm"
+TARGET_ARCH=arm
 TARGET_ARM_GENERIC=true
 # TARGET_ARM_CORTEX_A9 is not set
 # TARGET_ARM_CORTEX_A15 is not set
@@ -18,7 +18,7 @@ TARGET_ARM_GENERIC=true
 # TARGET_ARM_SPARROW is not set
 # TARGET_ARM_KRAIT is not set
 ARCH_ARM_HAVE_NEON=true
-TARGET_SUBARCH="neon"
+TARGET_SUBARCH=neon
 
 #
 # General Library Settings
@@ -64,10 +64,10 @@ LINKER_TRACE_RELO=true
 LINKER_TIMING=true
 LINKER_STATS=true
 LINKER_COUNT_PAGES=true
-EXTRA_OLIBC_CFLAGS=""
-EXTRA_OLIBC_CXXFLAGS=""
-EXTRA_OLIBC_LDFLAGS=""
-OUT_DIR="out-generic"
+EXTRA_OLIBC_CFLAGS=
+EXTRA_OLIBC_CXXFLAGS=
+EXTRA_OLIBC_LDFLAGS=
+OUT_DIR=out-generic
 
 #
 # Extra packages
