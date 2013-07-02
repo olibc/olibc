@@ -286,7 +286,7 @@ choice
 	config OLIBC_GCC_WRAPPER
 		bool "GCC wrapper-style toolchain"
 
-	config OLIBC_STANDALONG_TOOLCHAIN
+	config OLIBC_STANDALONE_TOOLCHAIN
 		bool "Build from source (experimental)"
 		depends on TARGET_arm
 endchoice
