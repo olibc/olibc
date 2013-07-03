@@ -24,10 +24,10 @@ crypt(const char *key, const char *salt)
     switch (salt[1]) {
 #ifdef MD5_IMPL
       case '1': /* md5 */
-        /* Not implment yet. */
+        /* Unimplemented */
         break;
 #endif
-      /* olibc don't implment SHA 256/512 yet. */
+      /* SHA 256/512: Unimplemented  */
       case '5': /* SHA 256 */
       case '6': /* SHA 512 */
       default:

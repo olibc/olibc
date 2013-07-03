@@ -17,7 +17,7 @@
 #include <shadow.h>
 #include "passwd_private.h"
 
-/* It's not thread safe implmentation yet :P */
+/* FIXME: not thread safe */
 int lckpwdf(void)
 {
   return 0;
