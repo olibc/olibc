@@ -199,6 +199,8 @@ extern int vhangup();
 extern int profil(unsigned short *buf, size_t bufsiz,
                   size_t offset, unsigned int scale);
 
+extern char *crypt(const char *key, const char *salt);
+
 #if 0 /* MISSING FROM BIONIC */
 extern int execvpe(const char *, char * const *, char * const *);
 extern int execlpe(const char *, const char *, ...);

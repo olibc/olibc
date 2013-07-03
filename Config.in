@@ -133,6 +133,10 @@ config WCHAR_SUPPORT
 	bool "Wide character support"
 	default n
 
+config CRYPT_IMPL
+	bool "crypt functions"
+	default n
+
 config SHA1_IMPL
 	bool "SHA1 functions"
 	default n

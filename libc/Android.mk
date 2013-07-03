@@ -234,7 +234,18 @@ endif
 ifeq ($(MD5_IMPL),true)
 libc_common_no_strict_alias_src_files += \
 	bionic/md5.c
+
+libc_common_cflags := \
+    -DMD5_IMPL
 endif
+
+ifeq ($(CRYPT_IMPL),true)
+libc_common_src_files += \
+	unistd/crypt.c \
+	unistd/des_crypt.c \
+
+endif
+
 
 libc_bionic_src_files := \
     bionic/abort.c \
