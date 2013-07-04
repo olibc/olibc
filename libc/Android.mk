@@ -263,6 +263,7 @@ libc_bionic_src_files := \
     bionic/eventfd_read.c \
     bionic/eventfd_write.c \
     bionic/__fgets_chk.c \
+    bionic/futimens.c \
     bionic/getauxval.c \
     bionic/getcwd.c \
     bionic/libc_init_common.c \
