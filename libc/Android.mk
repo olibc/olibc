@@ -246,6 +246,13 @@ libc_common_src_files += \
 
 endif
 
+ifeq ($(STATVFS_IMPL),true)
+libc_common_src_files += \
+	bionic/statvfs.c \
+	bionic/fstatvfs.c \
+	bionic/statvfs_internal.c \
+
+endif
 
 libc_bionic_src_files := \
     bionic/abort.c \

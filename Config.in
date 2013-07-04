@@ -145,6 +145,10 @@ config MD5_IMPL
 	bool "MD5 functions"
 	default n
 
+config STATVFS_IMPL
+	bool "statvfs functions"
+	default n
+
 config SYSVIPC_SUPPORT
 	bool "SysV IPC support"
 	default y
