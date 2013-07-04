@@ -248,6 +248,7 @@ syscall_src += arch-x86/syscalls/vhangup.S
 syscall_src += arch-x86/syscalls/bdflush.S
 syscall_src += arch-x86/syscalls/profil.S
 syscall_src += arch-x86/syscalls/sethostname.S
+syscall_src += arch-x86/syscalls/pivot_root.S
 syscall_src += arch-x86/syscalls/futex.S
 syscall_src += arch-x86/syscalls/epoll_create.S
 syscall_src += arch-x86/syscalls/epoll_create1.S
