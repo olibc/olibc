@@ -341,6 +341,7 @@ int     iopl(int level) -1,1,1
 int     vhangup(void) 1
 int     bdflush (int, long int) 1
 int     profil(unsigned short *, size_t, size_t, unsigned int) -1,1,1
+int     sethostname(const char *, size_t) 1
 
 
 
