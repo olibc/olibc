@@ -266,6 +266,8 @@ libc_bionic_src_files := \
     bionic/futimens.c \
     bionic/getauxval.c \
     bionic/getcwd.c \
+    bionic/getlogin.c \
+    bionic/getlogin_r.c \
     bionic/libc_init_common.c \
     bionic/libgen.c \
     bionic/__memcpy_chk.c \

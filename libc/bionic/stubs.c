@@ -396,11 +396,6 @@ int getgrouplist(const char* user __unused, gid_t group, gid_t* groups, int* ngr
     return (*ngroups = 1);
 }
 
-char* getlogin() { // NOLINT: implementing bad function.
-  passwd *pw = getpwuid(getuid()); // NOLINT: implementing bad function in terms of bad function.
-  return (pw != NULL) ? pw->pw_name : NULL;
-}
-
 group* getgrgid(gid_t gid) { // NOLINT: implementing bad function.
   stubs_state_t* state = __stubs_state();
   if (state == NULL) {
