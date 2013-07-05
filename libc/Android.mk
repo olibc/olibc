@@ -24,6 +24,7 @@ libc_common_src_files := \
 	stdio/fseek.c \
 	stdio/ftell.c \
 	stdio/fvwrite.c \
+	stdio/fcloseall.c \
 	stdio/gets.c \
 	stdio/mktemp.c \
 	stdio/printf.c \
