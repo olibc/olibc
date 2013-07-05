@@ -46,6 +46,9 @@ extern int clock_adjtime (__clockid_t __clock_id, struct timex *__utx);
 extern int futimesat(int, const char *,
                      const struct timeval[2]);
 
+extern int futimes(int fd, const struct timeval tv[2]);
+extern int lutimes(const char *filename, const struct timeval tv[2]);
+
 #define timerclear(a)   \
         ((a)->tv_sec = (a)->tv_usec = 0)
 

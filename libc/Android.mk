@@ -94,6 +94,7 @@ libc_common_src_files := \
 	bionic/ftime.c \
 	bionic/ftok.c \
 	bionic/fts.c \
+	bionic/futimes.c \
 	bionic/getdtablesize.c \
 	bionic/gethostname.c \
 	bionic/getpgrp.c \
@@ -107,6 +108,7 @@ libc_common_src_files := \
 	bionic/issetugid.c \
 	bionic/ldexp.c \
 	bionic/lseek64.c \
+	bionic/lutimes.c \
 	bionic/memmem.c \
 	bionic/memswap.c \
 	bionic/mmap.c \
@@ -153,6 +155,7 @@ libc_common_src_files := \
 	bionic/umount.c \
 	bionic/unlockpt.c \
 	bionic/usleep.c \
+	bionic/utimes_internal.c \
 	bionic/utmp.c \
 	netbsd/inet/nsap_addr.c \
 	netbsd/resolv/__dn_comp.c \
