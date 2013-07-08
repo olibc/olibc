@@ -201,6 +201,19 @@ extern int profil(unsigned short *buf, size_t bufsiz,
 
 extern char *crypt(const char *key, const char *salt);
 
+enum {
+  F_ULOCK = 0,
+#define F_ULOCK F_ULOCK
+  F_LOCK = 1,
+#define F_LOCK F_LOCK
+  F_TLOCK = 2,
+#define F_TLOCK F_TLOCK
+  F_TEST = 3
+#define F_TEST F_TEST
+};
+
+extern int lockf(int fd, int cmd, off_t len);
+
 #if 0 /* MISSING FROM BIONIC */
 extern int execvpe(const char *, char * const *, char * const *);
 extern int execlpe(const char *, const char *, ...);
