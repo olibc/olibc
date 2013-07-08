@@ -104,6 +104,7 @@ libc_common_src_files := \
 	bionic/if_nametoindex.c \
 	bionic/initgroups.c \
 	bionic/ioctl.c \
+	bionic/isfdtype.c \
 	bionic/lockf.c \
 	bionic/isatty.c \
 	bionic/issetugid.c \

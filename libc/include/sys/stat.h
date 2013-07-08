@@ -193,6 +193,8 @@ extern int utimensat (int fd, const char *path, const struct timespec times[2], 
 extern int futimens(int fd, const struct timespec times[2]);
 extern int mknodat (int fd, const char *path, mode_t mode, dev_t dev);
 
+extern int isfdtype(int fd, int fdtype);
+
 __END_DECLS
 
 #endif /* _SYS_STAT_H_ */
