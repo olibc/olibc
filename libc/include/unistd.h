@@ -127,6 +127,7 @@ extern int fchown(int, uid_t, gid_t);
 extern int lchown(const char *, uid_t, gid_t);
 extern int truncate(const char *, off_t);
 extern char *getcwd(char *, size_t);
+extern char *get_current_dir_name(void);
 
 extern int sync(void);
 extern int syncfs(int);

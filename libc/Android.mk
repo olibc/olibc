@@ -95,6 +95,7 @@ libc_common_src_files := \
 	bionic/ftok.c \
 	bionic/fts.c \
 	bionic/futimes.c \
+	bionic/get_current_dir_name.c \
 	bionic/getdtablesize.c \
 	bionic/gethostname.c \
 	bionic/getpgrp.c \
