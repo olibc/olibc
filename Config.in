@@ -300,6 +300,13 @@ choice
 endchoice
 endif
 
+if !OLIBC_NO_BUILD_TOOLCHAIN
+config PREDEFINE_ANDROID_MARCO
+	bool "Predfine __ANDROID__ marco"
+	default n
+
+endif
+
 config DEBUG_BIONIC_LIBC
 	bool "Enable olibc debugging"
 	default n
