@@ -149,6 +149,10 @@ config STATVFS_IMPL
 	bool "statvfs functions"
 	default n
 
+config LSEARCH_LFIND_IMPL
+	bool "lsearch and lfind functions"
+	default n
+
 config SYSVIPC_SUPPORT
 	bool "SysV IPC support"
 	default y

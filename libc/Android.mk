@@ -397,6 +397,11 @@ libc_upstream_netbsd_src_files += \
     upstream-netbsd/common/lib/libc/hash/sha1/sha1.c
 endif
 
+ifeq ($(LSEARCH_LFIND_IMPL),true)
+libc_upstream_netbsd_src_files += \
+    upstream-freebsd/lib/libc/stdlib/lsearch.c
+endif
+
 ifeq ($(WCHAR_SUPPORT),true)
 libc_common_src_files += \
     bionic/wcscoll.c \
