@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 olibc developers
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,49 @@
  * limitations under the License.
  */
 
-#include "statvfs_internal.h"
+#include <sys/statvfs.h>
 
-int statvfs(const char *path, struct statvfs *buf) {
-  struct statfs stfs;
+#include <sys/statfs.h>
 
-  if (statfs (path, &stfs) < 0) {
-    return -1;
+int __statfs64(const char*, size_t, struct statfs*);
+int __fstatfs64(int, size_t, struct statfs*);
+
+#define ST_VALID 0x0020
+
+#if defined(__mips__)
+#define __val val
+#endif
+
+static void __statfs_to_statvfs(const struct statfs *in, struct statvfs* out) {
+  out->f_bsize = in->f_bsize;
+  out->f_frsize = in->f_frsize;
+  out->f_blocks = in->f_blocks;
+  out->f_bfree = in->f_bfree;
+  out->f_bavail = in->f_bavail;
+  out->f_files = in->f_files;
+  out->f_ffree = in->f_ffree;
+  out->f_favail = in->f_ffree;
+  out->f_fsid = in->f_fsid.__val[0] | ((uint64_t)(in->f_fsid.__val[1]) << 32);
+  out->f_flag = in->f_flags & ~ST_VALID;
+  out->f_namemax = in->f_namelen;
+}
+
+int statvfs(const char* path, struct statvfs* result) {
+  struct statfs tmp;
+  int rc = __statfs64(path, sizeof(tmp), &tmp);
+  if (rc != 0) {
+    return rc;
   }
+  __statfs_to_statvfs(&tmp, result);
+  return 0;
+}
 
-  statvfs_internal(buf, &stfs);
-
+int fstatvfs(int fd, struct statvfs* result) {
+  struct statfs tmp;
+  int rc = __fstatfs64(fd, sizeof(tmp), &tmp);
+  if (rc != 0) {
+    return rc;
+  }
+  __statfs_to_statvfs(&tmp, result);
   return 0;
 }

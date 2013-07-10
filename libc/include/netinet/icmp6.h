@@ -65,6 +65,8 @@
 #ifndef _NETINET_ICMP6_H_
 #define _NETINET_ICMP6_H_
 
+#include <netinet/in.h> /* android-added: glibc source compatibility. */
+
 #define ICMPV6_PLD_MAXLEN	1232	/* IPV6_MMTU - sizeof(struct ip6_hdr)
 					   - sizeof(struct icmp6_hdr) */
 
@@ -388,11 +390,15 @@ struct icmp6_nodeinfo {
 	/* could be followed by reply data */
 } __packed;
 
+/*
+ * BEGIN android-removed: glibc doesn't have these, and external/ping declares them itself.
 #define ni_type		icmp6_ni_hdr.icmp6_type
 #define ni_code		icmp6_ni_hdr.icmp6_code
 #define ni_cksum	icmp6_ni_hdr.icmp6_cksum
 #define ni_qtype	icmp6_ni_hdr.icmp6_data16[0]
 #define ni_flags	icmp6_ni_hdr.icmp6_data16[1]
+ * END android-removed
+ */
 
 #define NI_QTYPE_NOOP		0 /* NOOP  */
 #define NI_QTYPE_SUPTYPES	1 /* Supported Qtypes */
@@ -533,18 +539,28 @@ struct icmp6_filter {
 	u_int32_t icmp6_filt[8];
 };
 
+/*
+ * BEGIN android-changed
+ * Linux and *BSD kernels use opposite values to indicate pass/block in ICMPv6
+ * filters, and assign a different value to the ICMP6_FILTER sockopt.
+ */
+#define ICMP6_FILTER 1
+
 #define	ICMP6_FILTER_SETPASSALL(filterp) \
-	(void)memset(filterp, 0xff, sizeof(struct icmp6_filter))
-#define	ICMP6_FILTER_SETBLOCKALL(filterp) \
 	(void)memset(filterp, 0x00, sizeof(struct icmp6_filter))
+#define	ICMP6_FILTER_SETBLOCKALL(filterp) \
+	(void)memset(filterp, 0xff, sizeof(struct icmp6_filter))
 #define	ICMP6_FILTER_SETPASS(type, filterp) \
-	(((filterp)->icmp6_filt[(type) >> 5]) |= (1 << ((type) & 31)))
-#define	ICMP6_FILTER_SETBLOCK(type, filterp) \
 	(((filterp)->icmp6_filt[(type) >> 5]) &= ~(1 << ((type) & 31)))
+#define	ICMP6_FILTER_SETBLOCK(type, filterp) \
+	(((filterp)->icmp6_filt[(type) >> 5]) |= (1 << ((type) & 31)))
 #define	ICMP6_FILTER_WILLPASS(type, filterp) \
-	((((filterp)->icmp6_filt[(type) >> 5]) & (1 << ((type) & 31))) != 0)
-#define	ICMP6_FILTER_WILLBLOCK(type, filterp) \
 	((((filterp)->icmp6_filt[(type) >> 5]) & (1 << ((type) & 31))) == 0)
+#define	ICMP6_FILTER_WILLBLOCK(type, filterp) \
+	((((filterp)->icmp6_filt[(type) >> 5]) & (1 << ((type) & 31))) != 0)
+/*
+ * END android-changed
+ */
 
 /*
  * Variables related to this implementation

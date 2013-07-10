@@ -253,14 +253,6 @@ libc_common_src_files += \
 
 endif
 
-ifeq ($(STATVFS_IMPL),true)
-libc_common_src_files += \
-	bionic/statvfs.c \
-	bionic/fstatvfs.c \
-	bionic/statvfs_internal.c \
-
-endif
-
 libc_bionic_src_files := \
     bionic/abort.c \
     bionic/assert.c \
@@ -300,6 +292,7 @@ libc_bionic_src_files := \
     bionic/setlocale.c \
     bionic/signalfd.c \
     bionic/sigwait.c \
+    bionic/statvfs.c \
     bionic/__strcat_chk.c \
     bionic/__strchr_chk.c \
     bionic/__strcpy_chk.c \
@@ -319,7 +312,6 @@ libc_bionic_src_files := \
     bionic/__vsnprintf_chk.c \
     bionic/__vsprintf_chk.c \
     bionic/wait.c
-
 libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/clrerr.c \
     upstream-freebsd/lib/libc/stdio/fclose.c \

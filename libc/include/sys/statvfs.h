@@ -1,5 +1,6 @@
+
 /*
- * Copyright (C) 2013 olibc developers
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,59 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef _SYS_STATVFS_H_
 #define _SYS_STATVFS_H_
 
+#include <stdint.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
 __BEGIN_DECLS
 
-enum {
-  ST_RDONLY = 1,
-#define ST_RDONLY ST_RDONLY
-  ST_NOSUID = 2,
-#define ST_NOSUID ST_NOSUID
-  ST_NODEV = 4,
-#define ST_NODEV ST_NODEV
-  ST_NOEXEC = 8,
-#define ST_NOEXEC ST_NOEXEC
-  ST_SYNCHRONOUS = 16,
-#define ST_SYNCHRONOUS ST_SYNCHRONOUS
-  ST_MANDLOCK = 64,
-#define ST_MANDLOCK ST_MANDLOCK
-  ST_WRITE = 128,
-#define ST_WRITE ST_WRITE
-  ST_APPEND = 256,
-#define ST_APPEND ST_APPEND
-  ST_IMMUTABLE = 512,
-#define ST_IMMUTABLE ST_IMMUTABLE
-  ST_NOATIME = 1024,
-#define ST_NOATIME ST_NOATIME
-  ST_NODIRATIME = 2048,
-#define ST_NODIRATIME ST_NODIRATIME
-  ST_RELATIME = 4096
-#define ST_RELATIME ST_RELATIME
-};
-
 struct statvfs {
-  uint32_t f_bsize;
-  uint32_t f_frsize;
-  uint64_t f_blocks;
-  uint64_t f_bfree;
-  uint64_t f_bavail;
-  uint64_t f_files;
-  uint64_t f_ffree;
-  uint64_t f_favail;
-  __kernel_fsid_t f_fsid;
-  uint32_t f_flag;
-  uint32_t f_namemax;
+  unsigned long f_bsize;
+  unsigned long f_frsize;
+  fsblkcnt_t    f_blocks;
+  fsblkcnt_t    f_bfree;
+  fsblkcnt_t    f_bavail;
+  fsfilcnt_t    f_files;
+  fsfilcnt_t    f_ffree;
+  fsfilcnt_t    f_favail;
+  unsigned long f_fsid;
+  unsigned long f_flag;
+  unsigned long f_namemax;
 };
 
-extern int statvfs (const char *__restrict,
-                    struct statvfs *__restrict);
-extern int fstatvfs (int, struct statvfs *);
+#define ST_RDONLY      0x0001
+#define ST_NOSUID      0x0002
+#define ST_NODEV       0x0004
+#define ST_NOEXEC      0x0008
+#define ST_SYNCHRONOUS 0x0010
+#define ST_MANDLOCK    0x0040
+#define ST_NOATIME     0x0400
+#define ST_NODIRATIME  0x0800
+#define ST_RELATIME    0x1000
 
+extern int statvfs(const char* __restrict, struct statvfs* __restrict) __nonnull((1, 2));
+extern int fstatvfs(int, struct statvfs*) __nonnull((2));
 
 __END_DECLS
 
