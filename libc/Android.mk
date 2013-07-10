@@ -69,6 +69,7 @@ libc_common_src_files := \
 	string/strspn.c \
 	string/strstr.c \
 	string/strtok.c \
+	string/rindex.c \
 	tzcode/asctime.c \
 	tzcode/difftime.c \
 	tzcode/localtime.c \
