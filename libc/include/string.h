@@ -36,6 +36,7 @@ __BEGIN_DECLS
 
 extern void*  memccpy(void* __restrict, const void* __restrict, int, size_t);
 extern void*  memchr(const void *, int, size_t) __purefunc;
+extern void*  rawmemchr(const void *s, int c) __purefunc;
 extern void*  memrchr(const void *, int, size_t) __purefunc;
 extern int    memcmp(const void *, const void *, size_t) __purefunc;
 extern void*  memcpy(void* __restrict, const void* __restrict, size_t);

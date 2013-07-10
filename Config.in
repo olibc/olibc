@@ -177,6 +177,7 @@ config STRING_STDIO_GLIBC_FULL_COMPATIBLE
 	select STPCPY_IMPL
 	select STRCHRNUL_IMPL
 	select MEMPCPY_IMPL
+	select RAWMEMCHR_IMPL
 
 menu "glibc extensions"
 config STPCPY_IMPL
@@ -189,6 +190,10 @@ config STRCHRNUL_IMPL
 
 config MEMPCPY_IMPL
 	bool "mempcpy function"
+	default n
+
+config RAWMEMCHR_IMPL
+	bool "rawmemchr function"
 	default n
 
 endmenu

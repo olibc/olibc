@@ -199,6 +199,12 @@ libc_common_src_files += \
 
 endif
 
+ifeq ($(RAWMEMCHR_IMPL),true)
+libc_common_src_files += \
+	string/rawmemchr.c \
+
+endif
+
 ifeq ($(SHADOW_PASSWD_FILE_IMPL),true)
 libc_common_src_files += \
 	passwd/fgetspent.c \
