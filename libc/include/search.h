@@ -26,6 +26,13 @@ typedef	struct node {
 } node_t;
 #endif
 
+struct qelem {
+	struct qelem *q_forw;
+	struct qelem *q_back;
+	char          q_data[1];
+};
+
+
 __BEGIN_DECLS
 void	*tdelete(const void * __restrict, void ** __restrict,
 	    int (*)(const void *, const void *));
@@ -34,6 +41,9 @@ void	*tfind(const void *, void * const *,
 void	*tsearch(const void *, void **, int (*)(const void *, const void *));
 void	 twalk(const void *, void (*)(const void *, VISIT, int));
 void	 tdestroy(void *, void (*)(void *));
+
+void insque(void *elem, void *prev);
+void remque(void *elem);
 __END_DECLS
 
 #endif /* !_SEARCH_H_ */

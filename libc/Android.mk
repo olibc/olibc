@@ -205,6 +205,12 @@ libc_common_src_files += \
 
 endif
 
+ifeq ($(INSQUE_REMQUE_IMPL),true)
+libc_common_src_files += \
+	bionic/insque.c \
+	bionic/remque.c
+endif
+
 ifeq ($(SHADOW_PASSWD_FILE_IMPL),true)
 libc_common_src_files += \
 	passwd/fgetspent.c \
