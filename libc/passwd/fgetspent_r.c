@@ -34,7 +34,7 @@ int fgetspent_r(FILE *fp, struct spwd *spbuf,
 {
   *spbufp = NULL;
 
-  if (fgets(buf, buflen, fp)) {
+  while (fgets(buf, buflen, fp)) {
     int pos[8];
     int idx = 0;
     char *str = buf;
@@ -44,6 +44,9 @@ int fgetspent_r(FILE *fp, struct spwd *spbuf,
         *str = '\0';
       }
       ++str;
+    }
+    if (idx != 8) {
+      continue;
     }
     spbuf->sp_namp = buf;
     spbuf->sp_pwdp = buf + pos[0];
@@ -56,7 +59,6 @@ int fgetspent_r(FILE *fp, struct spwd *spbuf,
     spbuf->sp_flag = parse_spent_num(buf + pos[7]);
     *spbufp = spbuf;
     return 0;
-  } else {
-    return -1;
   }
+  return -1;
 }

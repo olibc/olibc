@@ -31,6 +31,7 @@ void setspent() {
 void endspent() {
   if (spf) {
     fclose(spf);
+    spf = NULL;
   }
 }
 
