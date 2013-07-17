@@ -8,5 +8,5 @@ $(call libc-add-cpu-variant-src,MEMCHR,bionic/memchr.c)
 ifeq ($(ARCH_ARM_HAVE_ARMV7A),false)
 $(call libc-add-cpu-variant-src,STRLEN,arch-arm/bionic/strlen-armv7.S)
 else
-$(call libc-add-cpu-variant-src,STRLEN,arch-arm/bionic/strlen.c.arm)
+$(call libc-add-cpu-variant-src,STRLEN,arch-arm/generic/bionic/strlen.c)
 endif

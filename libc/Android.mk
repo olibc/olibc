@@ -70,11 +70,6 @@ libc_common_src_files := \
 	string/strstr.c \
 	string/strtok.c \
 	string/rindex.c \
-	tzcode/asctime.c \
-	tzcode/difftime.c \
-	tzcode/localtime.c \
-	tzcode/strftime.c \
-	tzcode/strptime.c \
 	bionic/arc4random.c \
 	bionic/atoi.c \
 	bionic/atol.c \
@@ -325,6 +320,14 @@ libc_bionic_src_files := \
     bionic/__vsnprintf_chk.c \
     bionic/__vsprintf_chk.c \
     bionic/wait.c
+
+libc_tzcode_src_files := \
+    tzcode/asctime.c \
+    tzcode/difftime.c \
+    tzcode/localtime.c \
+    tzcode/strftime.c \
+    tzcode/strptime.c \
+
 libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/clrerr.c \
     upstream-freebsd/lib/libc/stdio/fclose.c \
@@ -606,14 +609,6 @@ libc_common_cflags := \
     -DLOG_ON_HEAP_ERROR \
     -Wall -Wextra
 
-# these macro definitions are required to implement the
-# 'timezone' and 'daylight' global variables, as well as
-# properly update the 'tm_gmtoff' field in 'struct tm'.
-#
-libc_common_cflags += \
-    -DTM_GMTOFF=tm_gmtoff \
-    -DUSG_COMPAT=1
-
 ifeq ($(strip $(DEBUG_BIONIC_LIBC)),true)
   libc_common_cflags += -DDEBUG
 endif
@@ -873,6 +868,28 @@ include $(BUILD_STATIC_LIBRARY)
 
 
 # ========================================================
+# libc_tzcode.a - upstream 'tzcode' code
+# ========================================================
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := $(libc_tzcode_src_files)
+LOCAL_CFLAGS := \
+    $(libc_common_cflags) \
+    -std=gnu99 \
+    -DSTD_INSPIRED=1 \
+    -DTZDIR=\"/system/usr/share/zoneinfo\" \
+    -DTM_GMTOFF=tm_gmtoff \
+    -DUSG_COMPAT=1
+LOCAL_C_INCLUDES := $(libc_common_c_includes)
+LOCAL_MODULE := libc_tzcode
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+LOCAL_SYSTEM_SHARED_LIBRARIES :=
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+# ========================================================
 # libc_freebsd.a - upstream FreeBSD C library code
 # ========================================================
 #
@@ -965,9 +982,13 @@ LOCAL_CFLAGS := $(libc_common_cflags) \
 LOCAL_C_INCLUDES := $(libc_common_c_includes)
 LOCAL_MODULE := libc_common
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
-LOCAL_WHOLE_STATIC_LIBRARIES := libbionic_ssp libc_bionic \
-                                libc_freebsd libc_netbsd \
-                                libc_common_no_strict_alias
+LOCAL_WHOLE_STATIC_LIBRARIES := \
+    libbionic_ssp \
+    libc_bionic \
+    libc_freebsd \
+    libc_netbsd \
+    libc_common_no_strict_alias \
+    libc_tzcode
 LOCAL_SYSTEM_SHARED_LIBRARIES :=
 
 include $(BUILD_STATIC_LIBRARY)
