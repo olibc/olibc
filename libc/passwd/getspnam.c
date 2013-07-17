@@ -19,10 +19,8 @@
 
 struct spwd *getspnam(const char *name)
 {
-  static char buf[PWD_BUFFER_SIZE];
-  static struct spwd spwd;
   struct spwd *result;
 
-  getspnam_r(name, &spwd, buf, sizeof(buf), &result);
+  getspnam_r(name, &__spwd_spwdbuf, __spwd_buf, SPWD_BUFFER_SIZE, &result);
   return result;
 }

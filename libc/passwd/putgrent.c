@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-#include <shadow.h>
+#include <grp.h>
+#include <stddef.h>
+#include <stdio.h>
 #include "passwd_private.h"
 
-struct spwd *fgetspent(FILE *fp)
+int putgrent(const struct group *grp, FILE *fp)
 {
-  struct spwd *result;
-
-  fgetspent_r(fp, &__spwd_spwdbuf, __spwd_buf, SPWD_BUFFER_SIZE, &result);
-  return result;
+  int rv = -1;
+  if (grp != NULL && fp != NULL) {
+    fprintf(fp, "%s:%s:%d:", grp->gr_name, grp->gr_passwd, grp->gr_gid);
+    if (grp->gr_mem) {
+      char **member = grp->gr_mem;
+      const char *sep = "";
+      while (*member) {
+        fprintf(fp, "%s%s", sep, *member++);
+        sep = ",";
+      }
+    }
+  }
+  return rv;
 }

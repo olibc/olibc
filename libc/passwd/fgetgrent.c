@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <shadow.h>
+#include <grp.h>
 #include "passwd_private.h"
 
-struct spwd *fgetspent(FILE *fp)
+struct group *fgetgrent(FILE *fp)
 {
-  struct spwd *result;
+  struct group *result;
 
-  fgetspent_r(fp, &__spwd_spwdbuf, __spwd_buf, SPWD_BUFFER_SIZE, &result);
+  fgetgrent_r(fp, &grp_gbuf, grp_buf, GRP_BUFFER_SIZE, &result);
   return result;
 }

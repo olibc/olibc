@@ -19,10 +19,8 @@
 
 struct spwd *getspent()
 {
-  static char buf[PWD_BUFFER_SIZE];
-  static struct spwd spwd;
   struct spwd *result;
 
-  getspent_r(&spwd, buf, sizeof(buf), &result);
+  getspent_r(&__spwd_spwdbuf, __spwd_buf, SPWD_BUFFER_SIZE, &result);
   return result;
 }

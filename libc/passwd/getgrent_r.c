@@ -14,13 +14,36 @@
  * limitations under the License.
  */
 
-#include <shadow.h>
-#include "passwd_private.h"
+#include <grp.h>
+#include <stdio.h>
+#include <errno.h>
+#include <paths.h>
 
-struct spwd *fgetspent(FILE *fp)
+static FILE *grf = NULL;
+
+void setgrent(void)
 {
-  struct spwd *result;
+  if (grf) {
+    rewind(grf);
+  }
+}
 
-  fgetspent_r(fp, &__spwd_spwdbuf, __spwd_buf, SPWD_BUFFER_SIZE, &result);
-  return result;
+void endgrent(void)
+{
+  if (grf) {
+    fclose(grf);
+    grf = NULL;
+  }
+}
+
+int getgrent_r(struct group *gbuf, char *buf,
+               size_t buflen, struct group **gbufp)
+{
+  if (grf == NULL) {
+    grf = fopen(_PATH_GROUP, "re");
+    if (grf == NULL) {
+      return errno;
+    }
+  }
+  return fgetgrent_r(grf, gbuf, buf, buflen, gbufp);
 }

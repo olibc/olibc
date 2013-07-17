@@ -42,6 +42,7 @@
 
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <stdio.h>
 
 #if __BSD_VISIBLE
 #define	_PATH_GROUP		"/etc/group"
@@ -66,6 +67,12 @@ int		 getgrgid_r(gid_t, struct group *, char *,
 int		 getgrnam_r(const char *, struct group *, char *,
 		    size_t, struct group **);
 #endif
+int getgrent_r(struct group *gbuf, char *buf,
+               size_t buflen, struct group **gbufp);
+struct group *fgetgrent(FILE *fp);
+int fgetgrent_r(FILE *fp, struct group *gbuf, char *buf,
+                size_t buflen, struct group **gbufp);
+
 #if __BSD_VISIBLE
 void		 setgrfile(const char *);
 int		 setgroupent(int);

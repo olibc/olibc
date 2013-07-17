@@ -99,7 +99,6 @@ libc_common_src_files := \
 	bionic/getpt.c \
 	bionic/if_indextoname.c \
 	bionic/if_nametoindex.c \
-	bionic/initgroups.c \
 	bionic/ioctl.c \
 	bionic/isfdtype.c \
 	bionic/lockf.c \
@@ -218,6 +217,25 @@ libc_common_src_files += \
 	passwd/sgetspent.c \
 	passwd/sgetspent_r.c \
 	passwd/putspent.c \
+	passwd/passwd_private.c \
+
+endif
+
+ifeq ($(GROUP_FILE_IMPL), true)
+libc_common_src_files += \
+	passwd/fgetgrent.c \
+	passwd/fgetgrent_r.c \
+	passwd/getgrent.c \
+	passwd/getgrent_r.c \
+	passwd/getgrgid.c \
+	passwd/getgrgid_r.c \
+	passwd/getgrnam.c \
+	passwd/getgrnam_r.c \
+	passwd/putgrent.c \
+	passwd/initgroups.c \
+	passwd/getgrouplist.c \
+
+libc_common_cflags := -DGROUP_FILE_IMPL
 
 endif
 
