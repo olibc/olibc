@@ -172,7 +172,6 @@ static passwd* android_iinfo_to_passwd(stubs_state_t* state,
   return pw;
 }
 
-#if defined(GROUP_FILE_IMPL)
 static group* android_iinfo_to_group(group* gr,
                                      const android_id_info* iinfo) {
   gr->gr_name   = (char*) iinfo->name;
@@ -181,7 +180,6 @@ static group* android_iinfo_to_group(group* gr,
   gr->gr_mem[1] = NULL;
   return gr;
 }
-#endif
 
 static passwd* android_id_to_passwd(stubs_state_t* state, unsigned id) {
   size_t n;
@@ -203,7 +201,6 @@ static passwd* android_name_to_passwd(stubs_state_t* state, const char* name) {
   return NULL;
 }
 
-#if defined(GROUP_FILE_IMPL)
 static group* android_id_to_group(group* gr, unsigned id) {
   size_t n;
   for (n = 0; n < android_id_count; ++n) {
@@ -223,7 +220,6 @@ static group* android_name_to_group(group* gr, const char* name) {
   }
   return NULL;
 }
-#endif
 
 // Translate a user/group name to the corresponding user/group id.
 // u0_a1234 -> 0 * AID_USER + AID_APP + 1234
@@ -301,13 +297,11 @@ static void print_app_name_from_appid_userid(const uid_t appid,
   }
 }
 
-#if defined(GROUP_FILE_IMPL)
 static void print_app_name_from_uid(const uid_t uid, char* buffer, const int bufferlen) {
   const uid_t appid = uid % AID_USER;
   const uid_t userid = uid / AID_USER;
   return print_app_name_from_appid_userid(appid, userid, buffer, bufferlen);
 }
-#endif
 
 // Translate a uid into the corresponding name.
 // 0 to AID_APP-1                   -> "system", "radio", etc.
@@ -346,7 +340,6 @@ static passwd* app_id_to_passwd(uid_t uid, stubs_state_t* state) {
   return pw;
 }
 
-#if defined(GROUP_FILE_IMPL)
 // Translate a gid into the corresponding app_<gid>
 // group structure (sets errno to ENOENT on failure).
 static group* app_id_to_group(gid_t gid, stubs_state_t* state) {
@@ -365,7 +358,6 @@ static group* app_id_to_group(gid_t gid, stubs_state_t* state) {
   gr->gr_mem[1] = NULL;
   return gr;
 }
-#endif
 
 
 passwd* getpwuid(uid_t uid) { // NOLINT: implementing bad function.
@@ -394,7 +386,6 @@ passwd* getpwnam(const char* login) { // NOLINT: implementing bad function.
   return app_id_to_passwd(app_id_from_name(login), state);
 }
 
-#if defined(GROUP_FILE_IMPL)
 // All users are in just one group, the one passed in.
 int getgrouplist(const char* user __unused, gid_t group, gid_t* groups, int* ngroups) {
     if (*ngroups < 1) {
@@ -431,7 +422,6 @@ group* getgrnam(const char* name) { // NOLINT: implementing bad function.
 
   return app_id_to_group(app_id_from_name(name), state);
 }
-#endif
 
 // We don't have an /etc/networks, so all inputs return NULL.
 netent* getnetbyname(const char* name __unused) {

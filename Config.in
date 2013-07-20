@@ -165,11 +165,7 @@ config UTMPX_SUPPORT
 	default n
 
 config SHADOW_PASSWD_FILE_IMPL
-	bool "Shadow password file entry manipulation functions"
-	default n
-
-config GROUP_FILE_IMPL
-	bool "group file entry manipulation functions"
+	bool "shadow/passwd/group file entry manipulation functions"
 	default n
 
 config INSQUE_REMQUE_IMPL

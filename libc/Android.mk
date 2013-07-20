@@ -226,16 +226,6 @@ libc_common_src_files += \
 	passwd/getpwuid.c \
 	passwd/getpwuid_r.c \
 	passwd/putpwent.c \
-	passwd/passwd_private.c \
-
-else
-
-libc_common_src_files += bionic/stubs.c
-
-endif
-
-ifeq ($(GROUP_FILE_IMPL), true)
-libc_common_src_files += \
 	passwd/fgetgrent.c \
 	passwd/fgetgrent_r.c \
 	passwd/getgrent.c \
@@ -247,8 +237,11 @@ libc_common_src_files += \
 	passwd/putgrent.c \
 	passwd/initgroups.c \
 	passwd/getgrouplist.c \
+	passwd/passwd_private.c \
 
-libc_common_cflags := -DGROUP_FILE_IMPL
+else
+
+libc_common_src_files += bionic/stubs.c
 
 endif
 
