@@ -29,13 +29,8 @@ int getgrgid_r(gid_t gid, struct group *grp,
                char *buf, size_t buflen, struct group **result)
 {
   gid_t grp_target = gid;
-  struct grp_next_arg_t grp_next_arg;
-  grp_next_arg.grp = grp;
-  grp_next_arg.buf = buf;
-  grp_next_arg.buflen = buflen;
-  grp_next_arg.result = result;
-  return __pwdgrp_find(setgrent, endgrent,
-                       grp_next, &grp_next_arg,
-                       grp_find_by_gid, &grp_target,
-                       (void**)result);
+  return __pwdgrp_find((const void*)&grp_target, (void*)grp,
+                       buf, buflen, (void**)result,
+                       setgrent, endgrent,
+                       grp_next, grp_find_by_gid);
 }

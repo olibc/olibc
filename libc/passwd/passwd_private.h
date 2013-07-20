@@ -39,7 +39,10 @@ extern __LIBC_HIDDEN__ struct group grp_gbuf;
 typedef int (*pwdgrp_compare_func_t)(void *pwdgrp,
                                      const void *target);
 
-typedef void *(*pwdgrp_next_func_t)(void *arg);
+typedef int (*pwdgrp_next_func_t)(void *pwdgrpbuf,
+                                  char *buf,
+                                  size_t buflen,
+                                  void **pwdgrpbufp);
 
 typedef void (*pwdgrp_init_func_t)();
 typedef void (*pwdgrp_finit_func_t)();
@@ -58,15 +61,23 @@ struct pwd_next_arg_t {
   struct passwd **result;
 };
 
-__LIBC_HIDDEN__ void *grp_next(void *arg);
-__LIBC_HIDDEN__ void *pwd_next(void *arg);
+__LIBC_HIDDEN__ int grp_next(void *pwdgrpbuf,
+                             char *buf,
+                             size_t buflen,
+                             void **pwdgrpbufp);
+__LIBC_HIDDEN__ int pwd_next(void *pwdgrpbuf,
+                             char *buf,
+                             size_t buflen,
+                             void **pwdgrpbufp);
 
-__LIBC_HIDDEN__ int __pwdgrp_find(pwdgrp_init_func_t init_func,
+__LIBC_HIDDEN__ int __pwdgrp_find(const void *target,
+                                  void *pwdgrpbuf,
+                                  char *buf,
+                                  size_t buflen,
+                                  void *pwdgrpbufp,
+                                  pwdgrp_init_func_t init_func,
                                   pwdgrp_finit_func_t finit_func,
                                   pwdgrp_next_func_t next_func,
-                                  void *next_func_arg,
-                                  pwdgrp_compare_func_t compare_func,
-                                  const void *target,
-                                  void **result);
+                                  pwdgrp_compare_func_t compare_func);
 
 #endif /* _PASSWD_PRIVATE_H_ */

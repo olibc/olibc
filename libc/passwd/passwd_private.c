@@ -25,19 +25,20 @@ struct passwd __pwd_pwdbuf;
 char grp_buf[GRP_BUFFER_SIZE];
 struct group grp_gbuf;
 
-int __pwdgrp_find(pwdgrp_init_func_t init_func,
+int __pwdgrp_find(const void *target,
+                  void *pwdgrpbuf,
+                  char *buf,
+                  size_t buflen,
+                  void *pwdgrpbufp,
+                  pwdgrp_init_func_t init_func,
                   pwdgrp_finit_func_t finit_func,
                   pwdgrp_next_func_t next_func,
-                  void *next_func_arg,
-                  pwdgrp_compare_func_t compare_func,
-                  const void *target,
-                  void **result)
+                  pwdgrp_compare_func_t compare_func)
 {
   int found = 0;
-  void *itr;
   init_func();
-  while ((itr = next_func(next_func_arg)) != NULL) {
-    if (compare_func(itr, target)) {
+  while (next_func(pwdgrpbuf, buf, buflen, pwdgrpbufp)) {
+    if (compare_func(pwdgrpbuf, target)) {
       found = 1;
       break;
     }
@@ -46,23 +47,29 @@ int __pwdgrp_find(pwdgrp_init_func_t init_func,
   if (found) {
     return 0;
   } else {
-    *result = NULL;
+    *((char**)pwdgrpbufp) = NULL;
     return -1;
   }
 }
 
-void *grp_next(void *arg)
+int grp_next(void *grp,
+             char *buf,
+             size_t buflen,
+             void **result)
 {
-  struct grp_next_arg_t *grp_arg = (struct grp_next_arg_t*)arg;
-  getgrent_r(grp_arg->grp, grp_arg->buf,
-             grp_arg->buflen, grp_arg->result);
-  return (void*)(*grp_arg->result);
+  struct group *_grp = (struct group *)grp;
+  struct group **_result = (struct group **)result;
+  return getgrent_r(_grp, buf,
+                    buflen, _result);
 }
 
-void *pwd_next(void *arg)
+int pwd_next(void *pwd,
+             char *buf,
+             size_t buflen,
+             void **result)
 {
-  struct pwd_next_arg_t *pwd_arg = (struct pwd_next_arg_t*)arg;
-  getpwent_r(pwd_arg->pwd, pwd_arg->buf,
-             pwd_arg->buflen, pwd_arg->result);
-  return (void*)(*pwd_arg->result);
+  struct passwd *_pwd = (struct passwd*)pwd;
+  struct passwd **_result = (struct passwd**)result;
+  return getpwent_r(_pwd, buf,
+                    buflen, _result);
 }

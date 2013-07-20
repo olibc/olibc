@@ -29,14 +29,9 @@ int getpwuid_r(uid_t uid, struct passwd *pwd,
                char *buf, size_t buflen, struct passwd **result)
 {
   uid_t pwd_target = uid;
-  struct pwd_next_arg_t pwd_next_arg;
-  pwd_next_arg.pwd = pwd;
-  pwd_next_arg.buf = buf;
-  pwd_next_arg.buflen = buflen;
-  pwd_next_arg.result = result;
-
-  return __pwdgrp_find(setpwent, endpwent,
-                       pwd_next, &pwd_next_arg,
-                       pwd_find_by_uid, &pwd_target,
-                       (void**)result);
+  return __pwdgrp_find((const void*)&pwd_target, (void*)pwd,
+                       buf, buflen, (void**)result,
+                       setpwent, endpwent,
+                       pwd_next,
+                       pwd_find_by_uid);
 }

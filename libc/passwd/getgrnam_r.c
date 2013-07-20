@@ -30,15 +30,8 @@ static int grp_find_by_name(void *grp,
 int getgrnam_r(const char *name, struct group *grp,
                char *buf, size_t buflen, struct group **result)
 {
-  const char *grp_target = name;
-  struct grp_next_arg_t grp_next_arg;
-  grp_next_arg.grp = grp;
-  grp_next_arg.buf = buf;
-  grp_next_arg.buflen = buflen;
-  grp_next_arg.result = result;
-
-  return __pwdgrp_find(setgrent, endgrent,
-                       grp_next, &grp_next_arg,
-                       grp_find_by_name, grp_target,
-                       (void**)result);
+  return __pwdgrp_find(name, (void*)grp,
+                       buf, buflen, (void**)result,
+                       setgrent, endgrent,
+                       grp_next, grp_find_by_name);
 }
