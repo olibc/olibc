@@ -18,15 +18,20 @@
 #define _PASSWD_PRIVATE_H_
 
 #include <shadow.h>
+#include <pwd.h>
 #include <grp.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
 #define SPWD_BUFFER_SIZE 4096
+#define PWD_BUFFER_SIZE 4096
 #define GRP_BUFFER_SIZE 4096
 
 extern __LIBC_HIDDEN__ char __spwd_buf[SPWD_BUFFER_SIZE];
 extern __LIBC_HIDDEN__ struct spwd __spwd_spwdbuf;
+
+extern __LIBC_HIDDEN__ char __pwd_buf[PWD_BUFFER_SIZE];
+extern __LIBC_HIDDEN__ struct passwd __pwd_pwdbuf;
 
 extern __LIBC_HIDDEN__ char grp_buf[GRP_BUFFER_SIZE];
 extern __LIBC_HIDDEN__ struct group grp_gbuf;
@@ -46,7 +51,15 @@ struct grp_next_arg_t {
   struct group **result;
 };
 
+struct pwd_next_arg_t {
+  struct passwd *pwd;
+  char *buf;
+  size_t buflen;
+  struct passwd **result;
+};
+
 __LIBC_HIDDEN__ void *grp_next(void *arg);
+__LIBC_HIDDEN__ void *pwd_next(void *arg);
 
 __LIBC_HIDDEN__ int __pwdgrp_find(pwdgrp_init_func_t init_func,
                                   pwdgrp_finit_func_t finit_func,

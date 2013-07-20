@@ -19,6 +19,9 @@
 char __spwd_buf[SPWD_BUFFER_SIZE];
 struct spwd __spwd_spwdbuf;
 
+char __pwd_buf[PWD_BUFFER_SIZE];
+struct passwd __pwd_pwdbuf;
+
 char grp_buf[GRP_BUFFER_SIZE];
 struct group grp_gbuf;
 
@@ -54,4 +57,12 @@ void *grp_next(void *arg)
   getgrent_r(grp_arg->grp, grp_arg->buf,
              grp_arg->buflen, grp_arg->result);
   return (void*)(*grp_arg->result);
+}
+
+void *pwd_next(void *arg)
+{
+  struct pwd_next_arg_t *pwd_arg = (struct pwd_next_arg_t*)arg;
+  getpwent_r(pwd_arg->pwd, pwd_arg->buf,
+             pwd_arg->buflen, pwd_arg->result);
+  return (void*)(*pwd_arg->result);
 }

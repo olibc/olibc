@@ -64,6 +64,7 @@
 
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <stdio.h>
 
 #define _PATH_PASSWD        "/etc/passwd"
 #define _PATH_MASTERPASSWD  "/etc/master.passwd"
@@ -122,7 +123,17 @@ int getpwuid_r(uid_t, struct passwd*, char*, size_t, struct passwd**);
 
 void endpwent(void);
 struct passwd* getpwent(void);
-int setpwent(void);
+struct passwd *fgetpwent(FILE *);
+void setpwent(void);
+
+
+int getpwent_r(struct passwd *, char *,
+               size_t, struct passwd **);
+int fgetpwent_r(FILE *, struct passwd *, char *,
+                size_t, struct passwd **);
+
+
+int putpwent(const struct passwd *, FILE *);
 
 __END_DECLS
 

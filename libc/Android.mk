@@ -217,7 +217,20 @@ libc_common_src_files += \
 	passwd/sgetspent.c \
 	passwd/sgetspent_r.c \
 	passwd/putspent.c \
+	passwd/fgetpwent.c \
+	passwd/fgetpwent_r.c \
+	passwd/getpwent.c \
+	passwd/getpwent_r.c \
+	passwd/getpwnam.c \
+	passwd/getpwnam_r.c \
+	passwd/getpwuid.c \
+	passwd/getpwuid_r.c \
+	passwd/putpwent.c \
 	passwd/passwd_private.c \
+
+else
+
+libc_common_src_files += bionic/stubs.c
 
 endif
 
@@ -330,7 +343,6 @@ libc_bionic_src_files := \
     bionic/__strncat_chk.c \
     bionic/__strncpy_chk.c \
     bionic/strsignal.c \
-    bionic/stubs.c \
     bionic/sysconf.c \
     bionic/tdestroy.c \
     bionic/tmpfile.c \
