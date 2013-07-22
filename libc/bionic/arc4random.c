@@ -185,10 +185,10 @@ __arc4_getbyte(void)
         return val;
 }
 
-static inline u_int32_t
+static inline uint32_t
 arc4_getword(void)
 {
-        u_int32_t val;
+        uint32_t val;
         val = arc4_getbyte() << 24;
         val |= arc4_getbyte() << 16;
         val |= arc4_getbyte() << 8;
@@ -214,10 +214,10 @@ arc4random_addrandom(u_char *dat, int datlen)
         _ARC4_UNLOCK();
 }
 
-u_int32_t
+uint32_t
 arc4random(void)
 {
-        u_int32_t val;
+        uint32_t val;
         _ARC4_LOCK();
         arc4_count -= 4;
         if (arc4_count <= 0 || !rs_initialized || arc4_stir_pid != getpid())
@@ -252,10 +252,10 @@ arc4random_buf(void *_buf, size_t n)
  * [2**32 % upper_bound, 2**32) which maps back to [0, upper_bound)
  * after reduction modulo upper_bound.
  */
-u_int32_t
-arc4random_uniform(u_int32_t upper_bound)
+uint32_t
+arc4random_uniform(uint32_t upper_bound)
 {
-        u_int32_t r, min;
+        uint32_t r, min;
 
         if (upper_bound < 2)
                 return 0;

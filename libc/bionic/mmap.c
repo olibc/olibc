@@ -25,19 +25,32 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include <unistd.h>
+
 #include <errno.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
-extern void*  __mmap2(void*, size_t, int, int, int, size_t);
+#include "private/ErrnoRestorer.h"
 
-#define  MMAP2_SHIFT  12
-void* mmap(void *addr, size_t size, int prot, int flags, int fd, long offset)
-{
-    if (offset & ((1UL << MMAP2_SHIFT)-1)) {
-        errno = EINVAL;
-        return MAP_FAILED;
-    }
+// mmap2(2) is like mmap(2), but the offset is in 4096-byte blocks, not bytes.
+void*  __mmap2(void*, size_t, int, int, int, size_t);
 
-    return __mmap2(addr, size, prot, flags, fd, (size_t)offset >> MMAP2_SHIFT);
+#define MMAP2_SHIFT 12 // 2**12 == 4096
+
+void* mmap(void* addr, size_t size, int prot, int flags, int fd, long offset) {
+  if (offset & ((1UL << MMAP2_SHIFT)-1)) {
+    errno = EINVAL;
+    return MAP_FAILED;
+  }
+
+  void* result = __mmap2(addr, size, prot, flags, fd, offset >> MMAP2_SHIFT);
+
+  if (result != MAP_FAILED && (flags & (MAP_PRIVATE | MAP_ANONYMOUS)) != 0) {
+    ErrnoRestorer errno_restorer;
+    ErrnoRestorer_init(&errno_restorer);
+    madvise(result, size, MADV_MERGEABLE);
+    ErrnoRestorer_fini(&errno_restorer);
+  }
+
+  return result;
 }

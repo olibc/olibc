@@ -47,6 +47,8 @@ typedef struct pthread_internal_t
     __pthread_cleanup_t*        cleanup_stack;
     void**                      tls;         /* thread-local storage area */
 
+    void* alternate_signal_stack;
+
     /*
      * The dynamic linker implements dlerror(3), which makes it hard for us to implement this
      * per-thread buffer by simply using malloc(3) and free(3).
@@ -77,65 +79,6 @@ __LIBC_HIDDEN__ void _pthread_internal_remove_locked(pthread_internal_t* thread)
 
 __LIBC_HIDDEN__ extern pthread_internal_t* gThreadList;
 __LIBC_HIDDEN__ extern pthread_mutex_t gThreadListLock;
-
-/* needed by posix-timers.c */
-
-static __inline__ void timespec_add( struct timespec*  a, const struct timespec*  b )
-{
-    a->tv_sec  += b->tv_sec;
-    a->tv_nsec += b->tv_nsec;
-    if (a->tv_nsec >= 1000000000) {
-        a->tv_nsec -= 1000000000;
-        a->tv_sec  += 1;
-    }
-}
-
-static  __inline__ void timespec_sub( struct timespec*  a, const struct timespec*  b )
-{
-    a->tv_sec  -= b->tv_sec;
-    a->tv_nsec -= b->tv_nsec;
-    if (a->tv_nsec < 0) {
-        a->tv_nsec += 1000000000;
-        a->tv_sec  -= 1;
-    }
-}
-
-static  __inline__ void timespec_zero( struct timespec*  a )
-{
-    a->tv_sec = a->tv_nsec = 0;
-}
-
-static  __inline__ int timespec_is_zero( const struct timespec*  a )
-{
-    return (a->tv_sec == 0 && a->tv_nsec == 0);
-}
-
-static  __inline__ int timespec_cmp( const struct timespec*  a, const struct timespec*  b )
-{
-    if (a->tv_sec  < b->tv_sec)  return -1;
-    if (a->tv_sec  > b->tv_sec)  return +1;
-    if (a->tv_nsec < b->tv_nsec) return -1;
-    if (a->tv_nsec > b->tv_nsec) return +1;
-    return 0;
-}
-
-static  __inline__ int timespec_cmp0( const struct timespec*  a )
-{
-    if (a->tv_sec < 0) return -1;
-    if (a->tv_sec > 0) return +1;
-    if (a->tv_nsec < 0) return -1;
-    if (a->tv_nsec > 0) return +1;
-    return 0;
-}
-
-extern int  __pthread_cond_timedwait(pthread_cond_t*,
-                                     pthread_mutex_t*,
-                                     const struct timespec*,
-                                     clockid_t);
-
-extern int  __pthread_cond_timedwait_relative(pthread_cond_t*,
-                                              pthread_mutex_t*,
-                                              const struct timespec*);
 
 /* needed by fork.c */
 __LIBC_HIDDEN__ extern void __timer_table_start_stop(int  stop);

@@ -26,7 +26,6 @@ libc_common_src_files := \
 	stdio/fvwrite.c \
 	stdio/fcloseall.c \
 	stdio/gets.c \
-	stdio/mktemp.c \
 	stdio/printf.c \
 	stdio/refill.c \
 	stdio/rewind.c \
@@ -109,7 +108,6 @@ libc_common_src_files := \
 	bionic/lutimes.c \
 	bionic/memmem.c \
 	bionic/memswap.c \
-	bionic/mmap.c \
 	bionic/openat.c \
 	bionic/open.c \
 	bionic/pathconf.c \
@@ -304,6 +302,7 @@ libc_bionic_src_files := \
     bionic/__memcpy_chk.c \
     bionic/__memmove_chk.c \
     bionic/__memset_chk.c \
+    bionic/mmap.c \
     bionic/pthread_attr.c \
     bionic/pthread_detach.c \
     bionic/pthread_equal.c \
@@ -342,7 +341,7 @@ libc_bionic_src_files := \
     bionic/__umask_chk.c \
     bionic/__vsnprintf_chk.c \
     bionic/__vsprintf_chk.c \
-    bionic/wait.c
+    bionic/wait.c \
 
 libc_tzcode_src_files := \
     tzcode/asctime.c \
@@ -372,6 +371,7 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/getc.c \
     upstream-freebsd/lib/libc/stdio/getchar.c \
     upstream-freebsd/lib/libc/stdio/makebuf.c \
+    upstream-freebsd/lib/libc/stdio/mktemp.c \
     upstream-freebsd/lib/libc/stdio/putc.c \
     upstream-freebsd/lib/libc/stdio/putchar.c \
     upstream-freebsd/lib/libc/stdio/puts.c \
@@ -758,23 +758,17 @@ libc_crt_target_cflags += \
 # static C++ destructors are properly called on dlclose().
 #
 ifeq ($(TARGET_ARCH),arm)
-    libc_crtbegin_extension := c
     libc_crt_target_so_cflags :=
 endif
 ifeq ($(TARGET_ARCH),mips)
-    libc_crtbegin_extension := S
     libc_crt_target_so_cflags := -fPIC
 endif
 ifeq ($(TARGET_ARCH),x86)
-    libc_crtbegin_extension := c
     libc_crt_target_so_cflags := -fPIC
 endif
-ifeq ($(libc_crtbegin_extension),)
-    $(error $(TARGET_ARCH) not supported)
-endif
 libc_crt_target_so_cflags += $(libc_crt_target_cflags)
-libc_crt_target_crtbegin_file := $(LOCAL_PATH)/arch-$(TARGET_ARCH)/bionic/crtbegin.$(libc_crtbegin_extension)
-libc_crt_target_crtbegin_so_file := $(LOCAL_PATH)/arch-$(TARGET_ARCH)/bionic/crtbegin_so.$(libc_crtbegin_extension)
+libc_crt_target_crtbegin_file := $(LOCAL_PATH)/arch-$(TARGET_ARCH)/bionic/crtbegin.c
+libc_crt_target_crtbegin_so_file := $(LOCAL_PATH)/arch-$(TARGET_ARCH)/bionic/crtbegin_so.c
 
 # See the comment in crtbrand.c for the reason why we need to generate
 # crtbrand.s before generating crtbrand.o.
