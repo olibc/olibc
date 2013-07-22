@@ -455,16 +455,6 @@ void endpwent() {
   UNIMPLEMENTED;
 }
 
-char* ttyname(int fd __unused) { // NOLINT: implementing bad function.
-  UNIMPLEMENTED;
-  return NULL;
-}
-
-int ttyname_r(int fd __unused, char* buf __unused, size_t buflen __unused) {
-  UNIMPLEMENTED;
-  return -ERANGE;
-}
-
 char* getusershell() {
   UNIMPLEMENTED;
   return NULL;

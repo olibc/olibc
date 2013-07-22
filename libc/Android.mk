@@ -148,6 +148,8 @@ libc_common_src_files := \
 	bionic/tcsetpgrp.c \
 	bionic/thread_atexit.c \
 	bionic/time64.c \
+	bionic/ttyname.c \
+	bionic/ttyname_r.c \
 	bionic/umount.c \
 	bionic/unlockpt.c \
 	bionic/usleep.c \
