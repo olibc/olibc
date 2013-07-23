@@ -85,6 +85,7 @@ libc_common_src_files := \
 	bionic/fdprintf.c \
 	bionic/flockfile.c \
 	bionic/fork.c \
+	bionic/forkpty.c \
 	bionic/fstatfs.c \
 	bionic/ftime.c \
 	bionic/ftok.c \
@@ -104,12 +105,14 @@ libc_common_src_files := \
 	bionic/isatty.c \
 	bionic/issetugid.c \
 	bionic/ldexp.c \
+	bionic/login_tty.c \
 	bionic/lseek64.c \
 	bionic/lutimes.c \
 	bionic/memmem.c \
 	bionic/memswap.c \
 	bionic/openat.c \
 	bionic/open.c \
+	bionic/openpty.c \
 	bionic/pathconf.c \
 	bionic/perror.c \
 	bionic/pread.c \
