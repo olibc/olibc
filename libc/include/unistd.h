@@ -215,6 +215,8 @@ enum {
 
 extern int lockf(int fd, int cmd, off_t len);
 
+extern char *getpass(const char *prompt);
+
 #if 0 /* MISSING FROM BIONIC */
 extern int execvpe(const char *, char * const *, char * const *);
 extern int execlpe(const char *, const char *, ...);
