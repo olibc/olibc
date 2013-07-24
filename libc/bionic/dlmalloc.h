@@ -28,6 +28,7 @@
 #define USE_RECURSIVE_LOCK 0
 #define USE_SPIN_LOCKS 0
 #define DLMALLOC_EXPORT __LIBC_HIDDEN__
+#define DEFAULT_MMAP_THRESHOLD (64U * 1024U)
 
 /* Include the proper definitions. */
 #include "../upstream-dlmalloc/malloc.h"
