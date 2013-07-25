@@ -82,13 +82,7 @@ extern struct __res_state _nres;
 
 int  res_ourserver_p(const res_state, const struct sockaddr *);
 
-#if defined(ANDROID_CHANGES) && defined(PROPERTY_SYSTEM_SUPPORT)
-static int res_need_init() {
-	return ((_nres.options & RES_INIT) == 0U) || res_get_dns_changed();
-}
-#else
 #define res_need_init()   ((_nres.options & RES_INIT) == 0U)
-#endif
 
 int
 res_init(void) {

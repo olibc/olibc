@@ -93,6 +93,9 @@ endif
 # just for this module
 LOCAL_NO_CRT := true
 
+# TODO: split out the asflags.
+LOCAL_ASFLAGS := $(LOCAL_CFLAGS)
+
 include $(BUILD_SYSTEM)/dynamic_binary.mk
 
 # See build/core/executable.mk

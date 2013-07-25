@@ -58,6 +58,7 @@
 
 #include <resolv.h>
 #include "resolv_static.h"
+#include <net/if.h>
 
 /*
  * Revision information.  This is the release date in YYYYMMDD format.
@@ -112,7 +113,74 @@ struct res_sym {
 	const char *	humanname; /* Its fun name, like "mail exchanger" */
 };
 
+/*
+ * Global defines and variables for resolver stub.
+ */
+#define	MAXNS			3	/* max # name servers we'll track */
+#define	MAXDFLSRCH		3	/* # default domain levels to try */
+#define	MAXDNSRCH		6	/* max # domains in search path */
+#define	LOCALDOMAINPARTS	2	/* min levels in name that is "local" */
+
+#define	RES_TIMEOUT		5	/* min. seconds between retries */
+#define	MAXRESOLVSORT		10	/* number of net to sort on */
+#define	RES_MAXNDOTS		15	/* should reflect bit field size */
+#define	RES_MAXRETRANS		30	/* only for resolv.conf/RES_OPTIONS */
+#define	RES_MAXRETRY		5	/* only for resolv.conf/RES_OPTIONS */
+#define	RES_DFLRETRY		2	/* Default #/tries. */
+#define	RES_MAXTIME		65535	/* Infinity, in milliseconds. */
+
 struct __res_state_ext;
+
+struct __res_state {
+	char	iface[IF_NAMESIZE+1];
+	int	retrans;	 	/* retransmission time interval */
+	int	retry;			/* number of times to retransmit */
+#ifdef sun
+	u_int	options;		/* option flags - see below. */
+#else
+	u_long	options;		/* option flags - see below. */
+#endif
+	int	nscount;		/* number of name servers */
+	struct sockaddr_in
+		nsaddr_list[MAXNS];	/* address of name server */
+#define	nsaddr	nsaddr_list[0]		/* for backward compatibility */
+	u_short	id;			/* current message id */
+	char	*dnsrch[MAXDNSRCH+1];	/* components of domain to search */
+	char	defdname[256];		/* default domain (deprecated) */
+#ifdef sun
+	u_int	pfcode;			/* RES_PRF_ flags - see below. */
+#else
+	u_long	pfcode;			/* RES_PRF_ flags - see below. */
+#endif
+	unsigned ndots:4;		/* threshold for initial abs. query */
+	unsigned nsort:4;		/* number of elements in sort_list[] */
+	char	unused[3];
+	struct {
+		struct in_addr	addr;
+		uint32_t	mask;
+	} sort_list[MAXRESOLVSORT];
+#ifdef __OLD_RES_STATE
+	char lookups[4];
+#else
+	res_send_qhook qhook;		/* query hook */
+	res_send_rhook rhook;		/* response hook */
+	int	res_h_errno;		/* last one set for this context */
+	int	_vcsock;		/* PRIVATE: for res_send VC i/o */
+	u_int	_flags;			/* PRIVATE: see below */
+	u_int	_pad;			/* make _u 64 bit aligned */
+	union {
+		/* On an 32-bit arch this means 512b total. */
+		char	pad[72 - 4*sizeof (int) - 2*sizeof (void *)];
+		struct {
+			uint16_t		nscount;
+			uint16_t		nstimes[MAXNS];	/* ms. */
+			int			nssocks[MAXNS];
+			struct __res_state_ext *ext;	/* extention for IPv6 */
+		} _ext;
+	} _u;
+#endif
+        struct res_static   rstatic[1];
+};
 
 typedef struct __res_state *res_state;
 
@@ -411,7 +479,7 @@ void		res_setservers(res_state,
 int		res_getservers(res_state,
 				    union res_sockaddr_union *, int);
 
-int res_get_dns_changed();
+void res_setiface();
 u_int  res_randomid(void);
 
 __END_DECLS
