@@ -43,7 +43,7 @@ void* mmap(void* addr, size_t size, int prot, int flags, int fd, off_t offset) {
     return MAP_FAILED;
   }
 
-  size_t unsigned_offset = static_cast<size_t>(offset); // To avoid sign extension.
+  size_t unsigned_offset = (size_t)(offset); // To avoid sign extension.
   void* result = __mmap2(addr, size, prot, flags, fd, unsigned_offset >> MMAP2_SHIFT);
 
   if (result != MAP_FAILED && (flags & (MAP_PRIVATE | MAP_ANONYMOUS)) != 0) {
