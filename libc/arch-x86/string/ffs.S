@@ -16,3 +16,6 @@ ENTRY(ffs)
 L1:	xorl	%eax,%eax		/* clear result */
 	ret
 END(ffs)
+
+.global ffsl
+	ffsl = ffs

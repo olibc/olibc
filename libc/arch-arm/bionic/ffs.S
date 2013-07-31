@@ -39,3 +39,6 @@ ENTRY(ffs)
 	rsbne	r0, r0, #32
 	bx		lr
 END(ffs)
+
+.global ffsl
+	ffsl = ffs

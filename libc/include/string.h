@@ -90,6 +90,10 @@ extern char*  strsignal(int  sig);
 extern int    strcoll(const char *, const char *) __purefunc;
 extern size_t strxfrm(char* __restrict, const char* __restrict, size_t);
 
+extern int ffsl(long int);
+
+extern int ffsll(long long int);
+
 #if defined(__BIONIC_FORTIFY)
 
 __errordecl(__memcpy_dest_size_error, "memcpy called with size bigger than destination");

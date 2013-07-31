@@ -90,3 +90,6 @@ ffs:
 	
 #endif
 	.end	ffs
+
+.global ffsl
+	ffsl = ffs
