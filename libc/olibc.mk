@@ -70,6 +70,11 @@ ifeq ($(MEMPCPY_IMPL),true)
 libc_common_src_files += \
 	bionic/mempcpy.c \
 
+  ifeq ($(WCHAR_SUPPORT),true)
+	libc_common_src_files += \
+	  wchar/wmempcpy.c
+  endif
+
 endif
 
 ifeq ($(STRCHRNUL_IMPL), true)
