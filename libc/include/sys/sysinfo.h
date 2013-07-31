@@ -35,6 +35,9 @@ __BEGIN_DECLS
 
 extern int sysinfo (struct sysinfo *info);
 
+#define get_nprocs_conf() (sysconf(_SC_NPROCESSORS_CONF))
+#define get_nprocs() (sysconf(_SC_NPROCESSORS_ONLN))
+
 __END_DECLS
 
 #endif /* _SYS_SYSINFO_H_ */
