@@ -995,3 +995,7 @@ size_t qemu_instrumented_malloc_usable_size(const void* mem) {
     /* during instrumentation, we can't really report anything more than requested_bytes */
     return cur_desc.requested_bytes;
 }
+
+int qemu_instrumented_malloc_trim(size_t pad) {
+    return dlmalloc_trim(pad);
+}

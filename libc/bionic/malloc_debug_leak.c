@@ -437,3 +437,7 @@ size_t leak_malloc_usable_size(const void* mem) {
     }
     return 0;
 }
+
+int leak_malloc_trim(size_t pad) {
+    return dlmalloc_trim(pad);
+}

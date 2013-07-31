@@ -80,6 +80,7 @@ typedef void* (*MallocDebugCalloc)(size_t, size_t);
 typedef void* (*MallocDebugRealloc)(void*, size_t);
 typedef void* (*MallocDebugMemalign)(size_t, size_t);
 typedef size_t (*MallocDebugMallocUsableSize)(const void*);
+typedef int (*MallocDebugMallocTrim)(size_t);
 typedef struct MallocDebug MallocDebug;
 struct MallocDebug {
   MallocDebugMalloc malloc;
@@ -88,6 +89,7 @@ struct MallocDebug {
   MallocDebugRealloc realloc;
   MallocDebugMemalign memalign;
   MallocDebugMallocUsableSize malloc_usable_size;
+  MallocDebugMallocTrim malloc_trim;
 };
 
 /* Malloc debugging initialization and finalization routines.

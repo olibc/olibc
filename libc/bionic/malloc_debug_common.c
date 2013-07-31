@@ -219,6 +219,7 @@ extern const MallocDebug __libc_malloc_default_dispatch;
 const MallocDebug __libc_malloc_default_dispatch __attribute__((aligned(32))) =
 {
     dlmalloc, dlfree, dlcalloc, dlrealloc, dlmemalign, dlmalloc_usable_size,
+    dlmalloc_trim,
 };
 
 /* Selector of dispatch table to use for dispatching malloc calls. */
@@ -248,6 +249,10 @@ size_t malloc_usable_size(const void* mem) {
     return __libc_malloc_dispatch->malloc_usable_size(mem);
 }
 
+int malloc_trim(size_t pad) {
+    return __libc_malloc_dispatch->malloc_trim(pad);
+}
+
 /* We implement malloc debugging only in libc.so, so code below
  * must be excluded if we compile this file for static libc.a
  */
@@ -259,7 +264,8 @@ size_t malloc_usable_size(const void* mem) {
 
 /* Table for dispatching malloc calls, depending on environment. */
 static MallocDebug gMallocUse __attribute__((aligned(32))) = {
-    dlmalloc, dlfree, dlcalloc, dlrealloc, dlmemalign, dlmalloc_usable_size
+    dlmalloc, dlfree, dlcalloc, dlrealloc, dlmemalign, dlmalloc_usable_size,
+    dlmalloc_trim
 };
 
 extern const char* __progname;
@@ -330,6 +336,18 @@ static void InitMalloc(void* malloc_impl_handler, MallocDebug* table, const char
   snprintf(symbol, sizeof(symbol), "%s_memalign", prefix);
   table->memalign = (MallocDebugMemalign)(dlsym(malloc_impl_handler, symbol));
   if (table->memalign == NULL) {
+      error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
+  }
+
+  snprintf(symbol, sizeof(symbol), "%s_malloc_usable_size", prefix);
+  table->malloc_usable_size = (MallocDebugMallocUsableSize)(dlsym(malloc_impl_handler, symbol));
+  if (table->malloc_usable_size == NULL) {
+      error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
+  }
+
+  snprintf(symbol, sizeof(symbol), "%s_malloc_trim", prefix);
+  table->malloc_trim = (MallocDebugMallocTrim)(dlsym(malloc_impl_handler, symbol));
+  if (table->malloc_trim == NULL) {
       error_log("%s: dlsym(\"%s\") failed", __progname, symbol);
   }
 }
@@ -508,7 +526,8 @@ static void malloc_init_impl() {
         (gMallocUse.calloc == NULL) ||
         (gMallocUse.realloc == NULL) ||
         (gMallocUse.memalign == NULL) ||
-        (gMallocUse.malloc_usable_size == NULL)) {
+        (gMallocUse.malloc_usable_size == NULL) ||
+        (gMallocUse.malloc_trim == NULL)) {
         error_log("%s: some symbols for libc.debug.malloc level %d were not found (see above)",
                   __progname, gMallocDebugLevel);
         dlclose(malloc_impl_handle);

@@ -34,6 +34,7 @@ extern void free(void* p);
 
 extern void* memalign(size_t alignment, size_t byte_count) __mallocfunc __wur;
 extern size_t malloc_usable_size(const void* p);
+extern int malloc_trim(size_t pad);
 
 extern void* valloc(size_t byte_count) __mallocfunc __wur;
 extern void* pvalloc(size_t byte_count) __mallocfunc __wur;

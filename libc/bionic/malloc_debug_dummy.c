@@ -43,6 +43,10 @@ size_t malloc_usable_size(const void* mem) {
     return dlmalloc_usable_size(mem);
 }
 
+int malloc_trim(size_t pad) {
+    return dlmalloc_trim(pad);
+}
+
 void* valloc(size_t bytes) {
     return dlvalloc(bytes);
 }

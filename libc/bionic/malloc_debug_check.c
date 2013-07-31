@@ -513,6 +513,10 @@ size_t chk_malloc_usable_size(const void* ptr) {
     return hdr->size;
 }
 
+int chk_malloc_trim(size_t pad) {
+    return dlmalloc_trim(pad);
+}
+
 static void ReportMemoryLeaks() {
   // We only track leaks at level 10.
   if (gMallocDebugLevel != 10) {
