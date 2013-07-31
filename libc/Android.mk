@@ -249,6 +249,14 @@ libc_common_src_files += bionic/stubs.c
 
 endif
 
+ifeq ($(A64L_L64A_IMPL),true)
+libc_common_src_files += \
+	bionic/a64l.c \
+	bionic/l64a.c \
+
+endif
+
+
 ifeq ($(MEMPCPY_IMPL),true)
 libc_common_src_files += \
 	bionic/mempcpy.c \

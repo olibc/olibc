@@ -188,6 +188,10 @@ void arc4random_stir(void);
 
 void arc4random_addrandom(unsigned char *dat, int datlen);
 
+long a64l(const char *str64);
+
+const char *l64a(long value);
+
 __END_DECLS
 
 #endif /* _STDLIB_H_ */

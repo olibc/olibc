@@ -172,6 +172,10 @@ config INSQUE_REMQUE_IMPL
 	bool "Doubly-linked list manipulation functions"
 	default n
 
+config A64L_L64A_IMPL
+	bool "a64l/l64a functions"
+	default n
+
 endmenu
 
 menu "String and Stdio Support"
