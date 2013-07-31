@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <pthread.h>
 #include <stdio.h>  // For FOPEN_MAX.
 #include <string.h>
 #include <sys/sysconf.h>
@@ -58,7 +59,6 @@
 
 /* the following depends on our implementation */
 #define  SYSTEM_ATEXIT_MAX          65536    /* our implementation is unlimited */
-#define  SYSTEM_THREAD_STACK_MIN    32768    /* lower values may be possible, but be conservative */
 #define  SYSTEM_THREAD_THREADS_MAX  2048     /* really unlimited */
 
 #define  SYSTEM_2_C_BIND     _POSIX_VERSION  /* Posix C binding version */
@@ -315,7 +315,7 @@ int sysconf(int name) {
     case _SC_THREAD_KEYS_MAX:
       return (BIONIC_TLS_SLOTS - TLS_SLOT_FIRST_USER_SLOT - GLOBAL_INIT_THREAD_LOCAL_BUFFER_COUNT);
 
-    case _SC_THREAD_STACK_MIN:    return SYSTEM_THREAD_STACK_MIN;
+    case _SC_THREAD_STACK_MIN:    return PTHREAD_STACK_MIN;
     case _SC_THREAD_THREADS_MAX:  return SYSTEM_THREAD_THREADS_MAX;
     case _SC_TTY_NAME_MAX:        return SYSTEM_TTY_NAME_MAX;
 #ifdef _POSIX_THREADS
