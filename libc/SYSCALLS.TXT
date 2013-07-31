@@ -180,6 +180,8 @@ ssize_t     process_vm_writev(pid_t, const struct iovec *, unsigned long, const 
 ssize_t     tee (int, int, size_t, unsigned int) 1
 int         name_to_handle_at (int, const char *, struct file_handle *, int *, int) 1
 int         open_by_handle_at (int, struct file_handle *, int) 1
+int         setfsgid(uid_t fsgid) 1
+int         setfsuid(uid_t) 1
 
 
 # file system
