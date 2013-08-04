@@ -93,6 +93,7 @@
 #include <errno.h>
 #include <netdb.h>
 #include "resolv_private.h"
+#include "resolv_cache.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -2311,6 +2312,12 @@ res_searchN(const char *name, struct res_target *target, res_state res)
 	if ((!dots && (res->options & RES_DEFNAMES)) ||
 	    (dots && !trailing_dot && (res->options & RES_DNSRCH))) {
 		int done = 0;
+
+		/* Unfortunately we need to set stuff up before
+		 * the domain stuff is tried.  Will have a better
+		 * fix after thread pools are used.
+		 */
+		_resolv_populate_res_for_iface(res);
 
 		for (domain = (const char * const *)res->dnsrch;
 		   *domain && !done;

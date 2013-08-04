@@ -26,7 +26,7 @@ _LIBC_ARCH_COMMON_SRC_FILES += \
 	arch-x86/string/ssse3-strcat-atom.S \
 	arch-x86/string/ssse3-strcpy-atom.S \
 	arch-x86/string/ssse3-memcmp-atom.S \
-
+	arch-x86/string/ssse3-memcmp16-atom.S \
 else
 _LIBC_ARCH_COMMON_SRC_FILES += \
 	arch-x86/string/memcpy.S \
@@ -36,6 +36,7 @@ _LIBC_ARCH_COMMON_SRC_FILES += \
 	arch-x86/string/strncmp.S \
 	arch-x86/string/strcat.S \
 	arch-x86/string/memcmp.S \
+	string/memcmp16.c \
 	string/strcpy.c \
 	string/strncat.c \
 	string/strncpy.c \
