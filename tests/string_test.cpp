@@ -422,7 +422,7 @@ TEST(string, strchrnul_with_0) {
 TEST(string, strchrnul) {
   int seek_char = random() & 255;
 
-  StringTestState state(SMALL);
+  StringTestState<char> state(SMALL);
   for (size_t i = 1; i < state.n; i++) {
     for (size_t j = 0; j < POS_ITER; j++) {
       state.NewIteration();
@@ -905,7 +905,7 @@ TEST(string, memcpy) {
 
 #ifdef MEMPCPY_IMPL
 TEST(string, mempcpy) {
-  StringTestState state(LARGE);
+  StringTestState<char> state(LARGE);
   int rand = random() & 255;
   for (size_t i = 0; i < state.n - 1; i++) {
     for (size_t j = 0; j < POS_ITER; j++) {
