@@ -518,7 +518,7 @@ TEST(string, strcpy) {
 
 #ifdef STPCPY_IMPL
 TEST(string, stpcpy) {
-  StringTestState state(SMALL);
+  StringTestState<char> state(SMALL);
   for (size_t j = 0; j < POS_ITER; j++) {
     state.NewIteration();
 
@@ -700,7 +700,7 @@ TEST(string, strncpy) {
 
 #ifdef STPCPY_IMPL
 TEST(string, stpncpy) {
-  StringTestState state(SMALL);
+  StringTestState<char> state(SMALL);
   for (size_t j = 0; j < ITER; j++) {
     state.NewIteration();
 
