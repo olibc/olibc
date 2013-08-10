@@ -342,18 +342,18 @@ libc_upstream_netbsd_src_files := \
 # =========================================================
 ifeq ($(TARGET_ARCH),arm)
 libc_common_src_files += \
-        string/strncmp.c \
-        string/strcat.c \
-        string/strncat.c \
-        string/strncpy.c \
-        bionic/strchr.c \
-        string/strrchr.c \
-        bionic/memrchr.c \
-        string/index.c \
-        bionic/strnlen.c \
-        string/strlcat.c \
-        string/strlcpy.c \
-	bionic/sync_file_range.c \
+	bionic/memmove.c.arm \
+	string/bcopy.c \
+	string/strncmp.c \
+	string/strncat.c \
+	string/strncpy.c \
+	bionic/strchr.c \
+	string/strrchr.c \
+	bionic/memrchr.c \
+	string/index.c \
+	bionic/strnlen.c \
+	string/strlcat.c \
+	string/strlcpy.c \
 
 # These files need to be arm so that gdbserver
 # can set breakpoints in them without messing
