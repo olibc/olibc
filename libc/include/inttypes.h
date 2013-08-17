@@ -249,27 +249,15 @@ typedef struct {
 } imaxdiv_t;
 
 __BEGIN_DECLS
+
+intmax_t	imaxabs(intmax_t) __pure2;
+imaxdiv_t	imaxdiv(intmax_t, intmax_t) __pure2;
+
 intmax_t	strtoimax(const char *, char **, int);
 uintmax_t	strtoumax(const char *, char **, int);
 
 intmax_t	strntoimax(const char *nptr, char **endptr, int base, size_t n);
 uintmax_t	strntoumax(const char *nptr, char **endptr, int base, size_t n);
-
-static __inline__ intmax_t imaxabs(intmax_t __n) {
-  return (__n < 0) ? -__n : __n;
-}
-
-
-static __inline__ imaxdiv_t imaxdiv(intmax_t __a, intmax_t __b) {
-  imaxdiv_t rv;
-  rv.quot = __a / __b;
-  rv.rem = __a % __b;
-  if (__a >= 0 && rv.rem < 0) {
-    rv.quot++;
-    rv.rem -= __b;
-  }
-  return rv;
-}
 
 __END_DECLS
 

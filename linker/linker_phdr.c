@@ -153,7 +153,8 @@ bool ElfReader_ReadElfHeader(ElfReader* er) {
     return false;
   }
   if (rc != sizeof(er->header_)) {
-    DL_ERR("\"%s\" is too small to be an ELF executable", er->name_);
+    DL_ERR("\"%s\" is too small to be an ELF executable. Expected at least %d bytes, only found %d bytes.",
+           er->name_, sizeof(er->header_), rc);
     return false;
   }
   return true;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,26 +26,23 @@
  * SUCH DAMAGE.
  */
 
-#include <errno.h>
+#ifndef _LIBC_EVENTS_H
+#define _LIBC_EVENTS_H
 
-#include "pthread_accessor.h"
 
-int pthread_getcpuclockid(pthread_t t, clockid_t* clockid) {
-  pthread_accessor thread;
-  pthread_accessor_init(&thread, t);
-  if (pthread_accessor_get(&thread) == NULL) {
-    pthread_accessor_fini(&thread);
-    return ESRCH;
-  }
+// This is going to be included in assembler code so only allow #define
+// values instead of defining an enum.
 
-  // The tid is stored in the top bits, but negated.
-  clockid_t result = ~(clockid_t)(pthread_accessor_get(&thread)->tid) << 3;
-  // Bits 0 and 1: clock type (0 = CPUCLOCK_PROF, 1 = CPUCLOCK_VIRT, 2 = CPUCLOCK_SCHED).
-  result |= 2;
-  // Bit 2: thread (set) or process (clear)?
-  result |= (1 << 2);
+#define BIONIC_EVENT_MEMCPY_BUFFER_OVERFLOW   80100
+#define BIONIC_EVENT_STRCAT_BUFFER_OVERFLOW   80105
+#define BIONIC_EVENT_MEMMOVE_BUFFER_OVERFLOW  80110
+#define BIONIC_EVENT_STRNCAT_BUFFER_OVERFLOW  80115
+#define BIONIC_EVENT_STRNCPY_BUFFER_OVERFLOW  80120
+#define BIONIC_EVENT_MEMSET_BUFFER_OVERFLOW   80125
+#define BIONIC_EVENT_STRCPY_BUFFER_OVERFLOW   80130
 
-  *clockid = result;
-  pthread_accessor_fini(&thread);
-  return 0;
-}
+#define BIONIC_EVENT_RESOLVER_OLD_RESPONSE    80300
+#define BIONIC_EVENT_RESOLVER_WRONG_SERVER    80305
+#define BIONIC_EVENT_RESOLVER_WRONG_QUERY     80310
+
+#endif // _LIBC_EVENTS_H

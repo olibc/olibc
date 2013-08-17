@@ -63,7 +63,6 @@ libc_common_src_files := \
 	string/strcspn.c \
 	string/strdup.c \
 	string/strpbrk.c \
-	string/__strrchr_chk.c \
 	string/strsep.c \
 	string/strspn.c \
 	string/strstr.c \
@@ -190,6 +189,26 @@ libc_common_no_strict_alias_src_files += \
 	netbsd/net/getaddrinfo.c \
 	netbsd/net/getnameinfo.c \
 
+
+# Fortify implementations of libc functions.
+libc_common_src_files += \
+    bionic/__fgets_chk.c \
+    bionic/__memcpy_chk.c \
+    bionic/__memmove_chk.c \
+    bionic/__memset_chk.c \
+    bionic/__strcat_chk.c \
+    bionic/__strchr_chk.c \
+    bionic/__strcpy_chk.c \
+    bionic/__strlcat_chk.c \
+    bionic/__strlcpy_chk.c \
+    bionic/__strlen_chk.c \
+    bionic/__strncat_chk.c \
+    bionic/__strncpy_chk.c \
+    bionic/__strrchr_chk.c \
+    bionic/__umask_chk.c \
+    bionic/__vsnprintf_chk.c \
+    bionic/__vsprintf_chk.c \
+
 libc_bionic_src_files := \
     bionic/abort.c \
     bionic/assert.c \
@@ -198,7 +217,6 @@ libc_bionic_src_files := \
     bionic/__errno.c \
     bionic/eventfd_read.c \
     bionic/eventfd_write.c \
-    bionic/__fgets_chk.c \
     bionic/futimens.c \
     bionic/getauxval.c \
     bionic/getcwd.c \
@@ -206,9 +224,6 @@ libc_bionic_src_files := \
     bionic/getlogin_r.c \
     bionic/libc_init_common.c \
     bionic/libgen.c \
-    bionic/__memcpy_chk.c \
-    bionic/__memmove_chk.c \
-    bionic/__memset_chk.c \
     bionic/mmap.c \
     bionic/pthread_attr.c \
     bionic/pthread_detach.c \
@@ -231,23 +246,12 @@ libc_bionic_src_files := \
     bionic/signalfd.c \
     bionic/sigwait.c \
     bionic/statvfs.c \
-    bionic/__strcat_chk.c \
-    bionic/__strchr_chk.c \
-    bionic/__strcpy_chk.c \
     bionic/strerror.c \
     bionic/strerror_r.c \
-    bionic/__strlcat_chk.c \
-    bionic/__strlcpy_chk.c \
-    bionic/__strlen_chk.c \
-    bionic/__strncat_chk.c \
-    bionic/__strncpy_chk.c \
     bionic/strsignal.c \
     bionic/sysconf.c \
     bionic/tdestroy.c \
     bionic/tmpfile.c \
-    bionic/__umask_chk.c \
-    bionic/__vsnprintf_chk.c \
-    bionic/__vsprintf_chk.c \
     bionic/wait.c \
 
 libc_tzcode_src_files := \
@@ -291,7 +295,12 @@ libc_upstream_freebsd_src_files := \
     upstream-freebsd/lib/libc/stdio/tempnam.c \
     upstream-freebsd/lib/libc/stdio/tmpnam.c \
     upstream-freebsd/lib/libc/stdio/wsetup.c \
+    upstream-freebsd/lib/libc/stdlib/abs.c \
     upstream-freebsd/lib/libc/stdlib/getopt_long.c \
+    upstream-freebsd/lib/libc/stdlib/imaxabs.c \
+    upstream-freebsd/lib/libc/stdlib/imaxdiv.c \
+    upstream-freebsd/lib/libc/stdlib/labs.c \
+    upstream-freebsd/lib/libc/stdlib/llabs.c \
     upstream-freebsd/lib/libc/stdlib/qsort.c \
     upstream-freebsd/lib/libc/stdlib/realpath.c \
 
@@ -342,8 +351,6 @@ libc_upstream_netbsd_src_files := \
 # =========================================================
 ifeq ($(TARGET_ARCH),arm)
 libc_common_src_files += \
-	bionic/memmove.c.arm \
-	string/bcopy.c \
 	string/strncmp.c \
 	string/strncat.c \
 	string/strncpy.c \

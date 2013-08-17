@@ -1,6 +1,5 @@
-/*	$OpenBSD: rindex.c,v 1.6 2005/08/08 08:05:37 espie Exp $ */
-/*
- * Copyright (c) 1988 Regents of the University of California.
+/*-
+ * Copyright (c) 2001 Mike Barcroft <mike@FreeBSD.org>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,14 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -28,21 +24,13 @@
  * SUCH DAMAGE.
  */
 
-#include <string.h>
-#include "libc_logging.h"
+#include <sys/cdefs.h>
+__FBSDID("$FreeBSD$");
 
-char *
-__strrchr_chk(const char *p, int ch, size_t s_len)
+#include <stdlib.h>
+
+long long
+llabs(long long j)
 {
-	char *save;
-
-	for (save = NULL;; ++p, s_len--) {
-		if (s_len == 0)
-			__fortify_chk_fail("strrchr read beyond buffer", 0);
-		if (*p == (char) ch)
-			save = (char *)p;
-		if (!*p)
-			return(save);
-	}
-	/* NOTREACHED */
+	return (j < 0 ? -j : j);
 }

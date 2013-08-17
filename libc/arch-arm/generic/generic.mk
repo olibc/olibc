@@ -8,6 +8,9 @@ $(call libc-add-cpu-variant-src,BCOPY,string/bcopy.c)
 $(call libc-add-cpu-variant-src,MEMMOVE,bionic/memmove.c.arm)
 $(call libc-add-cpu-variant-src,MEMCHR,bionic/memchr.c)
 
+$(call libc-add-cpu-variant-src,__STRCAT_CHK,bionic/__strcat_chk.c)
+$(call libc-add-cpu-variant-src,__STRCPY_CHK,bionic/__strcpy_chk.c)
+
 
 ifeq ($(ARCH_ARM_HAVE_ARMV7A),false)
 $(call libc-add-cpu-variant-src,STRLEN,arch-arm/bionic/strlen-armv7.S)
