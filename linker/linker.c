@@ -1216,8 +1216,9 @@ static bool mips_relocate_got(soinfo* si, soinfo* needed[]) {
 
     /* Now for the global GOT entries */
     Elf32_Sym* sym = symtab + gotsym;
+    size_t g;
     got = si->plt_got + local_gotno;
-    for (size_t g = gotsym; g < symtabno; g++, sym++, got++) {
+    for (g = gotsym; g < symtabno; g++, sym++, got++) {
         const char* sym_name;
         Elf32_Sym* s;
         soinfo* lsi;
