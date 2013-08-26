@@ -1182,17 +1182,15 @@ static int soinfo_relocate(soinfo* si, Elf32_Rel* rel, unsigned count,
 }
 
 #ifdef ANDROID_MIPS_LINKER
-static int mips_relocate_got(soinfo* si, soinfo* needed[]) {
-    unsigned *got;
-    unsigned local_gotno, gotsym, symtabno;
-    Elf32_Sym *symtab, *sym;
-    unsigned g;
-
-    got = si->plt_got;
-    local_gotno = si->mips_local_gotno;
-    gotsym = si->mips_gotsym;
-    symtabno = si->mips_symtabno;
-    symtab = si->symtab;
+static bool mips_relocate_got(soinfo* si, soinfo* needed[]) {
+    unsigned* got = si->plt_got;
+    if (got == NULL) {
+        return true;
+    }
+    unsigned local_gotno = si->mips_local_gotno;
+    unsigned gotsym = si->mips_gotsym;
+    unsigned symtabno = si->mips_symtabno;
+    Elf32_Sym* symtab = si->symtab;
 
     /*
      * got[0] is address of lazy resolver function
@@ -1203,7 +1201,7 @@ static int mips_relocate_got(soinfo* si, soinfo* needed[]) {
      */
 
     if ((si->flags & FLAG_LINKER) == 0) {
-        g = 0;
+        size_t g = 0;
         got[g++] = 0xdeadbeef;
         if (got[g] & 0x80000000) {
             got[g++] = 0xdeadfeed;
@@ -1217,9 +1215,9 @@ static int mips_relocate_got(soinfo* si, soinfo* needed[]) {
     }
 
     /* Now for the global GOT entries */
-    sym = symtab + gotsym;
+    Elf32_Sym* sym = symtab + gotsym;
     got = si->plt_got + local_gotno;
-    for (g = gotsym; g < symtabno; g++, sym++, got++) {
+    for (size_t g = gotsym; g < symtabno; g++, sym++, got++) {
         const char* sym_name;
         Elf32_Sym* s;
         soinfo* lsi;
@@ -1233,7 +1231,7 @@ static int mips_relocate_got(soinfo* si, soinfo* needed[]) {
             s = &symtab[g];
             if (ELF32_ST_BIND(s->st_info) != STB_WEAK) {
                 DL_ERR("cannot locate \"%s\"...", sym_name);
-                return -1;
+                return false;
             }
             *got = 0;
         }
@@ -1245,7 +1243,7 @@ static int mips_relocate_got(soinfo* si, soinfo* needed[]) {
              *got = lsi->load_bias + s->st_value;
         }
     }
-    return 0;
+    return true;
 }
 #endif
 
@@ -1689,7 +1687,7 @@ static bool soinfo_link_image(soinfo* si) {
     }
 
 #ifdef ANDROID_MIPS_LINKER
-    if (mips_relocate_got(si, needed)) {
+    if (!mips_relocate_got(si, needed)) {
         return false;
     }
 #endif
