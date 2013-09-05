@@ -65,7 +65,7 @@ _LIBC_ARCH_COMMON_SRC_FILES += \
 	arch-x86/string/bzero.S \
 	bionic/memrchr.c \
 	bionic/memchr.c \
-	string/strchr.c \
+	bionic/strchr.c \
 	string/strrchr.c \
 	string/index.c \
 	bionic/strnlen.c \
