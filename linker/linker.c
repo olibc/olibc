@@ -432,7 +432,7 @@ _Unwind_Ptr dl_unwind_find_exidx(_Unwind_Ptr pc, int *pcount)
     return NULL;
 }
 
-#elif defined(ANDROID_X86_LINKER) || defined(ANDROID_MIPS_LINKER)
+#endif
 
 /* Here, we only have to provide a callback to iterate across all the
  * loaded libraries. gcc_eh does the rest. */
@@ -456,8 +456,6 @@ dl_iterate_phdr(int (*cb)(dl_phdr_info *info, size_t size, void *data),
     }
     return rv;
 }
-
-#endif
 
 static Elf32_Sym *soinfo_gnu_lookup(soinfo *si, unsigned gnu_hash, const char *name)
 {
