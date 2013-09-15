@@ -65,7 +65,7 @@ unsigned int __page_size = PAGE_SIZE;
 unsigned int __page_shift = PAGE_SHIFT;
 
 static size_t get_main_thread_stack_size() {
-  rlimit stack_limit;
+  struct rlimit stack_limit;
   int rlimit_result = getrlimit(RLIMIT_STACK, &stack_limit);
   if ((rlimit_result == 0) &&
       (stack_limit.rlim_cur != RLIM_INFINITY) &&
