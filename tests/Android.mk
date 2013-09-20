@@ -86,6 +86,7 @@ test_src_files = \
     string_test.cpp \
     strings_test.cpp \
     stubs_test.cpp \
+    sys_sendfile_test.cpp \
     sys_stat_test.cpp \
     time_test.cpp \
     unistd_test.cpp \
@@ -218,6 +219,28 @@ LOCAL_LDFLAGS += $(test_dynamic_ldflags)
 LOCAL_SRC_FILES := $(test_src_files) $(test_dynamic_src_files)
 LOCAL_STATIC_LIBRARIES += bionic-unit-tests-unwind-test-impl-host
 include $(BUILD_HOST_NATIVE_TEST)
+endif
+
+# -----------------------------------------------------------------------------
+# Run the unit tests built against x86 bionic on an x86 host.
+# -----------------------------------------------------------------------------
+
+ifeq ($(HOST_OS)-$(HOST_ARCH),linux-x86)
+ifeq ($(TARGET_ARCH),x86)
+# gtest needs EXTERNAL_STORAGE for death test output.
+# bionic itself should always work relative to ANDROID_DATA or ANDROID_ROOT.
+# We create /data/local/tmp to be as much like the regular target environment
+# as possible.
+bionic-unit-tests-run-on-host: bionic-unit-tests $(TARGET_OUT_EXECUTABLES)/linker
+	mkdir -p $(TARGET_OUT_DATA)/local/tmp
+	cp $(TARGET_OUT_EXECUTABLES)/linker /system/bin
+	cp $(TARGET_OUT_EXECUTABLES)/sh /system/bin
+	ANDROID_DATA=$(TARGET_OUT_DATA) \
+	ANDROID_ROOT=$(TARGET_OUT) \
+	EXTERNAL_STORAGE=$(TARGET_OUT_DATA)/local/tmp \
+	LD_LIBRARY_PATH=$(TARGET_OUT_SHARED_LIBRARIES) \
+		$(TARGET_OUT_DATA_NATIVE_TESTS)/bionic-unit-tests/bionic-unit-tests
+endif
 endif
 
 # -----------------------------------------------------------------------------

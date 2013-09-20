@@ -97,6 +97,7 @@ syscall_src += arch-x86/syscalls/sync_file_range.S
 syscall_src += arch-x86/syscalls/__fcntl64.S
 syscall_src += arch-x86/syscalls/__fstatfs64.S
 syscall_src += arch-x86/syscalls/sendfile.S
+syscall_src += arch-x86/syscalls/sendfile64.S
 syscall_src += arch-x86/syscalls/fstatat.S
 syscall_src += arch-x86/syscalls/mkdirat.S
 syscall_src += arch-x86/syscalls/fchownat.S
@@ -140,30 +141,15 @@ syscall_src += arch-x86/syscalls/symlink.S
 syscall_src += arch-x86/syscalls/symlinkat.S
 syscall_src += arch-x86/syscalls/fchdir.S
 syscall_src += arch-x86/syscalls/truncate.S
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/setxattr.S
-endif
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/lsetxattr.S
-endif
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/getxattr.S
-endif
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/lgetxattr.S
-endif
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/listxattr.S
-endif
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/llistxattr.S
-endif
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/removexattr.S
-endif
-ifeq ($(XATTR_SUPPORT),true)
-  syscall_src += arch-x86/syscalls/lremovexattr.S
-endif
+syscall_src += arch-x86/syscalls/truncate64.S
+syscall_src += arch-x86/syscalls/setxattr.S
+syscall_src += arch-x86/syscalls/lsetxattr.S
+syscall_src += arch-x86/syscalls/getxattr.S
+syscall_src += arch-x86/syscalls/lgetxattr.S
+syscall_src += arch-x86/syscalls/listxattr.S
+syscall_src += arch-x86/syscalls/llistxattr.S
+syscall_src += arch-x86/syscalls/removexattr.S
+syscall_src += arch-x86/syscalls/lremovexattr.S
 syscall_src += arch-x86/syscalls/__statfs64.S
 syscall_src += arch-x86/syscalls/unshare.S
 syscall_src += arch-x86/syscalls/swapon.S

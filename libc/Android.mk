@@ -93,6 +93,7 @@ libc_common_src_files := \
 	bionic/get_current_dir_name.c \
 	bionic/getdtablesize.c \
 	bionic/gethostname.c \
+	bionic/getpagesize.c \
 	bionic/getpass.c \
 	bionic/getpgrp.c \
 	bionic/getpriority.c \
