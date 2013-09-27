@@ -93,3 +93,5 @@ __LIBC_HIDDEN__ extern int __sdidinit;
 
 #define FLOCKFILE(fp)   do { if (__isthreaded) flockfile(fp); } while (0)
 #define FUNLOCKFILE(fp) do { if (__isthreaded) funlockfile(fp); } while (0)
+
+#define FLOATING_POINT
