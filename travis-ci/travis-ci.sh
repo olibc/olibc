@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 
-curl https://dl-ssl.google.com/dl/googlesource/git-repo/repo > repo
+curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > repo
 chmod a+x ./repo
 
 ./repo init -u https://github.com/olibc/manifest.git
