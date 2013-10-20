@@ -67,17 +67,17 @@ static void call_array(void(**list)()) {
 }
 
 static void apply_gnu_relro() {
-  Elf32_Phdr* phdr_start = (Elf32_Phdr*)(getauxval(AT_PHDR));
+  Elf32_Phdr* phdr_start = (Elf_Phdr*)(getauxval(AT_PHDR));
   unsigned long int phdr_ct = getauxval(AT_PHNUM);
 
-  Elf32_Phdr* phdr;
+  Elf_Phdr* phdr;
   for (phdr = phdr_start; phdr < (phdr_start + phdr_ct); phdr++) {
     if (phdr->p_type != PT_GNU_RELRO) {
       continue;
     }
 
-    Elf32_Addr seg_page_start = PAGE_START(phdr->p_vaddr);
-    Elf32_Addr seg_page_end = PAGE_END(phdr->p_vaddr + phdr->p_memsz);
+    Elf_Addr seg_page_start = PAGE_START(phdr->p_vaddr);
+    Elf_Addr seg_page_end = PAGE_END(phdr->p_vaddr + phdr->p_memsz);
 
     // Check return value here? What do we do if we fail?
     mprotect((void*)(seg_page_start), seg_page_end - seg_page_start, PROT_READ);

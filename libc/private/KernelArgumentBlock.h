@@ -34,14 +34,14 @@ struct KernelArgumentBlock {
   int argc;
   char** argv;
   char** envp;
-  Elf32_auxv_t* auxv;
+  Elf_auxv_t* auxv;
 
   abort_msg_t** abort_message_ptr;
 };
 
 static inline
 void KernelArgumentBlock_init(KernelArgumentBlock *kab, void* raw_args) {
-  uint32_t* args = (uint32_t*)(raw_args);
+  uintptr_t* args = (uintptr_t*)(raw_args);
   kab->argc = (int)(*args);
   kab->argv = (char**)(args + 1);
   kab->envp = kab->argv + kab->argc + 1;
@@ -54,7 +54,7 @@ void KernelArgumentBlock_init(KernelArgumentBlock *kab, void* raw_args) {
   }
   ++p; // Skip second NULL;
 
-  kab->auxv = (Elf32_auxv_t*)(p);
+  kab->auxv = (Elf_auxv_t*)(p);
 }
 
 // Similar to ::getauxval but doesn't require the libc global variables to be set up,
@@ -64,7 +64,7 @@ static inline
 unsigned long KernelArgumentBlock_getauxval(KernelArgumentBlock *kab,
                                             unsigned long type,
                                             bool* found_match) {
-  Elf32_auxv_t* v;
+  Elf_auxv_t* v;
   for (v = kab->auxv; v->a_type != AT_NULL; ++v) {
     if (v->a_type == type) {
       if (found_match != NULL) {

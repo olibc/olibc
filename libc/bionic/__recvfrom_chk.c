@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,31 +25,19 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef _ELF_H
-#define _ELF_H
 
-#include <stdint.h>
-#include <linux/auxvec.h>
-#include <sys/exec_elf.h>
+#undef _FORTIFY_SOURCE
 
-typedef struct {
-  uint32_t a_type;
-  union {
-    uint32_t a_val;
-  } a_un;
-} Elf32_auxv_t;
+#include <stddef.h>
+#include <sys/socket.h>
+#include "libc_logging.h"
 
-typedef struct {
-  uint64_t a_type;
-  union {
-    uint64_t a_val;
-  } a_un;
-} Elf64_auxv_t;
+ssize_t __recvfrom_chk(int socket, void* buf, size_t len, size_t buflen, unsigned int flags,
+        const struct sockaddr* src_addr, socklen_t* addrlen)
+{
+  if (__predict_false(len > buflen)) {
+    __fortify_chk_fail("recvfrom overflow", 0);
+  }
 
-#ifdef __LP64__
-#  define Elf_auxv_t Elf64_auxv_t
-#else
-#  define Elf_auxv_t Elf32_auxv_t
-#endif
-
-#endif /* _ELF_H */
+  return recvfrom(socket, buf, len, flags, src_addr, addrlen);
+}

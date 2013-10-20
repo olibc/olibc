@@ -197,6 +197,7 @@ libc_common_src_files += \
     bionic/__memcpy_chk.c \
     bionic/__memmove_chk.c \
     bionic/__memset_chk.c \
+    bionic/__recvfrom_chk.c \
     bionic/__strcat_chk.c \
     bionic/__strchr_chk.c \
     bionic/__strcpy_chk.c \
