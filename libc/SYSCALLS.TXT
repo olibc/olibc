@@ -144,6 +144,7 @@ int         select:_newselect(int, struct fd_set*, struct fd_set*, struct fd_set
 int         select(int, struct fd_set*, struct fd_set*, struct fd_set*, struct timeval*)  x86_64
 int         ftruncate(int, off_t)  all
 int         ftruncate64(int, off64_t) arm,x86,mips
+int         fallocate(int fd, int mode, off_t offset, off_t len) all
 int         getdents:getdents64(unsigned int, struct dirent*, unsigned int)   all
 int         fsync(int)  all
 int         fdatasync(int) all
