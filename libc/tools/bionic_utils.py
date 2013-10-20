@@ -129,7 +129,6 @@ class SysCallsTxtParser:
             for arch in string.split(arch_list, ','):
                 if arch in all_arches:
                     t[arch] = True
-                    print "arch %s , ok for %s" % (arch, t["decl"])
                 else:
                     E("invalid syscall architecture list in '%s'" % line)
                     return
