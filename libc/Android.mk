@@ -80,11 +80,9 @@ libc_common_src_files := \
 	bionic/err.c \
 	bionic/ether_aton.c \
 	bionic/ether_ntoa.c \
-	bionic/fcntl.c \
 	bionic/fdprintf.c \
 	bionic/flockfile.c \
 	bionic/fork.c \
-	bionic/forkpty.c \
 	bionic/fstatfs.c \
 	bionic/ftime.c \
 	bionic/ftok.c \
@@ -141,9 +139,7 @@ libc_common_src_files := \
 	bionic/signal.c \
 	bionic/signame.c \
 	bionic/sigsetmask.c \
-	bionic/sigsuspend.c \
 	bionic/sleep.c \
-	bionic/statfs.c \
 	bionic/strndup.c \
 	bionic/strntoimax.c \
 	bionic/strntoumax.c \
@@ -190,6 +186,15 @@ libc_common_no_strict_alias_src_files += \
 	netbsd/net/getaddrinfo.c \
 	netbsd/net/getnameinfo.c \
 
+# These are shared by all the 32-bit targets, but not the 64-bit ones.
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm mips x86))
+libc_common_src_files += \
+    bionic/fcntl.c \
+    bionic/fstatfs.c \
+    bionic/sigsuspend.c \
+    bionic/statfs.c \
+
+endif
 
 # Fortify implementations of libc functions.
 libc_common_src_files += \
@@ -226,7 +231,6 @@ libc_bionic_src_files := \
     bionic/getlogin_r.c \
     bionic/libc_init_common.c \
     bionic/libgen.c \
-    bionic/mmap.c \
     bionic/pthread_attr.c \
     bionic/pthread_detach.c \
     bionic/pthread_equal.c \
@@ -255,6 +259,13 @@ libc_bionic_src_files := \
     bionic/tdestroy.c \
     bionic/tmpfile.c \
     bionic/wait.c \
+
+# These are shared by all the 32-bit targets, but not the 64-bit ones.
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm mips x86))
+libc_bionic_src_files += \
+    bionic/mmap.c \
+
+endif
 
 libc_tzcode_src_files := \
     tzcode/asctime.c \
@@ -349,29 +360,31 @@ libc_upstream_netbsd_src_files := \
     upstream-netbsd/libc/string/strxfrm.c \
     upstream-netbsd/libc/unistd/killpg.c \
 
+
 # Architecture specific source files go here
 # =========================================================
 ifeq ($(TARGET_ARCH),arm)
 libc_common_src_files += \
-	string/strncmp.c \
-	string/strncat.c \
-	string/strncpy.c \
-	bionic/strchr.c \
-	string/strrchr.c \
 	bionic/memrchr.c \
-	string/index.c \
+	bionic/strchr.c \
 	bionic/strnlen.c \
+	string/index.c \
 	string/strlcat.c \
 	string/strlcpy.c \
+	string/strncat.c \
+	string/strncmp.c \
+	string/strncpy.c \
+	string/strrchr.c \
 
 # These files need to be arm so that gdbserver
 # can set breakpoints in them without messing
 # up any thumb code.
+# TODO: is this actually necessary?
 libc_common_src_files += \
-	bionic/pthread-atfork.c.arm \
-	bionic/pthread-rwlocks.c.arm \
-	bionic/pthread-timers.c.arm \
-	bionic/ptrace.c.arm
+    bionic/pthread-atfork.c.arm \
+    bionic/pthread-rwlocks.c.arm \
+    bionic/pthread-timers.c.arm \
+    bionic/ptrace.c.arm \
 
 libc_static_common_src_files += \
     bionic/pthread.c.arm \
@@ -393,6 +406,47 @@ libc_static_common_src_files += \
     bionic/pthread_key.c \
 
 endif # x86
+
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86_64))
+libc_common_src_files += \
+    bionic/memchr.c \
+    bionic/memcmp.c \
+    bionic/memcpy.c \
+    bionic/memmove.c \
+    bionic/memrchr.c \
+    bionic/memset.c \
+    bionic/pthread-atfork.c \
+    bionic/pthread-rwlocks.c \
+    bionic/pthread-timers.c \
+    bionic/ptrace.c \
+    bionic/strchr.c \
+    bionic/strnlen.c \
+    string/bcopy.c \
+    string/index.c \
+    string/strcat.c \
+    string/strcmp.c \
+    string/strcpy.c \
+    string/strlcat.c \
+    string/strlcpy.c \
+    string/strlen.c \
+    string/strncat.c \
+    string/strncmp.c \
+    string/strncpy.c \
+    string/strrchr.c \
+    upstream-freebsd/lib/libc/string/wcscat.c \
+    upstream-freebsd/lib/libc/string/wcschr.c \
+    upstream-freebsd/lib/libc/string/wcscmp.c \
+    upstream-freebsd/lib/libc/string/wcscpy.c \
+    upstream-freebsd/lib/libc/string/wcslen.c \
+    upstream-freebsd/lib/libc/string/wcsrchr.c \
+    upstream-freebsd/lib/libc/string/wmemcmp.c \
+
+libc_static_common_src_files += \
+    bionic/pthread.c \
+    bionic/pthread_create.c \
+    bionic/pthread_key.c \
+
+endif # x86_64
 
 ifeq ($(TARGET_ARCH),mips)
 libc_common_src_files += \
@@ -512,16 +566,24 @@ ifeq ($(TARGET_ARCH),arm)
 endif # !arm
 
 ifeq ($(TARGET_ARCH),x86)
-  libc_common_cflags += -DSOFTFLOAT -DHAVE_UNWIND_CONTEXT_STRUCT
+  libc_common_cflags += -DSOFTFLOAT
   libc_crt_target_cflags := -m32
   libc_crt_target_ldflags := -melf_i386
+endif
+ifeq ($(TARGET_ARCH),x86_64)
+  libc_crt_target_cflags := -m64
+  libc_crt_target_ldflags := -melf_x86_64
+endif
+
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
+  libc_common_cflags += -DSOFTFLOAT
   ifeq ($(ARCH_X86_HAVE_SSE2),true)
       libc_crt_target_cflags += -DUSE_SSE2=1
   endif
   ifeq ($(ARCH_X86_HAVE_SSSE3),true)
       libc_crt_target_cflags += -DUSE_SSSE3=1
   endif
-endif # x86
+endif
 
 ifeq ($(TARGET_ARCH),mips)
   ifneq ($(ARCH_MIPS_HAS_FPU),true)
@@ -583,7 +645,7 @@ endif
 ifeq ($(TARGET_ARCH),mips)
     libc_crt_target_so_cflags := -fPIC
 endif
-ifeq ($(TARGET_ARCH),x86)
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
     libc_crt_target_so_cflags := -fPIC
 endif
 libc_crt_target_so_cflags += $(libc_crt_target_cflags)
