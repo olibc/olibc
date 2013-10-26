@@ -215,7 +215,7 @@ libm_common_src_files += fake_long_double.c
 
 # TODO: re-enable i387/e_sqrtf.S for x86, and maybe others.
 
-libm_common_cflags := -DFLT_EVAL_METHOD=0
+libm_common_cflags := -DFLT_EVAL_METHOD=0 -std=c99
 libm_common_includes := $(LOCAL_PATH)/upstream-freebsd/lib/msun/src/
 TARGET_USE_CUSTOM_SINCOS := false
 
@@ -243,7 +243,7 @@ endif
 libm_x86_includes := $(LOCAL_PATH)/i386 $(LOCAL_PATH)/i387
 libm_x86_src_files := i387/fenv.c
 
-libm_x86_64_includes := $(LOCAL_PATH)/amd64 $(LOCAL_PATH)/i387
+libm_x86_64_includes := $(LOCAL_PATH)/amd64
 libm_x86_64_src_files := amd64/fenv.c
 
 libm_mips_cflags := -fno-builtin-rintf -fno-builtin-rint

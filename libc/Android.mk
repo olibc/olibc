@@ -450,22 +450,23 @@ endif # x86_64
 
 ifeq ($(TARGET_ARCH),mips)
 libc_common_src_files += \
+	bionic/memchr.c \
 	bionic/memcmp.c \
+	bionic/memrchr.c \
+	bionic/strnlen.c \
 	string/bcopy.c \
+	string/index.c \
 	string/strcmp.c \
 	string/strcpy.c \
-	string/strncmp.c \
+	string/strlcat.c \
+	string/strlcpy.c \
 	string/strcat.c \
 	string/strncat.c \
+	string/strncmp.c \
 	string/strncpy.c \
 	bionic/strchr.c \
 	string/strrchr.c \
-	bionic/memchr.c \
-	bionic/memrchr.c \
-	string/index.c \
-	bionic/strnlen.c \
-	string/strlcat.c \
-	string/strlcpy.c \
+
 
 libc_common_src_files += \
 	bionic/pthread-atfork.c \
