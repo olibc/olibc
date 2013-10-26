@@ -583,6 +583,7 @@ ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
   ifeq ($(ARCH_X86_HAVE_SSSE3),true)
       libc_crt_target_cflags += -DUSE_SSSE3=1
   endif
+  libc_common_cflags += -DHAVE_UNWIND_CONTEXT_STRUCT
 endif
 
 ifeq ($(TARGET_ARCH),mips)
