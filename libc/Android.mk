@@ -83,7 +83,6 @@ libc_common_src_files := \
 	bionic/fdprintf.c \
 	bionic/flockfile.c \
 	bionic/fork.c \
-	bionic/fstatfs.c \
 	bionic/ftime.c \
 	bionic/ftok.c \
 	bionic/fts.c \
