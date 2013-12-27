@@ -59,7 +59,7 @@ char *__strncat_chk(
         len--; dest_buf_size--;
 
         if (__predict_false(dest_buf_size == 0)) {
-            __fortify_chk_fail("strncat buffer overflow",
+            __fortify_chk_fail("strncat buffer overflow prevented",
                                BIONIC_EVENT_STRNCAT_BUFFER_OVERFLOW);
         }
 
