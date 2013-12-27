@@ -18,9 +18,16 @@
 
 #include <sys/statfs.h>
 
-int __statfs64(const char*, size_t, struct statfs*);
-int __fstatfs64(int, size_t, struct statfs*);
 
+// Paper over the fact that 32-bit kernels use fstatfs64/statfs64 with an extra argument,
+// but 64-bit kernels don't have the "64" bit suffix or the extra size_t argument.
+#if __LP64__
+#  define __fstatfs64(fd,size,buf) fstatfs(fd,buf)
+#  define __statfs64(path,size,buf) statfs(path,buf)
+#else
+int __fstatfs64(int, size_t, struct statfs*);
+int __statfs64(const char*, size_t, struct statfs*);
+#endif
 #define ST_VALID 0x0020
 
 static void __statfs_to_statvfs(const struct statfs *in, struct statvfs* out) {
