@@ -108,6 +108,7 @@ libc_common_src_files := \
 	bionic/lutimes.c \
 	bionic/memmem.c \
 	bionic/memswap.c \
+	bionic/name_mem.c \
 	bionic/openat.c \
 	bionic/open.c \
 	bionic/openpty.c \
@@ -197,6 +198,7 @@ endif
 
 # Fortify implementations of libc functions.
 libc_common_src_files += \
+    bionic/__FD_chk.c \
     bionic/__fgets_chk.c \
     bionic/__memcpy_chk.c \
     bionic/__memmove_chk.c \
