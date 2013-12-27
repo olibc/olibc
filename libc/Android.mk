@@ -109,7 +109,6 @@ libc_common_src_files := \
 	bionic/issetugid.c \
 	bionic/ldexp.c \
 	bionic/login_tty.c \
-	bionic/lseek64.c \
 	bionic/lutimes.c \
 	bionic/memmem.c \
 	bionic/memswap.c \
@@ -196,6 +195,7 @@ ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm mips x86))
 libc_common_src_files += \
     bionic/fcntl.c \
     bionic/fstatfs.c \
+    bionic/lseek64.c \
     bionic/sigsuspend.c \
     bionic/statfs.c \
 
