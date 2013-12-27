@@ -1085,6 +1085,12 @@ LOCAL_SRC_FILES := \
 	bionic/malloc_debug_leak.c \
 	bionic/malloc_debug_check.c \
 
+# FIXME: Work-around for x86
+#        warning: shared library text segment is not shareable
+ifeq ($(TARGET_ARCH),x86)
+LOCAL_LDFLAGS := -Wl,--no-warn-shared-textrel
+endif
+
 LOCAL_MODULE:= libc_malloc_debug_leak
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
