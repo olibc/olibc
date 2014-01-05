@@ -231,7 +231,6 @@ syscall_src += arch-x86_64/syscalls/unshare.S
 syscall_src += arch-x86_64/syscalls/ustat.S
 syscall_src += arch-x86_64/syscalls/utimensat.S
 syscall_src += arch-x86_64/syscalls/utimes.S
-syscall_src += arch-x86_64/syscalls/vfork.S
 syscall_src += arch-x86_64/syscalls/vhangup.S
 syscall_src += arch-x86_64/syscalls/vmsplice.S
 syscall_src += arch-x86_64/syscalls/wait4.S
