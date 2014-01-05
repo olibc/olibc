@@ -182,7 +182,6 @@ syscall_src += arch-x86/syscalls/timerfd_settime.S
 syscall_src += arch-x86/syscalls/timerfd_gettime.S
 syscall_src += arch-x86/syscalls/stime.S
 syscall_src += arch-x86/syscalls/sigaction.S
-syscall_src += arch-x86/syscalls/sigprocmask.S
 syscall_src += arch-x86/syscalls/__sigsuspend.S
 syscall_src += arch-x86/syscalls/__rt_sigaction.S
 syscall_src += arch-x86/syscalls/__rt_sigprocmask.S
