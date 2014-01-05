@@ -232,6 +232,7 @@ libc_bionic_src_files := \
     bionic/getlogin_r.c \
     bionic/libc_init_common.c \
     bionic/libgen.c \
+    bionic/mkfifo.c \
     bionic/pthread_attr.c \
     bionic/pthread_detach.c \
     bionic/pthread_equal.c \

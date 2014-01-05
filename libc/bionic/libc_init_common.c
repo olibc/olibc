@@ -47,7 +47,7 @@
 #include "pthread_internal.h"
 
 abort_msg_t** __abort_message_ptr;
-unsigned __get_sp(void);
+uintptr_t __get_sp(void);
 int __system_properties_init(void);
 
 // Not public, but well-known in the BSDs.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,19 +26,8 @@
  * SUCH DAMAGE.
  */
 
-#include <machine/asm.h>
-#include <asm/unistd.h>
+#include <sys/stat.h>
 
-// void _exit_with_stack_teardown(void* stackBase, size_t stackSize, int status)
-ENTRY_PRIVATE(_exit_with_stack_teardown)
-    mov     lr, r2
-    ldr     r7, =__NR_munmap
-    swi     #0              // the stack is destroyed by this call
-    mov     r0, lr
-    ldr     r7, =__NR_exit
-    swi     #0
-
-    // exit() should never return, cause a crash if it does
-    mov     r0, #0
-    ldr     r0, [r0]
-END(_exit_with_stack_teardown)
+int mkfifo(const char* path, mode_t mode) {
+  return mknod(path, (mode & ~S_IFMT) | S_IFIFO, 0);
+}
