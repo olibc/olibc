@@ -86,12 +86,12 @@ struct hdr_t {
     uintptr_t freed_bt[MAX_BACKTRACE_DEPTH];
     int freed_bt_depth;
     size_t size;
-    unsigned char front_guard[FRONT_GUARD_LEN];
+    uint8_t front_guard[FRONT_GUARD_LEN];
 } __attribute__((packed, aligned(MALLOC_ALIGNMENT)));
 
 typedef struct ftr_t ftr_t;
 struct ftr_t {
-    unsigned char rear_guard[REAR_GUARD_LEN];
+    uint8_t rear_guard[REAR_GUARD_LEN];
 } __attribute__((packed));
 
 static inline ftr_t* to_ftr(hdr_t* hdr) {
@@ -129,10 +129,10 @@ static inline bool is_front_guard_valid(hdr_t* hdr) {
     size_t i;
     for (i = 0; i < FRONT_GUARD_LEN; i++) {
         if (hdr->front_guard[i] != FRONT_GUARD) {
-            return 0;
+            return false;
         }
     }
-    return 1;
+    return true;
 }
 
 static inline void init_rear_guard(hdr_t* hdr) {
@@ -214,13 +214,15 @@ static inline void poison(hdr_t* hdr) {
     memset(user(hdr), FREE_POISON, hdr->size);
 }
 
-static int was_used_after_free(hdr_t* hdr) {
-    unsigned i;
-    const unsigned char* data = (const unsigned char *)(user(hdr));
-    for (i = 0; i < hdr->size; i++)
-        if (data[i] != FREE_POISON)
-            return 1;
-    return 0;
+static bool was_used_after_free(hdr_t* hdr) {
+    size_t i;
+    const uint8_t* data = (const uint8_t*)(user(hdr));
+    for (i = 0; i < hdr->size; i++) {
+        if (data[i] != FREE_POISON) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /* returns 1 if valid, *safe == 1 if safe to dump stack */
