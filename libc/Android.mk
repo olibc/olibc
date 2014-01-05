@@ -191,7 +191,6 @@ libc_common_src_files += \
     bionic/fstatfs.c \
     bionic/__get_tls.c \
     bionic/lseek64.c \
-    bionic/sigsuspend.c \
     bionic/statfs.c \
 
 endif
@@ -256,6 +255,7 @@ libc_bionic_src_files := \
     bionic/setlocale.c \
     bionic/signalfd.c \
     bionic/sigprocmask.c \
+    bionic/sigsuspend.c \
     bionic/sigwait.c \
     bionic/statvfs.c \
     bionic/strerror.c \

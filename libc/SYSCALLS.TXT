@@ -5,7 +5,7 @@
 # return_type func_name[|alias_list][:syscall_name[:socketcall_id]]([parameter_list]) arch_list
 #
 # where:
-#       arch_list ::= "all" | "custom" | arch+
+#       arch_list ::= "all" | arch+
 #       arch      ::= "arm" | "mips" | "x86" | "x86_64"
 #
 # Note:
@@ -21,9 +21,6 @@
 #          socketcall(__NR_socket, 1, *(rest of args on stack)).
 #
 #      - Each parameter type is assumed to be stored in 32 bits.
-#
-#      - The arch list can be the word "custom" meaning "do not generate any stubs".
-#        In this case, a hand-written custom stub must be provided.
 #
 # This file is processed by a python script named gensyscalls.py.
 
@@ -66,7 +63,6 @@ int     setgid:setgid32(gid_t)     arm,x86
 int     setgid:setgid(gid_t)       mips,x86_64
 int     setuid:setuid32(uid_t)    arm,x86
 int     setuid:setuid(uid_t)      mips,x86_64
-int     seteuid:seteuid32(uid_t)   custom
 int     setreuid:setreuid32(uid_t, uid_t)   arm,x86
 int     setreuid:setreuid(uid_t, uid_t)     mips,x86_64
 int     setresuid:setresuid32(uid_t, uid_t, uid_t)   arm,x86
@@ -89,7 +85,6 @@ long    ulimit (int __cmd, ...) mips,x86,x86_64
 int     getrusage(int who, struct rusage*  r_usage)  all
 int     setgroups:setgroups32(int, const gid_t*)   arm,x86
 int     setgroups:setgroups(int, const gid_t*)     mips,x86_64
-pid_t   getpgrp(void)  custom
 int     setpgid(pid_t, pid_t)  all
 pid_t   vfork(void)  arm,x86_64
 int     setregid:setregid32(gid_t, gid_t)  arm,x86
@@ -112,7 +107,6 @@ ssize_t     pwrite64(int, void*, size_t, off64_t) all
 int         __open:open(const char*, int, mode_t)  all
 int         __openat:openat(int, const char*, int, mode_t) all
 int         close(int)                      all
-int         creat(const char*, mode_t)       custom
 off_t       lseek(int, off_t, int)           arm,x86,mips
 off_t       lseek|lseek64(int, off_t, int)   x86_64
 int         __llseek:_llseek(int, unsigned long, unsigned long, off64_t*, int)  arm,x86,mips
@@ -195,7 +189,6 @@ int     chown:chown(const char*, uid_t, gid_t)    mips,x86_64
 int     lchown:lchown32(const char*, uid_t, gid_t)  arm,x86
 int     lchown:lchown(const char*, uid_t, gid_t)  mips,x86_64
 int     mount(const char*, const char*, const char*, unsigned long, const void*)  all
-int     umount(const char*)  custom
 int     umount2(const char*, int)  all
 int     fstat:fstat64(int, struct stat*)    arm,x86,mips
 int     fstat(int, struct stat*)    x86_64
@@ -262,14 +255,12 @@ int           stime(time_t *t) mips,x86
 
 # signals
 int     sigaction(int, const struct sigaction*, struct sigaction*)  arm,x86,mips
-int     __sigsuspend:sigsuspend(int unused1, int unused2, unsigned mask)  arm,x86
-int     __sigsuspend:sigsuspend(const sigset_t* mask)  mips
-int     __rt_sigsuspend:rt_sigsuspend(const sigset_t *unewset, size_t sigset_size)  x86_64
-int     __rt_sigaction:rt_sigaction(int sig, const struct sigaction* act, struct sigaction* oact, size_t sigsetsize)  all
-int     __rt_sigprocmask:rt_sigprocmask(int  how, const sigset_t* set, sigset_t* oset, size_t sigsetsize)  all
-int     __rt_sigtimedwait:rt_sigtimedwait(const sigset_t* set, struct siginfo_t* info, struct timespec_t* timeout, size_t  sigset_size)  all
 int     sigpending(sigset_t*)  arm,x86,mips
-int     signalfd4(int fd, const sigset_t* mask, size_t sizemask, int flags)  all
+int     __rt_sigaction:rt_sigaction(int, const struct sigaction*, struct sigaction*, size_t)  all
+int     __rt_sigprocmask:rt_sigprocmask(int, const sigset_t*, sigset_t*, size_t)  all
+int     __rt_sigsuspend:rt_sigsuspend(const sigset_t*, size_t)  all
+int     __rt_sigtimedwait:rt_sigtimedwait(const sigset_t*, struct siginfo_t*, struct timespec_t*, size_t)  all
+int     signalfd4(int, const sigset_t*, size_t, int)  all
 
 # sockets
 int           socket(int, int, int)              arm,mips,x86_64
@@ -331,7 +322,7 @@ int ioprio_get(int which, int who) all
 # other
 int     uname(struct utsname*)  all
 mode_t  umask(mode_t)  all
-int      __reboot:reboot(int, int, int, void*)  all
+int     __reboot:reboot(int, int, int, void*)  all
 int     __syslog:syslog(int, char*, int)  all
 int     init_module(void*, unsigned long, const char*)  all
 int     delete_module(const char*, unsigned int)   all

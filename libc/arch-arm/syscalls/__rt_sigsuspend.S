@@ -3,7 +3,7 @@
 #include <linux/err.h>
 #include <machine/asm.h>
 
-ENTRY(__sigsuspend)
+ENTRY(__rt_sigsuspend)
     ldr     ip, =__NR_sigsuspend
     b       __bionic_syscall_eabi
-END(__sigsuspend)
+END(__rt_sigsuspend)

@@ -132,9 +132,7 @@ class SysCallsTxtParser:
         if pos_rbracket != -1:
             t["cond"] = line[pos_lbracket+1:pos_rbracket].strip()
 
-        if arch_list == "custom":
-            pass
-        elif arch_list == "all":
+        if arch_list == "all":
             for arch in all_arches:
                 t[arch] = True
         else:

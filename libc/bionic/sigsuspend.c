@@ -25,19 +25,15 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include <signal.h>
-#ifdef __mips__
-extern int __sigsuspend(const sigset_t *);
-#else
-extern int __sigsuspend(int, int, unsigned int);
-#endif
 
-int sigsuspend(const sigset_t *_mask)
-{
-#ifdef __mips__
-        return __sigsuspend(_mask);
-#else
-        unsigned int    mask = (unsigned int)*_mask;
-        return __sigsuspend(0, 0, mask);
-#endif
+#include <signal.h>
+
+#include "private/kernel_sigset_t.h"
+
+int __rt_sigsuspend(const kernel_sigset_t*, size_t);
+
+int sigsuspend(const sigset_t* bionic_set) {
+  kernel_sigset_t set;
+  kernel_sigset_t_init(&set, bionic_set);
+  return __rt_sigsuspend(&set, sizeof(set));
 }
