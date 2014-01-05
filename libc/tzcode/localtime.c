@@ -335,7 +335,7 @@ differ_by_repeat(const time_t t1, const time_t t0)
 {
 	if (TYPE_BIT(time_t) - TYPE_SIGNED(time_t) < SECSPERREPEAT_BITS)
 			return 0;
-	return t1 - t0 == (time_t)SECSPERREPEAT;
+	return (time_t)t1 - t0 == SECSPERREPEAT;
 }
 
 static int
