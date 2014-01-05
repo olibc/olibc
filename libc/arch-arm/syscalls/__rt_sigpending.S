@@ -3,7 +3,7 @@
 #include <linux/err.h>
 #include <machine/asm.h>
 
-ENTRY(sigpending)
-    ldr     ip, =__NR_sigpending
+ENTRY(__rt_sigpending)
+    ldr     ip, =__NR_rt_sigpending
     b       __bionic_syscall_eabi
-END(sigpending)
+END(__rt_sigpending)

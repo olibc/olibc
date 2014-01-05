@@ -254,6 +254,7 @@ libc_bionic_src_files := \
     bionic/seteuid.c \
     bionic/setlocale.c \
     bionic/signalfd.c \
+    bionic/sigpending.c \
     bionic/sigprocmask.c \
     bionic/sigsuspend.c \
     bionic/sigwait.c \
