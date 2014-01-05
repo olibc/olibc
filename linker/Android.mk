@@ -17,10 +17,17 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_LDFLAGS := -shared -Wl,--exclude-libs,ALL
 
-LOCAL_CFLAGS += -fno-stack-protector \
-        -Wstrict-overflow=5 \
-        -fvisibility=hidden \
-        -Wall -Wextra -Werror \
+LOCAL_CFLAGS += \
+    -fno-stack-protector \
+    -Wstrict-overflow=5 \
+    -fvisibility=hidden \
+    -Wall -Wextra -Werror \
+
+LOCAL_CONLYFLAGS += \
+    -std=gnu99 \
+
+LOCAL_CPPFLAGS += \
+    -std=gnu++11 \
 
 ifeq ($(DEBUGGERD_SYSTEM_SUPPORT),true)
     LOCAL_SRC_FILES+= \
