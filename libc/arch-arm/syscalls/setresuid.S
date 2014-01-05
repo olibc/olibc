@@ -3,7 +3,7 @@
 #include <linux/err.h>
 #include <machine/asm.h>
 
-ENTRY(__setreuid)
-    ldr     ip, =__NR_setreuid32
+ENTRY(setresuid)
+    ldr     ip, =__NR_setresuid32
     b       __bionic_syscall_eabi
-END(__setreuid)
+END(setresuid)

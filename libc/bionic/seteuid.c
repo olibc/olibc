@@ -25,13 +25,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 #include <unistd.h>
-#include "cpuacct.h"
 
-extern int __setresuid(uid_t, uid_t, uid_t);
-
-int seteuid(uid_t euid)
-{
-    cpuacct_add(euid);
-    return __setresuid(-1, euid,-1);
+int seteuid(uid_t euid) {
+  return setresuid(-1, euid,-1);
 }
