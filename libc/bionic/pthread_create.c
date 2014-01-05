@@ -50,6 +50,8 @@ int __pthread_clone(void* (*fn)(void*), void* child_stack, int flags, void* arg)
 
 void ATTRIBUTES _thread_created_hook(pid_t thread_id);
 
+int __set_tls(void* ptr);
+
 static const int kPthreadInitFailed = 1;
 
 static pthread_mutex_t gPthreadStackCreationLock = PTHREAD_MUTEX_INITIALIZER;

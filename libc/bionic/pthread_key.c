@@ -260,8 +260,7 @@ void* pthread_getspecific(pthread_key_t key) {
   // to check that the key is properly allocated. If the key was not
   // allocated, the value read from the TLS should always be NULL
   // due to pthread_key_delete() clearing the values for all threads.
-  uintptr_t address = ((volatile uintptr_t*)(__get_tls()))[key];
-  return (void*)(address);
+  return __get_tls()[key];
 }
 
 int pthread_setspecific(pthread_key_t key, const void* ptr) {
@@ -273,7 +272,7 @@ int pthread_setspecific(pthread_key_t key, const void* ptr) {
     return EINVAL;
   }
 
-  ((volatile uintptr_t*)(__get_tls()))[key] = (uintptr_t)(ptr);
+  __get_tls()[key] = (void*)(ptr);
   ScopedTlsMapAccess_fini(&tls_map);
   return 0;
 }

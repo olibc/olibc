@@ -195,6 +195,7 @@ ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm mips x86))
 libc_common_src_files += \
     bionic/fcntl.c \
     bionic/fstatfs.c \
+    bionic/__get_tls.c \
     bionic/lseek64.c \
     bionic/sigsuspend.c \
     bionic/statfs.c \

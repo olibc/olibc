@@ -63,8 +63,8 @@ extern void malloc_debug_fini(void);
 // as soon as the shared library is loaded.
 __attribute__((constructor)) static void __libc_preinit() {
   // Read the kernel argument block pointer from TLS.
-  void* tls = (void*)(__get_tls());
-  KernelArgumentBlock** args_slot = &((KernelArgumentBlock**)(tls))[TLS_SLOT_BIONIC_PREINIT];
+  void** tls = __get_tls();
+  KernelArgumentBlock** args_slot = &(((KernelArgumentBlock**)(tls))[TLS_SLOT_BIONIC_PREINIT]);
   KernelArgumentBlock* args = *args_slot;
 
   // Clear the slot so no other initializer sees its value.

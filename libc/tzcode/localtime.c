@@ -335,7 +335,11 @@ differ_by_repeat(const time_t t1, const time_t t0)
 {
 	if (TYPE_BIT(time_t) - TYPE_SIGNED(time_t) < SECSPERREPEAT_BITS)
 			return 0;
-	return (time_t)t1 - t0 == SECSPERREPEAT;
+#if __LP64__ // 32-bit Android only has a signed 32-bit time_t; 64-bit Android is fixed.
+	return t1 - t0 == SECSPERREPEAT;
+#else
+	return 0;
+#endif
 }
 
 static int

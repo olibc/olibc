@@ -65,7 +65,6 @@ void _pthread_internal_add(pthread_internal_t* thread) {
   ScopedPthreadMutexLocker_fini(&locker);
 }
 
-pthread_internal_t* __get_thread(void) {
-  void** tls = (void**)((void*)(__get_tls()));
-  return (pthread_internal_t*)(tls[TLS_SLOT_THREAD_ID]);
+__LIBC_HIDDEN__ pthread_internal_t* __get_thread(void) {
+  return (pthread_internal_t*)(__get_tls()[TLS_SLOT_THREAD_ID]);
 }
