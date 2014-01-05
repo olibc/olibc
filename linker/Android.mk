@@ -18,7 +18,8 @@ LOCAL_SRC_FILES:= \
 LOCAL_CFLAGS += -fno-stack-protector \
         -Wstrict-overflow=5 \
         -fvisibility=hidden \
-        -Wall -Wextra -Werror
+        -Wall -Wextra -Werror \
+        -g
 
 ifeq ($(DEBUGGERD_SYSTEM_SUPPORT),true)
     LOCAL_SRC_FILES+= \
@@ -32,12 +33,16 @@ ifeq ($(TARGET_ARCH),arm)
     LOCAL_CFLAGS += -DANDROID_ARM_LINKER
 endif
 
+ifeq ($(TARGET_ARCH),mips)
+    LOCAL_CFLAGS += -DANDROID_MIPS_LINKER
+endif
+
 ifeq ($(TARGET_ARCH),x86)
     LOCAL_CFLAGS += -DANDROID_X86_LINKER
 endif
 
-ifeq ($(TARGET_ARCH),mips)
-    LOCAL_CFLAGS += -DANDROID_MIPS_LINKER
+ifeq ($(TARGET_ARCH),x86_64)
+    LOCAL_CFLAGS += -DANDROID_X86_64_LINKER
 endif
 
 # Use the AT_SECURE auxv flag to determine whether to enable secure mode

@@ -52,7 +52,7 @@ struct ElfReader {
   // First page of reserved address space.
   void* load_start_;
   // Size in bytes of reserved address space.
-  Elf_Addr load_size_;
+  size_t load_size_;
   // Load bias.
   Elf_Addr load_bias_;
 
@@ -76,7 +76,7 @@ Elf_Addr ElfReader_load_start(ElfReader* er) {
 }
 
 static inline
-Elf_Addr ElfReader_load_size(ElfReader* er) {
+size_t ElfReader_load_size(ElfReader* er) {
   return er->load_size_;
 }
 

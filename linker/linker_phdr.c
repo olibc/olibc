@@ -169,10 +169,29 @@ bool ElfReader_VerifyElfHeader(ElfReader* er) {
     return false;
   }
 
-  if (er->header_.e_ident[EI_CLASS] != ELFCLASS32) {
-    DL_ERR("\"%s\" not 32-bit: %d", er->name_, er->header_.e_ident[EI_CLASS]);
+  // Try to give a clear diagnostic for ELF class mismatches, since they're
+  // an easy mistake to make during the 32-bit/64-bit transition period.
+  int elf_class = er->header_.e_ident[EI_CLASS];
+#if defined(__LP64__)
+  if (elf_class != ELFCLASS64) {
+    if (elf_class == ELFCLASS32) {
+      DL_ERR("\"%s\" is 32-bit instead of 64-bit", er->name_);
+    } else {
+      DL_ERR("\"%s\" has unknown ELF class: %d", er->name_, elf_class);
+    }
     return false;
   }
+#else
+  if (elf_class != ELFCLASS32) {
+    if (elf_class == ELFCLASS64) {
+      DL_ERR("\"%s\" is 64-bit instead of 32-bit", er->name_);
+    } else {
+      DL_ERR("\"%s\" has unknown ELF class: %d", er->name_, elf_class);
+    }
+    return false;
+  }
+#endif
+
   if (er->header_.e_ident[EI_DATA] != ELFDATA2LSB) {
     DL_ERR("\"%s\" not little-endian: %d", er->name_, er->header_.e_ident[EI_DATA]);
     return false;
@@ -195,6 +214,8 @@ bool ElfReader_VerifyElfHeader(ElfReader* er) {
       EM_MIPS
 #elif defined(ANDROID_X86_LINKER)
       EM_386
+#elif defined(ANDROID_X86_64_LINKER)
+      EM_X86_64
 #endif
   ) {
     DL_ERR("\"%s\" has unexpected e_machine: %d", er->name_, er->header_.e_machine);
@@ -298,7 +319,7 @@ bool ElfReader_ReserveAddressSpace(ElfReader* er) {
   int mmap_flags = MAP_PRIVATE | MAP_ANONYMOUS;
   void* start = mmap(NULL, er->load_size_, PROT_NONE, mmap_flags, -1, 0);
   if (start == MAP_FAILED) {
-    DL_ERR("couldn't reserve %d bytes of address space for \"%s\"", er->load_size_, er->name_);
+    DL_ERR("couldn't reserve %zd bytes of address space for \"%s\"", er->load_size_, er->name_);
     return false;
   }
 
