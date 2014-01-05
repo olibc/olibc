@@ -450,13 +450,13 @@ static int __libc_write_stderr(const char* tag, const char* msg) {
   }
 
   iovec vec[4];
-  vec[0].iov_base = const_cast<char*>(tag);
+  vec[0].iov_base = (char*)(tag);
   vec[0].iov_len = strlen(tag);
-  vec[1].iov_base = const_cast<char*>(": ");
+  vec[1].iov_base = (char*)(": ");
   vec[1].iov_len = 2;
-  vec[2].iov_base = const_cast<char*>(msg);
+  vec[2].iov_base = (char*)(msg);
   vec[2].iov_len = strlen(msg) + 1;
-  vec[3].iov_base = const_cast<char*>("\n");
+  vec[3].iov_base = (char*)("\n");
   vec[3].iov_len = 1;
 
   int result = TEMP_FAILURE_RETRY(writev(fd, vec, 4));
