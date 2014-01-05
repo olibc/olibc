@@ -13,13 +13,14 @@ LOCAL_SRC_FILES:= \
     linker.c \
     linker_environ.c \
     linker_phdr.c \
-    rt.c
+    rt.c \
+
+LOCAL_LDFLAGS := -shared -Wl,--exclude-libs,ALL
 
 LOCAL_CFLAGS += -fno-stack-protector \
         -Wstrict-overflow=5 \
         -fvisibility=hidden \
         -Wall -Wextra -Werror \
-        -g
 
 ifeq ($(DEBUGGERD_SYSTEM_SUPPORT),true)
     LOCAL_SRC_FILES+= \
@@ -78,9 +79,15 @@ ifeq ($(SINGLE_BINARY_SUPPORT),true)
 else
   LOCAL_LDFLAGS := -shared -Wl,--exclude-libs,ALL -Wl,-Bsymbolic
 
-  LOCAL_MODULE:= linker
+    ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86_64))
+      LOCAL_MODULE := linker64
+    else
+      LOCAL_MODULE := linker
+    endif
 
   LOCAL_STATIC_LIBRARIES := libc_nomalloc
+
+  #LOCAL_FORCE_STATIC_EXECUTABLE := true # not necessary when not including BUILD_EXECUTABLE
 
   #
   # include $(BUILD_EXECUTABLE)
