@@ -133,7 +133,6 @@ libc_common_src_files := \
 	bionic/sigblock.c \
 	bionic/siginterrupt.c \
 	bionic/siglist.c \
-	bionic/signal.c \
 	bionic/signame.c \
 	bionic/sigsetmask.c \
 	bionic/sleep.c \
@@ -254,6 +253,13 @@ libc_bionic_src_files := \
     bionic/seteuid.c \
     bionic/setlocale.c \
     bionic/signalfd.c \
+    bionic/sigaction.c \
+    bionic/sigaddset.c \
+    bionic/sigdelset.c \
+    bionic/sigemptyset.c \
+    bionic/sigfillset.c \
+    bionic/sigismember.c \
+    bionic/signal.c \
     bionic/sigpending.c \
     bionic/sigprocmask.c \
     bionic/sigsuspend.c \

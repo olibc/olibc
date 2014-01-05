@@ -28,27 +28,13 @@
 
 #include <signal.h>
 
-static sighandler_t _signal(int signum, sighandler_t handler, int flags) {
-  struct sigaction sa;
-  sigemptyset(&sa.sa_mask);
-  sa.sa_handler = handler;
-  sa.sa_flags = flags;
-
-  if (sigaction(signum, &sa, &sa) == -1) {
-    return SIG_ERR;
+int sigdelset(sigset_t* set, int signum) {
+  int bit = signum - 1; // Signal numbers start at 1, but bit positions start at 0.
+  unsigned long* local_set = (unsigned long*) set;
+  if (set == NULL || bit < 0 || bit >= (int) (8*sizeof(sigset_t))) {
+    errno = EINVAL;
+    return -1;
   }
-
-  return (sighandler_t) sa.sa_handler;
-}
-
-sighandler_t bsd_signal(int signum, sighandler_t handler) {
-  return _signal(signum, handler, SA_RESTART);
-}
-
-sighandler_t sysv_signal(int signum, sighandler_t handler) {
-  return _signal(signum, handler, SA_RESETHAND);
-}
-
-sighandler_t signal(int signum, sighandler_t handler) {
-  return bsd_signal(signum, handler);
+  local_set[bit / LONG_BIT] &= ~(1UL << (bit % LONG_BIT));
+  return 0;
 }

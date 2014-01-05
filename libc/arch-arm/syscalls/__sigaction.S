@@ -4,7 +4,7 @@
 #include <linux/err.h>
 #include <machine/asm.h>
 
-ENTRY(sigaction)
+ENTRY(__sigaction)
     ldr     ip, =__NR_sigaction
     b       __bionic_syscall_eabi
-END(sigaction)
+END(__sigaction)

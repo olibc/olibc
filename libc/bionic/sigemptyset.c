@@ -28,27 +28,11 @@
 
 #include <signal.h>
 
-static sighandler_t _signal(int signum, sighandler_t handler, int flags) {
-  struct sigaction sa;
-  sigemptyset(&sa.sa_mask);
-  sa.sa_handler = handler;
-  sa.sa_flags = flags;
-
-  if (sigaction(signum, &sa, &sa) == -1) {
-    return SIG_ERR;
+int sigemptyset(sigset_t* set) {
+  if (set == NULL) {
+    errno = EINVAL;
+    return -1;
   }
-
-  return (sighandler_t) sa.sa_handler;
-}
-
-sighandler_t bsd_signal(int signum, sighandler_t handler) {
-  return _signal(signum, handler, SA_RESTART);
-}
-
-sighandler_t sysv_signal(int signum, sighandler_t handler) {
-  return _signal(signum, handler, SA_RESETHAND);
-}
-
-sighandler_t signal(int signum, sighandler_t handler) {
-  return bsd_signal(signum, handler);
+  memset(set, 0, sizeof(sigset_t));
+  return 0;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,25 +28,12 @@
 
 #include <signal.h>
 
-extern void __rt_sigreturn(void);
-extern int __rt_sigaction(int, const struct sigaction*, struct sigaction*, size_t);
-
-int sigaction(int sig, const struct sigaction* act, struct sigaction* old_act) {
-  struct sigaction sa;
-
-  if (act != NULL && !(act->sa_flags & SA_RESTORER)) {
-    sa = *act;
-    act = &sa;
-    sa.sa_flags |= SA_RESTORER;
-    sa.sa_restorer = &__rt_sigreturn;
+int sigismember(const sigset_t* set, int signum) {
+  int bit = signum - 1; // Signal numbers start at 1, but bit positions start at 0.
+  const unsigned long* local_set = (const unsigned long*) set;
+  if (set == NULL || bit < 0 || bit >= (int) (8*sizeof(sigset_t))) {
+    errno = EINVAL;
+    return -1;
   }
-
-  int result = __rt_sigaction(sig, act, old_act, sizeof(sigset_t));
-
-  if (old_act != NULL && (old_act->sa_restorer == &__rt_sigreturn)) {
-    old_act->sa_flags &= ~SA_RESTORER;
-  }
-
-  return result;
+  return (int) ((local_set[bit / LONG_BIT] >> (bit % LONG_BIT)) & 1);
 }
-
