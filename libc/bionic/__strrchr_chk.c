@@ -31,17 +31,19 @@
 #include <string.h>
 #include "private/libc_logging.h"
 
-char* __strrchr_chk(const char *p, int ch, size_t s_len)
-{
-    char *save;
+ char* __strrchr_chk(const char *p, int ch, size_t s_len) {
+  char *save;
 
-    for (save = NULL;; ++p, s_len--) {
-        if (s_len == 0)
-            __fortify_chk_fail("strrchr prevented read past end of buffer", 0);
-        if (*p == (char) ch)
-            save = (char *)p;
-        if (!*p)
-            return(save);
+  for (save = NULL;; ++p, s_len--) {
+    if (s_len == 0) {
+      __fortify_chk_fail("strrchr: prevented read past end of buffer", 0);
     }
-    /* NOTREACHED */
+    if (*p == (char) ch) {
+      save = (char *)p;
+    }
+    if (!*p) {
+      return(save);
+    }
+  }
+  /* NOTREACHED */
 }

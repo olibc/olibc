@@ -43,9 +43,9 @@
  * greater than 0.
  */
 mode_t __umask_chk(mode_t mode) {
-    if (__predict_false((mode & 0777) != mode)) {
-        __fortify_chk_fail("umask called with invalid mask", 0);
-    }
+  if (__predict_false((mode & 0777) != mode)) {
+    __fortify_chk_fail("umask: called with invalid mask", 0);
+  }
 
-    return umask(mode);
+  return umask(mode);
 }
