@@ -106,9 +106,6 @@ ssize_t     pwrite64(int, void*, size_t, off64_t) all
 int         __open:open(const char*, int, mode_t)  all
 int         __openat:openat(int, const char*, int, mode_t) all
 int         close(int)                      all
-off_t       lseek(int, off_t, int)           arm,x86,mips
-off_t       lseek|lseek64(int, off_t, int)   x86_64
-int         __llseek:_llseek(int, unsigned long, unsigned long, off64_t*, int)  arm,x86,mips
 pid_t       getpid()    all
 void*       mmap(void*, size_t, int, int, int, long)  x86_64
 void*       __mmap2:mmap2(void*, size_t, int, int, int, long)   arm,x86,mips
@@ -139,8 +136,6 @@ int         dup2(int, int)   all
 int         dup3(int oldfd, int newfd, int flags) all
 int         select:_newselect(int, struct fd_set*, struct fd_set*, struct fd_set*, struct timeval*)  arm,x86,mips
 int         select(int, struct fd_set*, struct fd_set*, struct fd_set*, struct timeval*)  x86_64
-int         ftruncate(int, off_t)  all
-int         ftruncate64(int, off64_t) arm,x86,mips
 int         fallocate(int fd, int mode, off_t offset, off_t len) all
 int         getdents:getdents64(unsigned int, struct dirent*, unsigned int)   all
 int         fsync(int)  all
@@ -154,8 +149,6 @@ int         sync_file_range2(int fd, unsigned int flags, off64_t offset, off64_t
 int         __fcntl64:fcntl64(int, int, void*)  arm,x86,mips
 int         __fstatfs64:fstatfs64(int, size_t, struct statfs*)  arm,x86,mips
 int         fstatfs(int, struct statfs*)  x86_64
-ssize_t     sendfile(int out_fd, int in_fd, off_t* offset, size_t count)  all
-ssize_t     sendfile64(int out_fd, int in_fd, off64_t* offset, size_t count)  arm,x86,mips
 int         fstatat:fstatat64(int dirfd, const char* path, struct stat* buf, int flags)   arm,x86,mips
 int         mkdirat(int dirfd, const char* pathname, mode_t mode)  all
 int         fchownat(int dirfd, const char* path, uid_t owner, gid_t group, int flags)  all
@@ -174,6 +167,23 @@ int         name_to_handle_at (int, const char*, struct file_handle*, int*, int)
 int         open_by_handle_at (int, struct file_handle*, int) all
 int         setfsgid(uid_t fsgid) all
 int         setfsuid(uid_t) all
+
+# Paired off_t/off64_t system calls. On 64-bit systems,
+# sizeof(off_t) == sizeof(off64_t), so there we emit two symbols that are
+# aliases. On 32-bit systems, we have two different system calls.
+# That means that every system call in this section should take three lines.
+off_t lseek(int, off_t, int) arm,mips,x86
+int __llseek:_llseek(int, unsigned long, unsigned long, off64_t*, int) arm,mips,x86
+off_t lseek|lseek64(int, off_t, int) x86_64
+int ftruncate(int, off_t) arm,mips,x86
+int ftruncate64(int, off64_t) arm,mips,x86
+int ftruncate|ftruncate64(int, off_t) x86_64
+ssize_t sendfile(int out_fd, int in_fd, off_t* offset, size_t count) arm,mips,x86
+ssize_t sendfile64(int out_fd, int in_fd, off64_t* offset, size_t count) arm,mips,x86
+ssize_t sendfile|sendfile64(int out_fd, int in_fd, off_t* offset, size_t count) x86_64
+int truncate(const char*, off_t) arm,mips,x86
+int truncate64(const char*, off64_t) arm,mips,x86
+int truncate|truncate64(const char*, off_t) x86_64
 
 # file system
 int     link(const char*, const char*)  all
@@ -207,8 +217,6 @@ int     faccessat(int, const char*, int, int)  all
 int     symlink(const char*, const char*)  all
 int     symlinkat(const char*, int, const char*) all
 int     fchdir(int)    all
-int     truncate(const char*, off_t)    all
-int     truncate64(const char*, off64_t)    arm,x86,mips
 int     setxattr(const char*, const char*, const void*, size_t, int) all
 int     lsetxattr(const char*, const char*, const void*, size_t, int) all
 ssize_t getxattr(const char*, const char*, void*, size_t) all
@@ -357,7 +365,7 @@ int ppoll(struct pollfd*, nfds_t, const struct timespec*, const sigset_t*) all
 
 int     eventfd:eventfd2(unsigned int, int)  all
 
-# ARM-specific ARM_NR_BASE == 0x0f0000 == 983040
+# ARM-specific
 int     __set_tls:__ARM_NR_set_tls(void*)                                 arm
 int     cacheflush:__ARM_NR_cacheflush(long start, long end, long flags)  arm
 
