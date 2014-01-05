@@ -1,25 +1,25 @@
 
 ifeq ($(STPCPY_IMPL),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	string/stpcpy.c \
 	string/stpncpy.c \
 
 endif
 
 ifeq ($(RAWMEMCHR_IMPL),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	string/rawmemchr.c \
 
 endif
 
 ifeq ($(INSQUE_REMQUE_IMPL),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	bionic/insque.c \
 	bionic/remque.c
 endif
 
 ifeq ($(SHADOW_PASSWD_FILE_IMPL),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	passwd/fgetspent.c \
 	passwd/fgetspent_r.c \
 	passwd/getspent.c \
@@ -54,12 +54,12 @@ libc_common_src_files += \
 
 else
 
-libc_common_src_files += bionic/stubs.c
+libc_bionic_src_files += bionic/stubs.c
 
 endif
 
 ifeq ($(A64L_L64A_IMPL),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	bionic/a64l.c \
 	bionic/l64a.c \
 
@@ -67,25 +67,25 @@ endif
 
 
 ifeq ($(MEMPCPY_IMPL),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	bionic/mempcpy.c \
 
   ifeq ($(WCHAR_SUPPORT),true)
-	libc_common_src_files += \
+	libc_bionic_src_files += \
 	  wchar/wmempcpy.c
   endif
 
 endif
 
 ifeq ($(STRCHRNUL_IMPL), true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	string/strchrnul.c
 
 endif
 
 
 ifeq ($(MNTENT_SUPPORT), true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	bionic/addmntent.c \
 	bionic/getmntent_r.c \
 	bionic/getmntent.c \
@@ -105,7 +105,7 @@ libc_common_cflags := \
 endif
 
 ifeq ($(CRYPT_IMPL),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
 	unistd/crypt.c \
 	unistd/des_crypt.c \
 
@@ -122,7 +122,7 @@ libc_upstream_netbsd_src_files += \
 endif
 
 ifeq ($(WCHAR_SUPPORT),true)
-libc_common_src_files += \
+libc_bionic_src_files += \
     bionic/wcscoll.c \
     wchar/wcswidth.c \
     wchar/wcsxfrm.c \
@@ -169,7 +169,7 @@ endif
 
 ifneq ($(TARGET_ARCH),arm)
   ifeq ($(SYSVIPC_SUPPORT),true)
-    libc_common_src_files += \
+    libc_bionic_src_files += \
       sysvipc/semctl.c \
       sysvipc/semget.c \
       sysvipc/semtimedop.c \
@@ -187,23 +187,23 @@ endif
 
 
 ifeq ($(PROPERTY_SYSTEM_SUPPORT),true)
-  libc_common_src_files += \
+  libc_bionic_src_files += \
 	bionic/system_properties_compat.c \
 	bionic/system_properties.c
   libc_common_cflags += -DPROPERTY_SYSTEM_SUPPORT
 endif
 
 ifeq ($(LOGGER_SYSTEM_SUPPORT),true)
-  libc_common_src_files += \
+  libc_bionic_src_files += \
 	bionic/libc_logging.c
   libc_common_cflags += -DLOGGER_SYSTEM_SUPPORT
 else
-  libc_common_src_files += \
+  libc_bionic_src_files += \
 	bionic/libc_logging_stderr.c
 endif
 
 ifeq ($(UTMPX_SUPPORT),true)
-  libc_common_src_files += \
+  libc_bionic_src_files += \
 	bionic/utmpx.c
   libc_common_cflags += -DUTMPX_SUPPORT
 endif

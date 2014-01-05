@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,26 +26,32 @@
  * SUCH DAMAGE.
  */
 
-#include <string.h>
-#include <stdlib.h>
-#include "private/libc_logging.h"
+#include <pthread.h>
 
-/*
- * Runtime implementation of __builtin____memset_chk.
- *
- * See
- *   http://gcc.gnu.org/onlinedocs/gcc/Object-Size-Checking.html
- *   http://gcc.gnu.org/ml/gcc-patches/2004-09/msg02055.html
- * for details.
- *
- * This memset check is called if _FORTIFY_SOURCE is defined and
- * greater than 0.
- */
-void *__memset_chk (void *dest, int c, size_t n, size_t dest_len) {
-    if (__predict_false(n > dest_len)) {
-        __fortify_chk_fail("memset prevented write past end of buffer",
-                             BIONIC_EVENT_MEMSET_BUFFER_OVERFLOW);
-    }
+#include "pthread_internal.h"
 
-    return memset(dest, c, n);
+#include "private/bionic_tls.h"
+
+// This trampoline is called from the assembly _pthread_clone function.
+// Our 'tls' and __pthread_clone's 'child_stack' are one and the same, just growing in
+// opposite directions.
+void __thread_entry(void* (*func)(void*), void* arg, void** tls) {
+  // Wait for our creating thread to release us. This lets it have time to
+  // notify gdb about this thread before we start doing anything.
+  // This also provides the memory barrier needed to ensure that all memory
+  // accesses previously made by the creating thread are visible to us.
+  pthread_mutex_t* start_mutex = (pthread_mutex_t*) &tls[TLS_SLOT_SELF];
+  pthread_mutex_lock(start_mutex);
+  pthread_mutex_destroy(start_mutex);
+
+  pthread_internal_t* thread = (pthread_internal_t*) tls[TLS_SLOT_THREAD_ID];
+  thread->tls = tls;
+  __init_tls(thread);
+
+  if ((thread->internal_flags & PTHREAD_INTERNAL_FLAG_THREAD_INIT_FAILED) != 0) {
+    pthread_exit(NULL);
+  }
+
+  void* result = func(arg);
+  pthread_exit(result);
 }

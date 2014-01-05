@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <private/KernelArgumentBlock.h>
+#include "private/KernelArgumentBlock.h"
 
 static char** _envp;
 #if defined(USE_AT_SECURE)

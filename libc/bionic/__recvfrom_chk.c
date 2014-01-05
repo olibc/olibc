@@ -30,7 +30,7 @@
 
 #include <stddef.h>
 #include <sys/socket.h>
-#include "libc_logging.h"
+#include "private/libc_logging.h"
 
 ssize_t __recvfrom_chk(int socket, void* buf, size_t len, size_t buflen, unsigned int flags,
         const struct sockaddr* src_addr, socklen_t* addrlen)

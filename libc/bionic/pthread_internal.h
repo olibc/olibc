@@ -58,7 +58,7 @@ typedef struct pthread_internal_t
 } pthread_internal_t;
 
 __LIBC_HIDDEN__ int _init_thread(pthread_internal_t* thread, bool add_to_thread_list);
-__LIBC_HIDDEN__ void __init_tls(pthread_internal_t* thread);
+void __init_tls(pthread_internal_t* thread);
 __LIBC_HIDDEN__ void _pthread_internal_add(pthread_internal_t* thread);
 __LIBC_HIDDEN__ pthread_internal_t* __get_thread(void);
 
@@ -76,6 +76,8 @@ __LIBC_HIDDEN__ void _pthread_internal_remove_locked(pthread_internal_t* thread)
 
 /* Has the thread already exited but not been joined? */
 #define PTHREAD_ATTR_FLAG_ZOMBIE        0x00000008
+
+#define PTHREAD_INTERNAL_FLAG_THREAD_INIT_FAILED 1
 
 /*
  * Traditionally we give threads a 1MiB stack. When we started

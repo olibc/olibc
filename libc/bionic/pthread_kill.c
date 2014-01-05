@@ -29,7 +29,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include "ErrnoRestorer.h"
+#include "private/ErrnoRestorer.h"
 #include "pthread_accessor.h"
 
 int tgkill(int tgid, int tid, int sig);

@@ -51,7 +51,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "dlmalloc.h"
-#include "libc_logging.h"
+#include "private/libc_logging.h"
 #include "malloc_debug_common.h"
 
 /* This file should be included into the build only when
@@ -410,7 +410,7 @@ static inline void notify_qemu(uint32_t code, uintptr_t val) {
  */
 static void notify_qemu_string(const char* str) {
     if (str != NULL) {
-        notify_qemu(TRACE_DEV_REG_PRINT_USER_STR, reinterpret_cast<uintptr_t>(str));
+        notify_qemu(TRACE_DEV_REG_PRINT_USER_STR, (uintptr_t)(str));
     }
 }
 
@@ -435,7 +435,7 @@ static inline int notify_qemu_malloc(volatile MallocDesc* desc) {
     desc->libc_pid = malloc_pid;
     desc->allocator_pid = getpid();
     desc->av_count = 0;
-    notify_qemu(TRACE_DEV_REG_MALLOC, reinterpret_cast<uintptr_t>(desc));
+    notify_qemu(TRACE_DEV_REG_MALLOC, (uintptr_t)(desc));
 
     /* Emulator reports failure by zeroing libc_pid field of the
      * descriptor. */
@@ -454,7 +454,7 @@ static inline int notify_qemu_free(void* ptr_to_free) {
     free_desc.ptr = ptr_to_free;
     free_desc.libc_pid = malloc_pid;
     free_desc.free_pid = getpid();
-    notify_qemu(TRACE_DEV_REG_FREE_PTR, reinterpret_cast<uintptr_t>(&free_desc));
+    notify_qemu(TRACE_DEV_REG_FREE_PTR, (uintptr_t)(&free_desc));
 
     /* Emulator reports failure by zeroing libc_pid field of the
      * descriptor. */
@@ -480,7 +480,7 @@ static inline int query_qemu_malloc_info(const void* ptr, MallocDesc* desc, uint
     query.query_pid = getpid();
     query.routine = routine;
     query.desc = desc;
-    notify_qemu(TRACE_DEV_REG_QUERY_MALLOC, reinterpret_cast<uintptr_t>(&query));
+    notify_qemu(TRACE_DEV_REG_QUERY_MALLOC, (uintptr_t)(&query));
 
     /* Emulator reports failure by zeroing libc_pid field of the
      * descriptor. */

@@ -49,9 +49,10 @@
 #include <stdint.h>
 #include <elf.h>
 #include "atexit.h"
-#include "KernelArgumentBlock.h"
 #include "libc_init_common.h"
-#include <bionic_tls.h>
+
+#include "private/bionic_tls.h"
+#include "private/KernelArgumentBlock.h"
 
 extern void pthread_debug_init(void);
 extern void malloc_debug_init(void);
