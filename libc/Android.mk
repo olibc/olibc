@@ -115,7 +115,6 @@ libc_common_src_files := \
 	bionic/pathconf.c \
 	bionic/perror.c \
 	bionic/pread.c \
-	bionic/pselect.c \
 	bionic/ptsname.c \
 	bionic/ptsname_r.c \
 	bionic/pututline.c \
@@ -218,12 +217,15 @@ libc_bionic_src_files := \
     bionic/abort.c \
     bionic/access.c \
     bionic/assert.c \
+    bionic/bionic_time_conversions.c \
     bionic/brk.c \
     bionic/chmod.c \
     bionic/chown.c \
     bionic/dirent.c \
     bionic/dup2.c \
     bionic/epoll_create.c \
+    bionic/epoll_wait.c \
+    bionic/epoll_pwait.c \
     bionic/__errno.c \
     bionic/eventfd_read.c \
     bionic/eventfd_write.c \
@@ -243,7 +245,9 @@ libc_bionic_src_files := \
     bionic/mkfifo.c \
     bionic/mknod.c \
     bionic/open.c \
+    bionic/pause.cpp \
     bionic/pipe.c \
+    bionic/poll.c \
     bionic/pthread_attr.c \
     bionic/pthread_detach.c \
     bionic/pthread_equal.c \

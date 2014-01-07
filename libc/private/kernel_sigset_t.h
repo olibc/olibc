@@ -31,7 +31,7 @@ union kernel_sigset_t {
 
 static inline
 void kernel_sigset_t_clear(kernel_sigset_t *ks) {
-  memset(ks, 0, sizeof(*ks));
+  __builtin_memset(ks, 0, sizeof(*ks));
 }
 
 static inline

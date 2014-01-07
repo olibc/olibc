@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,21 +26,20 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _POLL_H_
-#define _POLL_H_
+#ifndef _BIONIC_TIME_CONVERSIONS_H
+#define _BIONIC_TIME_CONVERSIONS_H
 
+#include <time.h>
 #include <sys/cdefs.h>
-#include <linux/poll.h>
-#include <signal.h> /* For sigset_t. */
-#include <time.h> /* For timespec. */
+#include <stdbool.h>
 
 __BEGIN_DECLS
 
-typedef unsigned int nfds_t;
+__LIBC_HIDDEN__ bool timespec_from_timeval(struct timespec* ts, const struct timeval* tv);
+__LIBC_HIDDEN__ void timespec_from_ms(struct timespec* ts, const int ms);
 
-extern int poll(struct pollfd*, nfds_t, int);
-extern int ppoll(struct pollfd*, nfds_t, const struct timespec*, const sigset_t*);
+__LIBC_HIDDEN__ void timeval_from_timespec(struct timeval* tv, const struct timespec* ts);
 
 __END_DECLS
 
-#endif /* _POLL_H_ */
+#endif

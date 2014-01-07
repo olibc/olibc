@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,21 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include <sys/select.h>
-#include <signal.h>
-#include <pthread.h>
 
-int
-pselect(int  n, fd_set*  readfds, fd_set*  writefds, fd_set*  errfds,
-        const struct timespec*  timeout, const sigset_t*  sigmask)
-{
-    sigset_t        oldmask;
-    int             result;
-    struct timeval  tv, *tv_timeout = NULL;
+#include <sys/epoll.h>
 
-    if (sigmask != NULL)
-        pthread_sigmask( SIG_SETMASK, sigmask, &oldmask );
+#include "private/kernel_sigset_t.h"
 
-    if (timeout != NULL) {
-        tv_timeout = &tv;
-        tv.tv_sec  = timeout->tv_sec;
-        tv.tv_usec = (timeout->tv_nsec + 999)/1000;  // round up
-        if (tv.tv_usec >= 1000000) {
-            tv.tv_sec  += 1;
-            tv.tv_usec -= 1000000;
-        }
-    }
+int __epoll_pwait(int, struct epoll_event*, int, int, const kernel_sigset_t*, size_t);
 
-    result = select( n, readfds, writefds, errfds, tv_timeout );
-
-    if (sigmask != NULL)
-        pthread_sigmask( SIG_SETMASK, &oldmask, NULL );
-
-    return result;
+int epoll_pwait(int fd, struct epoll_event* events, int max_events,
+                int timeout, const sigset_t* ss) {
+  union kernel_sigset_t kernel_ss;
+  union kernel_sigset_t* kernel_ss_ptr = NULL;
+  kernel_sigset_t_default_init(&kernel_ss);
+  if (ss != NULL) {
+    kernel_sigset_t_set(&kernel_ss, ss);
+    kernel_ss_ptr = &kernel_ss;
+  }
+  return __epoll_pwait(fd, events, max_events, timeout, kernel_ss_ptr, sizeof(kernel_ss));
 }

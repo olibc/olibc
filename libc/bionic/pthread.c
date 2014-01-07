@@ -41,6 +41,7 @@
 #include "private/bionic_pthread.h"
 #include "private/bionic_tls.h"
 #include "private/thread_private.h"
+#include "private/bionic_time_conversions.h"
 
 extern void pthread_debug_mutex_lock_check(pthread_mutex_t *mutex);
 extern void pthread_debug_mutex_unlock_check(pthread_mutex_t *mutex);
@@ -1176,13 +1177,10 @@ int pthread_cond_timedwait_relative_np(pthread_cond_t *cond,
 
 int pthread_cond_timeout_np(pthread_cond_t *cond,
                             pthread_mutex_t * mutex,
-                            unsigned msecs)
+                            unsigned ms)
 {
     struct timespec ts;
-
-    ts.tv_sec = msecs / 1000;
-    ts.tv_nsec = (msecs % 1000) * 1000000;
-
+    timespec_from_ms(&ts, ms);
     return __pthread_cond_timedwait_relative(cond, mutex, &ts);
 }
 

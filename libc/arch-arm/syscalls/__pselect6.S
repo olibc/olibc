@@ -4,7 +4,7 @@
 #include <linux/err.h>
 #include <machine/asm.h>
 
-ENTRY(epoll_wait)
-    ldr     ip, =__NR_epoll_wait
-    b       __bionic_syscall_eabi
-END(epoll_wait)
+ENTRY(__pselect6)
+    ldr     ip, =__NR_pselect6
+    b       __bionic_long_syscall_eabi
+END(__pselect6)

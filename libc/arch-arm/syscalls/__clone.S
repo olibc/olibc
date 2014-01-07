@@ -4,7 +4,7 @@
 #include <linux/err.h>
 #include <machine/asm.h>
 
-ENTRY(pause)
-    ldr     ip, =__NR_pause
-    b       __bionic_syscall_eabi
-END(pause)
+ENTRY(__clone)
+    ldr     ip, =__NR_clone
+    b       __bionic_long_syscall_eabi
+END(__clone)
