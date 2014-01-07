@@ -222,6 +222,8 @@ libc_bionic_src_files := \
     bionic/chmod.c \
     bionic/chown.c \
     bionic/dirent.c \
+    bionic/dup2.c \
+    bionic/epoll_create.c \
     bionic/__errno.c \
     bionic/eventfd_read.c \
     bionic/eventfd_write.c \
@@ -231,6 +233,7 @@ libc_bionic_src_files := \
     bionic/getcwd.c \
     bionic/getlogin.c \
     bionic/getlogin_r.c \
+    bionic/inotify_init.c \
     bionic/lchown.c \
     bionic/libc_init_common.c \
     bionic/libgen.c \
@@ -240,6 +243,7 @@ libc_bionic_src_files := \
     bionic/mkfifo.c \
     bionic/mknod.c \
     bionic/open.c \
+    bionic/pipe.c \
     bionic/pthread_attr.c \
     bionic/pthread_detach.c \
     bionic/pthread_equal.c \
@@ -280,6 +284,7 @@ libc_bionic_src_files := \
     bionic/strerror.c \
     bionic/strerror_r.c \
     bionic/strsignal.c \
+    bionic/symlink.c \
     bionic/sysconf.c \
     bionic/tdestroy.c \
     bionic/__thread_entry.c \

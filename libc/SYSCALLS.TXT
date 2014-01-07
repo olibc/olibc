@@ -129,10 +129,8 @@ int         fcntl(int, void*)  x86_64
 int         flock(int, int)   all
 int         fchmod(int, mode_t)  all
 int         dup(int)  all
-int         pipe(int*)  arm,x86,x86_64
 int         pipe2(int*, int) all
-int         dup2(int, int)   all
-int         dup3(int oldfd, int newfd, int flags) all
+int         dup3(int, int, int)   all
 int         select:_newselect(int, struct fd_set*, struct fd_set*, struct fd_set*, struct timeval*)  arm,x86,mips
 int         select(int, struct fd_set*, struct fd_set*, struct fd_set*, struct timeval*)  x86_64
 int         fallocate(int fd, int mode, off_t offset, off_t len) all
@@ -329,25 +327,22 @@ int     profil(unsigned short*, size_t, size_t, unsigned int) mips,x86
 int     sethostname(const char*, size_t) all
 int     pivot_root(const char*, const char*) all
 
-# futex
-int     futex(void*, int, int, void*, void*, int) all
-
-# epoll
-int     epoll_create(int size)     all
+int epoll_create1(int)  all
 int     epoll_create1(int flags)   all
-int     epoll_ctl(int epfd, int op, int fd, struct epoll_event* event)    all
-int     epoll_wait(int epfd, struct epoll_event* events, int max, int timeout)   all
+int epoll_ctl(int, int op, int, struct epoll_event*)  all
+int epoll_wait(int, struct epoll_event*, int, int)  all
 int     epoll_pwait(int epfd, struct epoll_event* events, int max, int timeout, const sigset_t* sigmask) all
 
-int     inotify_init(void)      all
-int     inotify_init1(void)     all
-int     inotify_add_watch(int, const char*, unsigned int)  all
-int     inotify_rm_watch(int, unsigned int)  all
+int eventfd:eventfd2(unsigned int, int)  all
+
+int futex(void*, int, int, void*, void*, int)  all
+
+int inotify_init1(int)  all
+int inotify_add_watch(int, const char*, unsigned int)  all
+int inotify_rm_watch(int, unsigned int)  all
 
 int     poll(struct pollfd*, unsigned int, long)  all
 int ppoll(struct pollfd*, nfds_t, const struct timespec*, const sigset_t*) all
-
-int     eventfd:eventfd2(unsigned int, int)  all
 
 # ARM-specific
 int     __set_tls:__ARM_NR_set_tls(void*)                                 arm
