@@ -208,13 +208,13 @@ bool ElfReader_VerifyElfHeader(ElfReader* er) {
   }
 
   if (er->header_.e_machine !=
-#ifdef ANDROID_ARM_LINKER
+#if defined(__arm__)
       EM_ARM
-#elif defined(ANDROID_MIPS_LINKER)
-      EM_MIPS
-#elif defined(ANDROID_X86_LINKER)
+#elif defined(__i386__)
       EM_386
-#elif defined(ANDROID_X86_64_LINKER)
+#elif defined(__mips__)
+      EM_MIPS
+#elif defined(__x86_64__)
       EM_X86_64
 #endif
   ) {
@@ -328,10 +328,6 @@ bool ElfReader_ReserveAddressSpace(ElfReader* er) {
   return true;
 }
 
-// Map all loadable segments in process' address space.
-// This assumes you already called phdr_table_reserve_memory to
-// reserve the address space range for the library.
-// TODO: assert assumption.
 bool ElfReader_LoadSegments(ElfReader* er) {
   size_t i;
   for (i = 0; i < er->phdr_num_; ++i) {
@@ -521,7 +517,7 @@ int phdr_table_protect_gnu_relro(const Elf_Phdr* phdr_table, size_t phdr_count, 
     return _phdr_table_set_gnu_relro_prot(phdr_table, phdr_count, load_bias, PROT_READ);
 }
 
-#ifdef ANDROID_ARM_LINKER
+#if defined(__arm__)
 
 #  ifndef PT_ARM_EXIDX
 #    define PT_ARM_EXIDX    0x70000001      /* .ARM.exidx segment */
@@ -558,7 +554,7 @@ int phdr_table_get_arm_exidx(const Elf_Phdr* phdr_table, size_t phdr_count,
     *arm_exidx_count = 0;
     return -1;
 }
-#endif /* ANDROID_ARM_LINKER */
+#endif
 
 /* Return the address and size of the ELF file's .dynamic section in memory,
  * or NULL if missing.
