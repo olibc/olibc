@@ -34,9 +34,13 @@
 
 int utimes(const char* path, const struct timeval tv[2]) {
   struct timespec ts[2];
-  if (!timespec_from_timeval(&ts[0], &tv[0]) || !timespec_from_timeval(&ts[1], &tv[1])) {
-    errno = EINVAL;
-    return -1;
+  struct timespec* ts_ptr = NULL;
+  if (tv != NULL) {
+    if (!timespec_from_timeval(&ts[0], &tv[0]) || !timespec_from_timeval(&ts[1], &tv[1])) {
+      errno = EINVAL;
+      return -1;
+    }
+    ts_ptr = ts;
   }
-  return utimensat(AT_FDCWD, path, ts, 0);
+  return utimensat(AT_FDCWD, path, ts_ptr, 0);
 }
