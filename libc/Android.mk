@@ -187,6 +187,7 @@ libc_common_src_files += \
     bionic/fstatfs.c \
     bionic/__get_tls.c \
     bionic/lseek64.c \
+    bionic/ndk_cruft.c \
     bionic/statfs.c \
 
 endif
