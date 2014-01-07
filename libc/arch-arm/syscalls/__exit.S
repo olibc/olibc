@@ -4,7 +4,7 @@
 #include <linux/err.h>
 #include <machine/asm.h>
 
-ENTRY(_exit_thread)
+ENTRY(__exit)
     ldr     ip, =__NR_exit
     b       __bionic_syscall_eabi
-END(_exit_thread)
+END(__exit)

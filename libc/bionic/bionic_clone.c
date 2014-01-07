@@ -39,7 +39,7 @@ extern int  __bionic_clone(unsigned long   clone_flags,
                            int            (*fn)(void *),
                            void          *arg);
 
-extern void _exit_thread(int status);
+extern void __exit(int status);
 
 /* this function is called from the __bionic_clone
  * assembly fragment to call the thread function
@@ -47,7 +47,7 @@ extern void _exit_thread(int status);
 __LIBC_HIDDEN__ extern void
 __bionic_clone_entry(int (*fn)(void*), void* arg) {
   int status = (*fn)(arg);
-  _exit_thread(status);
+  __exit(status);
 }
 
 int clone(int (*fn)(void*), void* child_stack, int flags, void* arg, ...) {

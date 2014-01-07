@@ -37,21 +37,10 @@ endif
 # We need to access Bionic private headers in the linker.
 LOCAL_CFLAGS += -I$(LOCAL_PATH)/../libc/
 
-ifeq ($(TARGET_ARCH),arm)
-    LOCAL_CFLAGS += -DANDROID_ARM_LINKER
-endif
-
-ifeq ($(TARGET_ARCH),mips)
-    LOCAL_CFLAGS += -DANDROID_MIPS_LINKER
-endif
-
-ifeq ($(TARGET_ARCH),x86)
-    LOCAL_CFLAGS += -DANDROID_X86_LINKER
-endif
-
-ifeq ($(TARGET_ARCH),x86_64)
-    LOCAL_CFLAGS += -DANDROID_X86_64_LINKER
-endif
+# Make the target architecture available at compile time.
+# TODO: do we really need this? why not just use __aarch64__, __arm__, __i386__, __mips__, __x86_64__?
+uppercase_target_arch := $(shell tr '[:lower:]' '[:upper:]' <<< $(TARGET_ARCH))
+LOCAL_CFLAGS += -DANDROID_$(uppercase_target_arch)_LINKER
 
 # Use the AT_SECURE auxv flag to determine whether to enable secure mode
 ifeq ($(USE_AT_SECURE),true)
