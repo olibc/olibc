@@ -251,7 +251,6 @@ int           setsockopt(int, int, int, const void*, socklen_t)  aarch64,arm,mip
 int           getsockopt(int, int, int, void*, socklen_t*)    aarch64,arm,mips,x86_64
 int           sendmsg(int, const struct msghdr*, unsigned int)  aarch64,arm,mips,x86_64
 int           recvmsg(int, struct msghdr*, unsigned int)   aarch64,arm,mips,x86_64
-int           recvmsg(int, struct msghdr*, unsigned int)   aarch64,arm,mips,x86_64
 int           accept4(int, struct sockaddr*, socklen_t*, int) aarch64,arm,mips,x86_64
 int           recvmmsg(int, struct mmsghdr*, unsigned int, unsigned int, struct timespec *) aarch64,arm,mips,x86_64
 int           sendmmsg(int, struct mmsghdr*, unsigned int, unsigned int) aarch64,arm,mips,x86_64
