@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,60 +27,8 @@
  */
 
 #include <fcntl.h>
-#include <stdarg.h>
-#include <stdlib.h>
 #include <unistd.h>
 
-#include "private/libc_logging.h"
-
-int __openat(int, const char*, int, int);
-
-int open(const char* pathname, int flags, ...) {
-  mode_t mode = 0;
-
-  flags |= O_LARGEFILE;
-
-  if (flags & O_CREAT) {
-    va_list args;
-    va_start(args, flags);
-    mode = (mode_t) va_arg(args, int);
-    va_end(args);
-  }
-
-  return __openat(AT_FDCWD, pathname, flags, mode);
-}
-
-int __open_2(const char* pathname, int flags) {
-  if (__predict_false(flags & O_CREAT)) {
-    __fortify_chk_fail("open(O_CREAT): called without specifying a mode", 0);
-  }
-
-  flags |= O_LARGEFILE;
-
-  return __openat(AT_FDCWD, pathname, flags, 0);
-}
-
-int openat(int fd, const char *pathname, int flags, ...) {
-  mode_t mode = 0;
-
-  flags |= O_LARGEFILE;
-
-  if (flags & O_CREAT) {
-    va_list args;
-    va_start(args, flags);
-    mode = (mode_t) va_arg(args, int);
-    va_end(args);
-  }
-
-  return __openat(fd, pathname, flags, mode);
-}
-
-int __openat_2(int fd, const char* pathname, int flags) {
-  if (flags & O_CREAT) {
-    __fortify_chk_fail("openat(O_CREAT): called without specifying a mode", 0);
-  }
-
-  flags |= O_LARGEFILE;
-
-  return __openat(fd, pathname, flags, 0);
+int link(const char* old_path, const char* new_path) {
+  return linkat(AT_FDCWD, old_path, AT_FDCWD, new_path, 0);
 }

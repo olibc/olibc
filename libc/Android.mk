@@ -111,8 +111,6 @@ libc_common_src_files := \
 	bionic/memmem.c \
 	bionic/memswap.c \
 	bionic/name_mem.c \
-	bionic/openat.c \
-	bionic/open.c \
 	bionic/openpty.c \
 	bionic/pathconf.c \
 	bionic/perror.c \
@@ -218,8 +216,11 @@ libc_common_src_files += \
 
 libc_bionic_src_files := \
     bionic/abort.c \
+    bionic/access.c \
     bionic/assert.c \
     bionic/brk.c \
+    bionic/chmod.c \
+    bionic/chown.c \
     bionic/dirent.c \
     bionic/__errno.c \
     bionic/eventfd_read.c \
@@ -230,9 +231,15 @@ libc_bionic_src_files := \
     bionic/getcwd.c \
     bionic/getlogin.c \
     bionic/getlogin_r.c \
+    bionic/lchown.c \
     bionic/libc_init_common.c \
     bionic/libgen.c \
+    bionic/link.c \
+    bionic/lstat.c \
+    bionic/mkdir.c \
     bionic/mkfifo.c \
+    bionic/mknod.c \
+    bionic/open.c \
     bionic/pthread_attr.c \
     bionic/pthread_detach.c \
     bionic/pthread_equal.c \
@@ -246,6 +253,9 @@ libc_bionic_src_files := \
     bionic/pthread_setschedparam.c \
     bionic/pthread_sigmask.c \
     bionic/raise.c \
+    bionic/readlink.c \
+    bionic/rename.c \
+    bionic/rmdir.c \
     bionic/sbrk.c \
     bionic/scandir.c \
     bionic/sched_getaffinity.c \
@@ -265,6 +275,7 @@ libc_bionic_src_files := \
     bionic/sigprocmask.c \
     bionic/sigsuspend.c \
     bionic/sigwait.c \
+    bionic/stat.c \
     bionic/statvfs.c \
     bionic/strerror.c \
     bionic/strerror_r.c \
@@ -273,6 +284,8 @@ libc_bionic_src_files := \
     bionic/tdestroy.c \
     bionic/__thread_entry.c \
     bionic/tmpfile.c \
+    bionic/unlink.c \
+    bionic/utimes.c \
     bionic/wait.c \
 
 # These are shared by all the 32-bit targets, but not the 64-bit ones.

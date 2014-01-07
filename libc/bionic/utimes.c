@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,60 +27,24 @@
  */
 
 #include <fcntl.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/time.h>
 
-#include "private/libc_logging.h"
+int utimes(const char* path, const struct timeval tv[2]) {
+  struct timespec ts[2];
 
-int __openat(int, const char*, int, int);
+  // Whole seconds can just be copied.
+  ts[0].tv_sec = tv[0].tv_sec;
+  ts[1].tv_sec = tv[1].tv_sec;
 
-int open(const char* pathname, int flags, ...) {
-  mode_t mode = 0;
-
-  flags |= O_LARGEFILE;
-
-  if (flags & O_CREAT) {
-    va_list args;
-    va_start(args, flags);
-    mode = (mode_t) va_arg(args, int);
-    va_end(args);
+  // But we might overflow when converting microseconds to nanoseconds.
+  if (tv[0].tv_usec >= 1000000 || tv[0].tv_usec < 0 ||
+      tv[1].tv_usec >= 1000000 || tv[1].tv_usec < 0) {
+    errno = EINVAL;
+    return -1;
   }
+  ts[0].tv_nsec = tv[0].tv_usec * 1000;
+  ts[1].tv_nsec = tv[1].tv_usec * 1000;
 
-  return __openat(AT_FDCWD, pathname, flags, mode);
-}
-
-int __open_2(const char* pathname, int flags) {
-  if (__predict_false(flags & O_CREAT)) {
-    __fortify_chk_fail("open(O_CREAT): called without specifying a mode", 0);
-  }
-
-  flags |= O_LARGEFILE;
-
-  return __openat(AT_FDCWD, pathname, flags, 0);
-}
-
-int openat(int fd, const char *pathname, int flags, ...) {
-  mode_t mode = 0;
-
-  flags |= O_LARGEFILE;
-
-  if (flags & O_CREAT) {
-    va_list args;
-    va_start(args, flags);
-    mode = (mode_t) va_arg(args, int);
-    va_end(args);
-  }
-
-  return __openat(fd, pathname, flags, mode);
-}
-
-int __openat_2(int fd, const char* pathname, int flags) {
-  if (flags & O_CREAT) {
-    __fortify_chk_fail("openat(O_CREAT): called without specifying a mode", 0);
-  }
-
-  flags |= O_LARGEFILE;
-
-  return __openat(fd, pathname, flags, 0);
+  return utimensat(AT_FDCWD, path, ts, 0);
 }
