@@ -195,7 +195,9 @@ struct soinfo {
   // value to get the corresponding address in the process' address space.
   Elf_Addr load_bias;
 
+#if !defined(__LP64__)
   bool has_text_relocations;
+#endif
   bool has_DT_SYMBOLIC;
 
 };
@@ -212,14 +214,6 @@ void soinfo_CallFunction(soinfo *si,const char* function_name,
 
 
 extern soinfo libdl_info;
-
-// These aren't defined in <sys/exec_elf.h>.
-#ifndef DT_PREINIT_ARRAY
-#define DT_PREINIT_ARRAY   32
-#endif
-#ifndef DT_PREINIT_ARRAYSZ
-#define DT_PREINIT_ARRAYSZ 33
-#endif
 
 void do_android_update_LD_LIBRARY_PATH(const char* ld_library_path);
 soinfo* do_dlopen(const char* name, int flags);
