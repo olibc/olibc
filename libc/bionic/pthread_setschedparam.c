@@ -31,7 +31,7 @@
 #include "private/ErrnoRestorer.h"
 #include "pthread_accessor.h"
 
-int pthread_setschedparam(pthread_t t, int policy, struct sched_param const* param) {
+int pthread_setschedparam(pthread_t t, int policy, const struct sched_param* param) {
   ErrnoRestorer errno_restorer;
   ErrnoRestorer_init(&errno_restorer);
 

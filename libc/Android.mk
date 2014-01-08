@@ -139,7 +139,6 @@ libc_common_src_files := \
 	bionic/strtotimeval.c \
 	bionic/tcgetpgrp.c \
 	bionic/tcsetpgrp.c \
-	bionic/thread_atexit.c \
 	bionic/time64.c \
 	bionic/ttyname.c \
 	bionic/ttyname_r.c \
@@ -250,18 +249,27 @@ libc_bionic_src_files := \
     bionic/pause.c \
     bionic/pipe.c \
     bionic/poll.c \
+    bionic/pthread_atfork.c \
     bionic/pthread_attr.c \
+    bionic/pthread_cond.c \
+    bionic/pthread_create.c \
     bionic/pthread_detach.c \
     bionic/pthread_equal.c \
+    bionic/pthread_exit.c \
     bionic/pthread_getcpuclockid.c \
     bionic/pthread_getschedparam.c \
     bionic/pthread_internals.c \
     bionic/pthread_join.c \
+    bionic/pthread_key.c \
     bionic/pthread_kill.c \
+    bionic/pthread_mutex.c \
+    bionic/pthread_once.c \
+    bionic/pthread_rwlock.c \
     bionic/pthread_self.c \
     bionic/pthread_setname_np.c \
     bionic/pthread_setschedparam.c \
     bionic/pthread_sigmask.c \
+    bionic/ptrace.c \
     bionic/raise.c \
     bionic/readlink.c \
     bionic/rename.c \
@@ -292,8 +300,10 @@ libc_bionic_src_files := \
     bionic/strsignal.c \
     bionic/symlink.c \
     bionic/sysconf.c \
+    bionic/thread_atexit.c \
     bionic/tdestroy.c \
     bionic/__thread_entry.c \
+    bionic/timer.c \
     bionic/tmpfile.c \
     bionic/unlink.c \
     bionic/utimes.c \
@@ -398,17 +408,6 @@ libc_upstream_netbsd_src_files := \
     upstream-netbsd/libc/string/strcoll.c \
     upstream-netbsd/libc/string/strxfrm.c \
     upstream-netbsd/libc/unistd/killpg.c \
-
-libc_common_src_files += \
-    bionic/pthread-atfork.c \
-    bionic/pthread-rwlocks.c \
-    bionic/pthread-timers.c \
-    bionic/ptrace.c \
-
-libc_static_common_src_files += \
-    bionic/pthread.c \
-    bionic/pthread_create.c \
-    bionic/pthread_key.c \
 
 # Architecture specific source files go here
 # =========================================================

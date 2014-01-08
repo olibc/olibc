@@ -56,7 +56,7 @@ int pthread_attr_setdetachstate(pthread_attr_t* attr, int state) {
   return 0;
 }
 
-int pthread_attr_getdetachstate(pthread_attr_t const* attr, int* state) {
+int pthread_attr_getdetachstate(const pthread_attr_t* attr, int* state) {
   *state = (attr->flags & PTHREAD_ATTR_FLAG_DETACHED) ? PTHREAD_CREATE_DETACHED : PTHREAD_CREATE_JOINABLE;
   return 0;
 }
@@ -66,17 +66,17 @@ int pthread_attr_setschedpolicy(pthread_attr_t* attr, int policy) {
   return 0;
 }
 
-int pthread_attr_getschedpolicy(pthread_attr_t const* attr, int* policy) {
+int pthread_attr_getschedpolicy(const pthread_attr_t* attr, int* policy) {
   *policy = attr->sched_policy;
   return 0;
 }
 
-int pthread_attr_setschedparam(pthread_attr_t * attr, struct sched_param const* param) {
+int pthread_attr_setschedparam(pthread_attr_t* attr, const struct sched_param* param) {
   attr->sched_priority = param->sched_priority;
   return 0;
 }
 
-int pthread_attr_getschedparam(pthread_attr_t const* attr, struct sched_param* param) {
+int pthread_attr_getschedparam(const pthread_attr_t* attr, struct sched_param* param) {
   param->sched_priority = attr->sched_priority;
   return 0;
 }
@@ -89,7 +89,7 @@ int pthread_attr_setstacksize(pthread_attr_t* attr, size_t stack_size) {
   return 0;
 }
 
-int pthread_attr_getstacksize(pthread_attr_t const* attr, size_t* stack_size) {
+int pthread_attr_getstacksize(const pthread_attr_t* attr, size_t* stack_size) {
   *stack_size = attr->stack_size;
   return 0;
 }
@@ -101,7 +101,7 @@ int pthread_attr_setstackaddr(pthread_attr_t *attr __unused,
   return ENOSYS;
 }
 
-int pthread_attr_getstackaddr(pthread_attr_t const* attr, void** stack_addr) {
+int pthread_attr_getstackaddr(const pthread_attr_t* attr, void** stack_addr) {
   // This was removed from POSIX.1-2008.
   // Needed for ABI compatibility with the NDK.
   *stack_addr = (char*)attr->stack_base + attr->stack_size;
@@ -120,7 +120,7 @@ int pthread_attr_setstack(pthread_attr_t* attr, void* stack_base, size_t stack_s
   return 0;
 }
 
-int pthread_attr_getstack(pthread_attr_t const* attr, void** stack_base, size_t* stack_size) {
+int pthread_attr_getstack(const pthread_attr_t* attr, void** stack_base, size_t* stack_size) {
   *stack_base = attr->stack_base;
   *stack_size = attr->stack_size;
   return 0;
@@ -131,7 +131,7 @@ int pthread_attr_setguardsize(pthread_attr_t* attr, size_t guard_size) {
   return 0;
 }
 
-int pthread_attr_getguardsize(pthread_attr_t const* attr, size_t* guard_size) {
+int pthread_attr_getguardsize(const pthread_attr_t* attr, size_t* guard_size) {
   *guard_size = attr->guard_size;
   return 0;
 }
@@ -142,7 +142,7 @@ int pthread_getattr_np(pthread_t thid, pthread_attr_t* attr) {
   return 0;
 }
 
-int pthread_attr_setscope(pthread_attr_t *attr __unused, int scope) {
+int pthread_attr_setscope(pthread_attr_t* attr __unused, int scope) {
   if (scope == PTHREAD_SCOPE_SYSTEM) {
     return 0;
   }
@@ -152,6 +152,7 @@ int pthread_attr_setscope(pthread_attr_t *attr __unused, int scope) {
   return EINVAL;
 }
 
-int pthread_attr_getscope(pthread_attr_t const *attr __unused) {
-  return PTHREAD_SCOPE_SYSTEM;
+int pthread_attr_getscope(const pthread_attr_t* attr __unused, int* scope) {
+  *scope = PTHREAD_SCOPE_SYSTEM;
+  return 0;
 }

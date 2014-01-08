@@ -30,12 +30,8 @@
 
 #include <pthread.h>
 #include <stdbool.h>
-#include <sys/cdefs.h>
 
-__BEGIN_DECLS
-
-typedef struct pthread_internal_t
-{
+struct pthread_internal_t {
     struct pthread_internal_t*  next;
     struct pthread_internal_t*  prev;
     pthread_attr_t              attr;
@@ -55,12 +51,13 @@ typedef struct pthread_internal_t
      */
 #define __BIONIC_DLERROR_BUFFER_SIZE 512
     char dlerror_buffer[__BIONIC_DLERROR_BUFFER_SIZE];
-} pthread_internal_t;
+};
+typedef struct pthread_internal_t pthread_internal_t;
 
 __LIBC_HIDDEN__ int _init_thread(pthread_internal_t* thread, bool add_to_thread_list);
-void __init_tls(pthread_internal_t* thread);
+__LIBC_HIDDEN__ void __init_tls(pthread_internal_t* thread);
 __LIBC_HIDDEN__ void _pthread_internal_add(pthread_internal_t* thread);
-__LIBC_HIDDEN__ pthread_internal_t* __get_thread(void);
+__LIBC_HIDDEN__ struct pthread_internal_t* __get_thread(void);
 
 __LIBC_HIDDEN__ void pthread_key_clean_all(void);
 __LIBC_HIDDEN__ void _pthread_internal_remove_locked(pthread_internal_t* thread);
@@ -91,11 +88,14 @@ __LIBC_HIDDEN__ void _pthread_internal_remove_locked(pthread_internal_t* thread)
 __LIBC_HIDDEN__ extern pthread_internal_t* gThreadList;
 __LIBC_HIDDEN__ extern pthread_mutex_t gThreadListLock;
 
+__LIBC_HIDDEN__ int __timespec_to_absolute(struct timespec*, const struct timespec*, clockid_t);
+
 /* needed by fork.c */
-__LIBC_HIDDEN__ extern void __timer_table_start_stop(int  stop);
+__LIBC_HIDDEN__ extern void __timer_table_start_stop(int);
 __LIBC_HIDDEN__ extern void __bionic_atfork_run_prepare();
 __LIBC_HIDDEN__ extern void __bionic_atfork_run_child();
 __LIBC_HIDDEN__ extern void __bionic_atfork_run_parent();
+__LIBC_HIDDEN__ extern int __pthread_settid(pthread_t, pid_t);
 
 __END_DECLS
 
