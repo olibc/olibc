@@ -200,7 +200,6 @@ long    unshare(unsigned long)  all
 int     swapon(const char*, int) all
 int     swapoff(const char*) all
 int     quotactl(int, const char *, int id, caddr_t) all
-int     mknodat(int, const char *, mode_t, dev_t) all
 int     futimesat(int, const char *, const struct timeval[2]) all
 
 # time
@@ -314,7 +313,6 @@ int     pivot_root(const char*, const char*) all
 pid_t __clone:clone(int, void*, int*, void*, int*)  all
 
 int epoll_create1(int)  all
-int     epoll_create1(int flags)   all
 int epoll_ctl(int, int op, int, struct epoll_event*)  all
 int __epoll_pwait:epoll_pwait(int, struct epoll_event*, int, int, const sigset_t*, size_t)  all
 
