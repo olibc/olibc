@@ -554,13 +554,11 @@ int pthread_mutex_lock_impl(pthread_mutex_t *mutex)
 int pthread_mutex_lock(pthread_mutex_t *mutex)
 {
     int err = pthread_mutex_lock_impl(mutex);
-#ifdef PTHREAD_DEBUG
     if (PTHREAD_DEBUG_ENABLED) {
         if (!err) {
             pthread_debug_mutex_lock_check(mutex);
         }
     }
-#endif
     return err;
 }
 
@@ -623,11 +621,9 @@ int pthread_mutex_unlock_impl(pthread_mutex_t *mutex)
 
 int pthread_mutex_unlock(pthread_mutex_t *mutex)
 {
-#ifdef PTHREAD_DEBUG
     if (PTHREAD_DEBUG_ENABLED) {
         pthread_debug_mutex_unlock_check(mutex);
     }
-#endif
     return pthread_mutex_unlock_impl(mutex);
 }
 
@@ -679,13 +675,11 @@ int pthread_mutex_trylock_impl(pthread_mutex_t *mutex)
 int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
     int err = pthread_mutex_trylock_impl(mutex);
-#ifdef PTHREAD_DEBUG
     if (PTHREAD_DEBUG_ENABLED) {
         if (!err) {
             pthread_debug_mutex_lock_check(mutex);
         }
     }
-#endif
     return err;
 }
 
@@ -820,13 +814,11 @@ int pthread_mutex_lock_timeout_np_impl(pthread_mutex_t *mutex, unsigned msecs)
 int pthread_mutex_lock_timeout_np(pthread_mutex_t *mutex, unsigned msecs)
 {
     int err = pthread_mutex_lock_timeout_np_impl(mutex, msecs);
-#ifdef PTHREAD_DEBUG
     if (PTHREAD_DEBUG_ENABLED) {
         if (!err) {
             pthread_debug_mutex_lock_check(mutex);
         }
     }
-#endif
     return err;
 }
 
