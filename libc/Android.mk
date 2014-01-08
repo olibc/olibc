@@ -114,11 +114,9 @@ libc_common_src_files := \
 	bionic/openpty.c \
 	bionic/pathconf.c \
 	bionic/perror.c \
-	bionic/pread.c \
 	bionic/ptsname.c \
 	bionic/ptsname_r.c \
 	bionic/pututline.c \
-	bionic/pwrite.c \
 	bionic/reboot.c \
 	bionic/recv.c \
 	bionic/sched_cpualloc.c \
@@ -187,6 +185,8 @@ libc_common_src_files += \
     bionic/__get_tls.c \
     bionic/lseek64.c \
     bionic/ndk_cruft.c \
+    bionic/pread.c \
+    bionic/pwrite.c \
     bionic/statfs.c \
 
 endif

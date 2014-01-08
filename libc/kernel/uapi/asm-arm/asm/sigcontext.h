@@ -16,29 +16,35 @@
  ***
  ****************************************************************************
  ****************************************************************************/
-#ifndef _ASM_X86_KMAP_TYPES_H
-#define _ASM_X86_KMAP_TYPES_H
-#define D(n)
-enum km_type {
+#ifndef _ASMARM_SIGCONTEXT_H
+#define _ASMARM_SIGCONTEXT_H
+struct sigcontext {
+ unsigned long trap_no;
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(0) KM_BOUNCE_READ,
-D(1) KM_SKB_SUNRPC_DATA,
-D(2) KM_SKB_DATA_SOFTIRQ,
-D(3) KM_USER0,
+ unsigned long error_code;
+ unsigned long oldmask;
+ unsigned long arm_r0;
+ unsigned long arm_r1;
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(4) KM_USER1,
-D(5) KM_BIO_SRC_IRQ,
-D(6) KM_BIO_DST_IRQ,
-D(7) KM_PTE0,
+ unsigned long arm_r2;
+ unsigned long arm_r3;
+ unsigned long arm_r4;
+ unsigned long arm_r5;
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(8) KM_PTE1,
-D(9) KM_IRQ0,
-D(10) KM_IRQ1,
-D(11) KM_SOFTIRQ0,
+ unsigned long arm_r6;
+ unsigned long arm_r7;
+ unsigned long arm_r8;
+ unsigned long arm_r9;
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(12) KM_SOFTIRQ1,
-D(13) KM_TYPE_NR
+ unsigned long arm_r10;
+ unsigned long arm_fp;
+ unsigned long arm_ip;
+ unsigned long arm_sp;
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+ unsigned long arm_lr;
+ unsigned long arm_pc;
+ unsigned long arm_cpsr;
+ unsigned long fault_address;
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
 };
-#undef D
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
 #endif

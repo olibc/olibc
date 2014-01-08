@@ -16,29 +16,19 @@
  ***
  ****************************************************************************
  ****************************************************************************/
-#ifndef _ASM_X86_KMAP_TYPES_H
-#define _ASM_X86_KMAP_TYPES_H
-#define D(n)
-enum km_type {
+#ifndef __ARCH_ARM_POSIX_TYPES_H
+#define __ARCH_ARM_POSIX_TYPES_H
+typedef unsigned short __kernel_mode_t;
+#define __kernel_mode_t __kernel_mode_t
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(0) KM_BOUNCE_READ,
-D(1) KM_SKB_SUNRPC_DATA,
-D(2) KM_SKB_DATA_SOFTIRQ,
-D(3) KM_USER0,
+typedef unsigned short __kernel_ipc_pid_t;
+#define __kernel_ipc_pid_t __kernel_ipc_pid_t
+typedef unsigned short __kernel_uid_t;
+typedef unsigned short __kernel_gid_t;
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(4) KM_USER1,
-D(5) KM_BIO_SRC_IRQ,
-D(6) KM_BIO_DST_IRQ,
-D(7) KM_PTE0,
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(8) KM_PTE1,
-D(9) KM_IRQ0,
-D(10) KM_IRQ1,
-D(11) KM_SOFTIRQ0,
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-D(12) KM_SOFTIRQ1,
-D(13) KM_TYPE_NR
-};
-#undef D
+#define __kernel_uid_t __kernel_uid_t
+typedef unsigned short __kernel_old_dev_t;
+#define __kernel_old_dev_t __kernel_old_dev_t
+#include <asm-generic/posix_types.h>
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
 #endif
