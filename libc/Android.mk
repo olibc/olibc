@@ -399,23 +399,6 @@ libc_upstream_netbsd_src_files := \
     upstream-netbsd/libc/string/strxfrm.c \
     upstream-netbsd/libc/unistd/killpg.c \
 
-# These files need to be arm so that gdbserver
-# can set breakpoints in them without messing
-# up any thumb code.
-# TODO: is this actually necessary?
-ifeq ($(TARGET_ARCH),arm)
-libc_common_src_files += \
-    bionic/pthread-atfork.c.arm \
-    bionic/pthread-rwlocks.c.arm \
-    bionic/pthread-timers.c.arm \
-    bionic/ptrace.c.arm \
-
-libc_static_common_src_files += \
-    bionic/pthread.c.arm \
-    bionic/pthread_create.c.arm \
-    bionic/pthread_key.c.arm \
-
-else
 libc_common_src_files += \
     bionic/pthread-atfork.c \
     bionic/pthread-rwlocks.c \
@@ -426,9 +409,6 @@ libc_static_common_src_files += \
     bionic/pthread.c \
     bionic/pthread_create.c \
     bionic/pthread_key.c \
-
-endif # arm
-
 
 # Architecture specific source files go here
 # =========================================================
