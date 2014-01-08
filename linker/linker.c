@@ -73,6 +73,7 @@
  */
 
 static bool soinfo_link_image(soinfo* si);
+static Elf_Addr get_elf_exec_load_bias(const Elf_Ehdr* elf);
 
 // We can't use malloc(3) in the dynamic linker. We use a linked list of anonymous
 // maps, each a single page in size. The pages are broken up into as many struct soinfo
@@ -197,7 +198,7 @@ static pthread_mutex_t gDebugMutex = PTHREAD_MUTEX_INITIALIZER;
 static void insert_soinfo_into_debug_map(soinfo * info) {
     // Copy the necessary fields into the debug structure.
     link_map_t* map = &(info->link_map);
-    map->l_addr = info->base;
+    map->l_addr = info->load_bias;
     map->l_name = (char*) info->name;
     map->l_ld = (uintptr_t)info->dynamic;
 
@@ -1871,16 +1872,16 @@ static void add_vdso(KernelArgumentBlock* args __unused) {
     Elf_Ehdr* ehdr_vdso = (Elf_Ehdr*)(args->getauxval(AT_SYSINFO_EHDR));
 
     soinfo* si = soinfo_alloc("[vdso]");
-    si->phdr = (Elf_Phdr*)((char*)(ehdr_vdso) + ehdr_vdso->e_phoff);
+
+    si->phdr = (Elf_Phdr*)(reinterpret_cast<char*>(ehdr_vdso) + ehdr_vdso->e_phoff);
     si->phnum = ehdr_vdso->e_phnum;
-    si->link_map.l_name = si->name;
-    size_t i;
-    for (i = 0; i < si->phnum; ++i) {
-        if (si->phdr[i].p_type == PT_LOAD) {
-            si->link_map.l_addr = (Elf_Addr)(ehdr_vdso) - si->phdr[i].p_vaddr;
-            break;
-        }
-    }
+    si->base = (Elf_Addr)(ehdr_vdso);
+    si->size = phdr_table_get_load_size(si->phdr, si->phnum);
+    si->flags = 0;
+    si->load_bias = get_elf_exec_load_bias(ehdr_vdso);
+
+    soinfo_link_image(si);
+    insert_soinfo_into_debug_map(si);
 #endif
 }
 
