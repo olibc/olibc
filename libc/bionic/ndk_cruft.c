@@ -41,8 +41,15 @@ pid_t __wait4(pid_t pid, int* status, int options, struct rusage* rusage) {
   return wait4(pid, status, options, rusage);
 }
 
+// TODO: does anything still need this?
 int __open() {
   abort();
+}
+
+// TODO: does anything still need this?
+void** __get_tls() {
+#include "private/__get_tls.h"
+  return __get_tls();
 }
 
 #endif

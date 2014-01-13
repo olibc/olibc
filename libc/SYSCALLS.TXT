@@ -113,8 +113,8 @@ int         readv(int, const struct iovec*, int)   all
 int         writev(int, const struct iovec*, int)  all
 ssize_t     preadv(int, const struct iovec*, int, off_t) all
 ssize_t     pwritev(int, const struct iovec*, int, off_t) all
-int         __fcntl:fcntl(int, int, void*)  arm,mips,x86
-int         fcntl(int, void*)  aarch64,x86_64
+int         __fcntl64:fcntl64(int, int, void*)  arm,mips,x86
+int         fcntl(int, int, void*)  aarch64,x86_64
 int         flock(int, int)   all
 int         fchmod(int, mode_t)  all
 int         dup(int)  all
@@ -130,7 +130,6 @@ void        sync(void)  all
 int         syncfs(int fd) all
 int         sync_file_range(int fd, off64_t offset, off64_t nbytes, unsigned int flags) mips,x86
 int         sync_file_range2(int fd, unsigned int flags, off64_t offset, off64_t nbytes) arm
-int         __fcntl64:fcntl64(int, int, void*)  arm,mips,x86
 int         __fstatfs64:fstatfs64(int, size_t, struct statfs*)  arm,mips,x86
 int         fstatfs(int, struct statfs*)  aarch64,x86_64
 int         fsetxattr(int, const char*, const void*, size_t, int) all

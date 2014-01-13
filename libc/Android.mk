@@ -177,17 +177,12 @@ libc_dns_src_files += \
     netbsd/resolv/res_send.c \
     netbsd/resolv/res_state.c \
 
-# These are shared by all the 32-bit targets, but not the 64-bit ones.
+
+# These are used by the 32-bit targets, but not the 64-bit ones.
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm mips x86))
 libc_common_src_files += \
-    bionic/fcntl.c \
-    bionic/fstatfs.c \
-    bionic/__get_tls.c \
-    bionic/lseek64.c \
+    bionic/legacy_32_bit_support.c \
     bionic/ndk_cruft.c \
-    bionic/pread.c \
-    bionic/pwrite.c \
-    bionic/statfs.c \
 
 endif
 
