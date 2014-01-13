@@ -43,6 +43,9 @@ struct pthread_internal_t {
     __pthread_cleanup_t*        cleanup_stack;
     void**                      tls;         /* thread-local storage area */
 
+    void* (*start_routine)(void*);
+    void* start_routine_arg;
+
     void* alternate_signal_stack;
 
     /*
@@ -54,8 +57,10 @@ struct pthread_internal_t {
 };
 typedef struct pthread_internal_t pthread_internal_t;
 
+__LIBC_HIDDEN__ int __thread_entry(void* arg); // Called from assembler.
 __LIBC_HIDDEN__ int _init_thread(pthread_internal_t* thread, bool add_to_thread_list);
 __LIBC_HIDDEN__ void __init_tls(pthread_internal_t* thread);
+__LIBC_HIDDEN__ void __init_alternate_signal_stack(pthread_internal_t*);
 __LIBC_HIDDEN__ void _pthread_internal_add(pthread_internal_t* thread);
 __LIBC_HIDDEN__ struct pthread_internal_t* __get_thread(void);
 

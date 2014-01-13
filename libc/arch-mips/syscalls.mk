@@ -206,7 +206,6 @@ syscall_src += arch-mips/syscalls/symlinkat.S
 syscall_src += arch-mips/syscalls/sync.S
 syscall_src += arch-mips/syscalls/sync_file_range.S
 syscall_src += arch-mips/syscalls/syncfs.S
-syscall_src += arch-mips/syscalls/syscall.S
 syscall_src += arch-mips/syscalls/sysinfo.S
 syscall_src += arch-mips/syscalls/tee.S
 syscall_src += arch-mips/syscalls/tgkill.S

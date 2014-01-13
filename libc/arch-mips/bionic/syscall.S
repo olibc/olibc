@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,38 +26,32 @@
  * SUCH DAMAGE.
  */
 
-#include <private/bionic_asm.h>
+#include <asm/unistd.h>
+    .text
+    .globl syscall
+    .align 4
+    .ent syscall
 
-// pid_t __bionic_clone(int flags, void* child_stack, pid_t* parent_tid, void* tls, pid_t* child_tid, int (*fn)(void*), void* arg);
-ENTRY(__bionic_clone)
-    mov     ip, sp
-    .save   {r4, r5, r6, r7}
-
-    # save registers to parent stack
-    stmfd   sp!, {r4, r5, r6, r7}
-
-    # load extra parameters
-    ldmfd   ip, {r4, r5, r6}
-
-    # store 'fn' and 'arg' to the child stack
-    str     r5, [r1, #-4]
-    str     r6, [r1, #-8]
-
-    # System call
-    ldr     r7, =__NR_clone
-    swi     #0
-    movs    r0, r0
-    beq     1f
-
-    # In the parent, reload saved registers then either return or set errno.
-    ldmfd   sp!, {r4, r5, r6, r7}
-    cmn     r0, #(MAX_ERRNO + 1)
-    bxls    lr
-    neg     r0, r0
-    b       __set_errno
-
-1:  # The child.
-    ldr    r0, [sp, #-4]
-    ldr    r1, [sp, #-8]
-    b      __bionic_clone_entry
-END(__bionic_clone)
+syscall:
+    .set noreorder
+    .cpload $t9
+    move    $v0, $a0
+    move    $a0, $a1
+    move    $a1, $a2
+    move    $a2, $a3
+    lw      $a3, 16($sp)
+    lw      $t0, 20($sp)
+    lw      $t1, 24($sp)
+    sw      $t0, 16($sp)
+    sw      $t1, 20($sp)
+    syscall
+    bnez    $a3, 1f
+    move    $a0, $v0
+    j       $ra
+    nop
+1:
+    la      $t9,__set_errno
+    j       $t9
+    nop
+    .set reorder
+    .end syscall
