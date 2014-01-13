@@ -57,7 +57,6 @@ struct pthread_internal_t {
 };
 typedef struct pthread_internal_t pthread_internal_t;
 
-__LIBC_HIDDEN__ int __thread_entry(void* arg); // Called from assembler.
 __LIBC_HIDDEN__ int _init_thread(pthread_internal_t* thread, bool add_to_thread_list);
 __LIBC_HIDDEN__ void __init_tls(pthread_internal_t* thread);
 __LIBC_HIDDEN__ void __init_alternate_signal_stack(pthread_internal_t*);

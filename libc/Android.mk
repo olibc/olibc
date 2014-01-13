@@ -297,7 +297,6 @@ libc_bionic_src_files := \
     bionic/sysconf.c \
     bionic/thread_atexit.c \
     bionic/tdestroy.c \
-    bionic/__thread_entry.c \
     bionic/timer.c \
     bionic/tmpfile.c \
     bionic/unlink.c \
