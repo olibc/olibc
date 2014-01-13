@@ -63,5 +63,5 @@ long ptrace(int request, pid_t pid, void* addr, void* data) {
 
 void _thread_created_hook(pid_t) ATTRIBUTES;
 
-void _thread_created_hook(pid_t unused __unused) {
+void ATTRIBUTES _thread_created_hook(pid_t unused __unused) {
 }

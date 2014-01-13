@@ -1869,14 +1869,14 @@ static bool soinfo_link_image(soinfo* si) {
  */
 static void add_vdso(KernelArgumentBlock* args __unused) {
 #if defined(AT_SYSINFO_EHDR)
-    Elf_Ehdr* ehdr_vdso = (Elf_Ehdr*)(args->getauxval(AT_SYSINFO_EHDR));
+    Elf_Ehdr* ehdr_vdso = (Elf_Ehdr*)KernelArgumentBlock_getauxval(args, AT_SYSINFO_EHDR, NULL);
 
     soinfo* si = soinfo_alloc("[vdso]");
 
-    si->phdr = (Elf_Phdr*)(reinterpret_cast<char*>(ehdr_vdso) + ehdr_vdso->e_phoff);
+    si->phdr = (Elf_Phdr*)(((char*)ehdr_vdso) + ehdr_vdso->e_phoff);
     si->phnum = ehdr_vdso->e_phnum;
     si->base = (Elf_Addr)(ehdr_vdso);
-    si->size = phdr_table_get_load_size(si->phdr, si->phnum);
+    si->size = phdr_table_get_load_size(si->phdr, si->phnum, NULL, NULL);
     si->flags = 0;
     si->load_bias = get_elf_exec_load_bias(ehdr_vdso);
 

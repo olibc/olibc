@@ -16,6 +16,7 @@
 
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <asm-generic/shmparam.h>
 #include "ipc_private.h"
 
 void *shmat(int shmid, const void *shmaddr, int shmflg) {

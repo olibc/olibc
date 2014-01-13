@@ -575,6 +575,7 @@ ifeq ($(TARGET_ARCH),mips)
 endif # mips
 
 ifeq ($(TARGET_ARCH),x86)
+  libc_common_cflags += -DHAVE_UNWIND_CONTEXT_STRUCT
   libc_crt_target_cflags := -m32
   libc_crt_target_ldflags := -melf_i386
 endif # x86

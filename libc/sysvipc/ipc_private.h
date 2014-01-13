@@ -17,7 +17,7 @@
 #ifndef _IPC_PRIVATE_H_
 #define _IPC_PRIVATE_H_
 
-#include <asm-generic/ipc.h>
+#include <linux/ipc.h>
 int ipc(unsigned int call, int first, int second,
         int third, void *ptr, long fifth);
 
