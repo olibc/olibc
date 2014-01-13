@@ -28,6 +28,8 @@
 #ifndef _BIONIC_FUTEX_H
 #define _BIONIC_FUTEX_H
 
+#include <time.h>
+#include <linux/compiler.h> /* needed for __user in non-uapi futex.h */
 #include <linux/futex.h>
 #include <sys/cdefs.h>
 

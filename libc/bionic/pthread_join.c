@@ -28,37 +28,55 @@
 
 #include <errno.h>
 
+#include "private/bionic_futex.h"
 #include "pthread_accessor.h"
 
-int pthread_join(pthread_t t, void** ret_val) {
+int pthread_join(pthread_t t, void** return_value) {
   if (t == pthread_self()) {
     return EDEADLK;
   }
 
+  pid_t tid;
+  volatile int* tid_ptr;
+  {
+    pthread_accessor thread;
+    pthread_accessor_init(&thread, t);
+    if (pthread_accessor_get(&thread) == NULL) {
+      return ESRCH;
+    }
+
+    if ((pthread_accessor_get(&thread)->attr.flags & PTHREAD_ATTR_FLAG_DETACHED) != 0) {
+      pthread_accessor_fini(&thread);
+      return EINVAL;
+    }
+
+    if ((pthread_accessor_get(&thread)->attr.flags & PTHREAD_ATTR_FLAG_JOINED) != 0) {
+      pthread_accessor_fini(&thread);
+      return EINVAL;
+    }
+
+    // Okay, looks like we can signal our intention to join.
+    pthread_accessor_get(&thread)->attr.flags |= PTHREAD_ATTR_FLAG_JOINED;
+    tid = pthread_accessor_get(&thread)->tid;
+    tid_ptr = &pthread_accessor_get(&thread)->tid;
+    pthread_accessor_fini(&thread);
+  }
+
+  // We set the PTHREAD_ATTR_FLAG_JOINED flag with the lock held,
+  // so no one is going to remove this thread except us.
+
+  // Wait for the thread to actually exit, if it hasn't already.
+  while (*tid_ptr != 0) {
+    __futex_wait(tid_ptr, tid, NULL);
+  }
+
+  // Take the lock again so we can pull the thread's return value
+  // and remove the thread from the list.
   pthread_accessor thread;
   pthread_accessor_init(&thread, t);
-  if (pthread_accessor_get(&thread) == NULL) {
-      pthread_accessor_fini(&thread);
-      return ESRCH;
-  }
 
-  if (pthread_accessor_get(&thread)->attr.flags & PTHREAD_ATTR_FLAG_DETACHED) {
-    pthread_accessor_fini(&thread);
-    return EINVAL;
-  }
-
-  if (pthread_accessor_get(&thread)->attr.flags & PTHREAD_ATTR_FLAG_JOINED) {
-    pthread_accessor_fini(&thread);
-    return EINVAL;
-  }
-
-  // Signal our intention to join, and wait for the thread to exit.
-  pthread_accessor_get(&thread)->attr.flags |= PTHREAD_ATTR_FLAG_JOINED;
-  while ((pthread_accessor_get(&thread)->attr.flags & PTHREAD_ATTR_FLAG_ZOMBIE) == 0) {
-    pthread_cond_wait(&pthread_accessor_get(&thread)->join_cond, &gThreadListLock);
-  }
-  if (ret_val) {
-    *ret_val = pthread_accessor_get(&thread)->return_value;
+  if (return_value) {
+    *return_value = pthread_accessor_get(&thread)->return_value;
   }
 
   _pthread_internal_remove_locked(pthread_accessor_get(&thread));
