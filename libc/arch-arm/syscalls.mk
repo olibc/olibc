@@ -35,13 +35,17 @@ syscall_src += arch-arm/syscalls/__timer_settime.S
 syscall_src += arch-arm/syscalls/__waitid.S
 syscall_src += arch-arm/syscalls/_exit.S
 syscall_src += arch-arm/syscalls/accept.S
+syscall_src += arch-arm/syscalls/accept4.S
 syscall_src += arch-arm/syscalls/acct.S
+syscall_src += arch-arm/syscalls/adjtimex.S
+syscall_src += arch-arm/syscalls/bdflush.S
 syscall_src += arch-arm/syscalls/bind.S
 syscall_src += arch-arm/syscalls/cacheflush.S
 syscall_src += arch-arm/syscalls/capget.S
 syscall_src += arch-arm/syscalls/capset.S
 syscall_src += arch-arm/syscalls/chdir.S
 syscall_src += arch-arm/syscalls/chroot.S
+syscall_src += arch-arm/syscalls/clock_adjtime.S
 syscall_src += arch-arm/syscalls/clock_getres.S
 syscall_src += arch-arm/syscalls/clock_gettime.S
 syscall_src += arch-arm/syscalls/clock_nanosleep.S
@@ -56,6 +60,7 @@ syscall_src += arch-arm/syscalls/epoll_ctl.S
 syscall_src += arch-arm/syscalls/eventfd.S
 syscall_src += arch-arm/syscalls/execve.S
 syscall_src += arch-arm/syscalls/faccessat.S
+syscall_src += arch-arm/syscalls/fallocate.S
 syscall_src += arch-arm/syscalls/fchdir.S
 syscall_src += arch-arm/syscalls/fchmod.S
 syscall_src += arch-arm/syscalls/fchmodat.S
@@ -73,6 +78,7 @@ syscall_src += arch-arm/syscalls/fsync.S
 syscall_src += arch-arm/syscalls/ftruncate.S
 syscall_src += arch-arm/syscalls/ftruncate64.S
 syscall_src += arch-arm/syscalls/futex.S
+syscall_src += arch-arm/syscalls/futimesat.S
 syscall_src += arch-arm/syscalls/getdents.S
 syscall_src += arch-arm/syscalls/getegid.S
 syscall_src += arch-arm/syscalls/geteuid.S
@@ -119,23 +125,45 @@ syscall_src += arch-arm/syscalls/mlockall.S
 syscall_src += arch-arm/syscalls/mount.S
 syscall_src += arch-arm/syscalls/mprotect.S
 syscall_src += arch-arm/syscalls/mremap.S
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/msgctl.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/msgget.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/msgrcv.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/msgsnd.S
+endif
 syscall_src += arch-arm/syscalls/msync.S
 syscall_src += arch-arm/syscalls/munlock.S
 syscall_src += arch-arm/syscalls/munlockall.S
 syscall_src += arch-arm/syscalls/munmap.S
+syscall_src += arch-arm/syscalls/name_to_handle_at.S
 syscall_src += arch-arm/syscalls/nanosleep.S
+syscall_src += arch-arm/syscalls/open_by_handle_at.S
 syscall_src += arch-arm/syscalls/perf_event_open.S
 syscall_src += arch-arm/syscalls/personality.S
 syscall_src += arch-arm/syscalls/pipe2.S
+syscall_src += arch-arm/syscalls/pivot_root.S
 syscall_src += arch-arm/syscalls/prctl.S
 syscall_src += arch-arm/syscalls/pread64.S
+syscall_src += arch-arm/syscalls/preadv.S
+syscall_src += arch-arm/syscalls/process_vm_readv.S
+syscall_src += arch-arm/syscalls/process_vm_writev.S
 syscall_src += arch-arm/syscalls/pwrite64.S
+syscall_src += arch-arm/syscalls/pwritev.S
+syscall_src += arch-arm/syscalls/quotactl.S
 syscall_src += arch-arm/syscalls/read.S
 syscall_src += arch-arm/syscalls/readahead.S
 syscall_src += arch-arm/syscalls/readlinkat.S
 syscall_src += arch-arm/syscalls/readv.S
 syscall_src += arch-arm/syscalls/recvfrom.S
+syscall_src += arch-arm/syscalls/recvmmsg.S
 syscall_src += arch-arm/syscalls/recvmsg.S
+syscall_src += arch-arm/syscalls/remap_file_pages.S
 syscall_src += arch-arm/syscalls/removexattr.S
 syscall_src += arch-arm/syscalls/renameat.S
 syscall_src += arch-arm/syscalls/sched_get_priority_max.S
@@ -147,13 +175,30 @@ syscall_src += arch-arm/syscalls/sched_setaffinity.S
 syscall_src += arch-arm/syscalls/sched_setparam.S
 syscall_src += arch-arm/syscalls/sched_setscheduler.S
 syscall_src += arch-arm/syscalls/sched_yield.S
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/semctl.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/semget.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/semop.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/semtimedop.S
+endif
 syscall_src += arch-arm/syscalls/sendfile.S
 syscall_src += arch-arm/syscalls/sendfile64.S
+syscall_src += arch-arm/syscalls/sendmmsg.S
 syscall_src += arch-arm/syscalls/sendmsg.S
 syscall_src += arch-arm/syscalls/sendto.S
+syscall_src += arch-arm/syscalls/setfsgid.S
+syscall_src += arch-arm/syscalls/setfsuid.S
 syscall_src += arch-arm/syscalls/setgid.S
 syscall_src += arch-arm/syscalls/setgroups.S
+syscall_src += arch-arm/syscalls/sethostname.S
 syscall_src += arch-arm/syscalls/setitimer.S
+syscall_src += arch-arm/syscalls/setns.S
 syscall_src += arch-arm/syscalls/setpgid.S
 syscall_src += arch-arm/syscalls/setpriority.S
 syscall_src += arch-arm/syscalls/setregid.S
@@ -166,16 +211,32 @@ syscall_src += arch-arm/syscalls/setsockopt.S
 syscall_src += arch-arm/syscalls/settimeofday.S
 syscall_src += arch-arm/syscalls/setuid.S
 syscall_src += arch-arm/syscalls/setxattr.S
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/shmat.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/shmctl.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/shmdt.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-arm/syscalls/shmget.S
+endif
 syscall_src += arch-arm/syscalls/shutdown.S
 syscall_src += arch-arm/syscalls/sigaltstack.S
 syscall_src += arch-arm/syscalls/signalfd4.S
 syscall_src += arch-arm/syscalls/socket.S
 syscall_src += arch-arm/syscalls/socketpair.S
+syscall_src += arch-arm/syscalls/splice.S
 syscall_src += arch-arm/syscalls/swapoff.S
 syscall_src += arch-arm/syscalls/swapon.S
 syscall_src += arch-arm/syscalls/symlinkat.S
 syscall_src += arch-arm/syscalls/sync.S
+syscall_src += arch-arm/syscalls/sync_file_range2.S
+syscall_src += arch-arm/syscalls/syncfs.S
 syscall_src += arch-arm/syscalls/sysinfo.S
+syscall_src += arch-arm/syscalls/tee.S
 syscall_src += arch-arm/syscalls/tgkill.S
 syscall_src += arch-arm/syscalls/timerfd_create.S
 syscall_src += arch-arm/syscalls/timerfd_gettime.S
@@ -189,8 +250,11 @@ syscall_src += arch-arm/syscalls/umount2.S
 syscall_src += arch-arm/syscalls/uname.S
 syscall_src += arch-arm/syscalls/unlinkat.S
 syscall_src += arch-arm/syscalls/unshare.S
+syscall_src += arch-arm/syscalls/ustat.S
 syscall_src += arch-arm/syscalls/utimensat.S
 syscall_src += arch-arm/syscalls/vfork.S
+syscall_src += arch-arm/syscalls/vhangup.S
+syscall_src += arch-arm/syscalls/vmsplice.S
 syscall_src += arch-arm/syscalls/wait4.S
 syscall_src += arch-arm/syscalls/write.S
 syscall_src += arch-arm/syscalls/writev.S
