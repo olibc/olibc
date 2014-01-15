@@ -223,6 +223,9 @@ libm_common_cflags := \
 libm_common_includes := $(LOCAL_PATH)/upstream-freebsd/lib/msun/src/
 TARGET_USE_CUSTOM_SINCOS := false
 
+libm_aarch64_includes := $(LOCAL_PATH)/aarch64
+libm_aarch64_src_files := aarch64/fenv.c
+
 libm_arm_includes := $(LOCAL_PATH)/arm
 libm_arm_src_files := arm/fenv.c
 ifeq ($(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION),true)
