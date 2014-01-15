@@ -72,15 +72,7 @@ pthread_internal_t* __get_thread(void) {
 }
 
 pid_t __pthread_gettid(pthread_t t) {
-  return ((pthread_internal_t*)t)->tid;
-}
-
-int __pthread_settid(pthread_t t, pid_t tid) {
-  if (t == 0) {
-    return EINVAL;
-  }
-  ((pthread_internal_t*)t)->tid = tid;
-  return 0;
+  return ((pthread_internal_t*)(t))->tid;
 }
 
 // Initialize 'ts' with the difference between 'abstime' and the current time

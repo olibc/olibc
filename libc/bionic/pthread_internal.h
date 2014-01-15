@@ -99,7 +99,6 @@ __LIBC_HIDDEN__ extern void __timer_table_start_stop(int);
 __LIBC_HIDDEN__ extern void __bionic_atfork_run_prepare();
 __LIBC_HIDDEN__ extern void __bionic_atfork_run_child();
 __LIBC_HIDDEN__ extern void __bionic_atfork_run_parent();
-__LIBC_HIDDEN__ extern int __pthread_settid(pthread_t, pid_t);
 
 __END_DECLS
 
