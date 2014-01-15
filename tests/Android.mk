@@ -17,42 +17,6 @@
 LOCAL_PATH := $(call my-dir)
 
 # -----------------------------------------------------------------------------
-# Benchmarks.
-# -----------------------------------------------------------------------------
-
-benchmark_c_flags = \
-    -O2 \
-    -Wall -Wextra \
-    -Werror \
-    -fno-builtin \
-
-benchmark_src_files = \
-    benchmark_main.cpp \
-    math_benchmark.cpp \
-    string_benchmark.cpp \
-    time_benchmark.cpp \
-
-ifeq ($(PROPERTY_SYSTEM_SUPPORT),true)
-benchmark_src_files += \
-    property_benchmark.cpp \
-
-endif
-
-# Build benchmarks for the device (with bionic's .so). Run with:
-#   adb shell bionic-benchmarks
-ifneq ($(EXTRA_STLPORT_SUPPORT),)
-include $(CLEAR_VARS)
-LOCAL_MODULE := bionic-benchmarks
-LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
-LOCAL_CFLAGS += $(benchmark_c_flags)
-LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include
-LOCAL_FORCE_STATIC_EXECUTABLE := true
-LOCAL_STATIC_LIBRARIES += libstlport_static libstdc++ libm libc
-LOCAL_SRC_FILES := $(benchmark_src_files)
-include $(BUILD_EXECUTABLE)
-endif
-
-# -----------------------------------------------------------------------------
 # Unit tests.
 # -----------------------------------------------------------------------------
 

@@ -36,6 +36,7 @@
 
 void _exit_with_stack_teardown(void*, size_t, int);
 void __exit(int);
+int __set_tid_address(int*);
 
 /* CAVEAT: our implementation of pthread_cleanup_push/pop doesn't support C++ exceptions
  *         and thread cancelation
@@ -93,7 +94,10 @@ void pthread_exit(void* return_value) {
 
   pthread_mutex_lock(&gThreadListLock);
   if ((thread->attr.flags & PTHREAD_ATTR_FLAG_DETACHED) != 0) {
-    // The thread is detached, so we can destroy the pthread_internal_t.
+    // The thread is detached, so we can free the pthread_internal_t.
+    // First make sure that the kernel does not try to clear the tid field
+    // because we'll have freed the memory before the thread actually exits.
+    __set_tid_address(NULL);
     _pthread_internal_remove_locked(thread);
   } else {
     // Make sure that the pthread_internal_t doesn't have stale pointers to a stack that
