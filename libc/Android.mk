@@ -439,13 +439,6 @@ libc_common_src_files += \
     string/strncmp.c \
     string/strncpy.c \
     string/strrchr.c \
-    upstream-freebsd/lib/libc/string/wcscat.c \
-    upstream-freebsd/lib/libc/string/wcschr.c \
-    upstream-freebsd/lib/libc/string/wcscmp.c \
-    upstream-freebsd/lib/libc/string/wcscpy.c \
-    upstream-freebsd/lib/libc/string/wcslen.c \
-    upstream-freebsd/lib/libc/string/wcsrchr.c \
-    upstream-freebsd/lib/libc/string/wmemcmp.c \
 
 endif # mips
 

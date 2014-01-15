@@ -34,7 +34,6 @@
 	.text
 	.type __bionic_clone, @function
 	.global __bionic_clone
-	.hidden __bionic_clone
 	.align 4
         .ent __bionic_clone
 __bionic_clone:
