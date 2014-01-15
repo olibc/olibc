@@ -70,7 +70,7 @@ ifeq ($(SINGLE_BINARY_SUPPORT),true)
 else
   LOCAL_LDFLAGS := -shared -Wl,--exclude-libs,ALL -Wl,-Bsymbolic
 
-    ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86_64))
+    ifeq ($(TARGET_IS_64_BIT),true)
       LOCAL_MODULE := linker64
     else
       LOCAL_MODULE := linker

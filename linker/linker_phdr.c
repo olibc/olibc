@@ -29,6 +29,7 @@
 #include "linker_phdr.h"
 
 #include <errno.h>
+#include <machine/exec.h>
 #include <sys/mman.h>
 
 #include "linker.h"
@@ -207,17 +208,7 @@ bool ElfReader_VerifyElfHeader(ElfReader* er) {
     return false;
   }
 
-  if (er->header_.e_machine !=
-#if defined(__arm__)
-      EM_ARM
-#elif defined(__i386__)
-      EM_386
-#elif defined(__mips__)
-      EM_MIPS
-#elif defined(__x86_64__)
-      EM_X86_64
-#endif
-  ) {
+  if (er->header_.e_machine != ELF_TARG_MACH) {
     DL_ERR("\"%s\" has unexpected e_machine: %d", er->name_, er->header_.e_machine);
     return false;
   }
