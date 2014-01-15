@@ -1870,6 +1870,9 @@ static bool soinfo_link_image(soinfo* si) {
 static void add_vdso(KernelArgumentBlock* args __unused) {
 #if defined(AT_SYSINFO_EHDR)
     Elf_Ehdr* ehdr_vdso = (Elf_Ehdr*)KernelArgumentBlock_getauxval(args, AT_SYSINFO_EHDR, NULL);
+    if (ehdr_vdso == NULL) {
+        return;
+    }
 
     soinfo* si = soinfo_alloc("[vdso]");
 
@@ -1881,7 +1884,6 @@ static void add_vdso(KernelArgumentBlock* args __unused) {
     si->load_bias = get_elf_exec_load_bias(ehdr_vdso);
 
     soinfo_link_image(si);
-    insert_soinfo_into_debug_map(si);
 #endif
 }
 
