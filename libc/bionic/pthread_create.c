@@ -81,7 +81,7 @@ void __init_alternate_signal_stack(pthread_internal_t* thread) {
 }
 
 __LIBC_HIDDEN__
-int _init_thread(pthread_internal_t* thread, bool add_to_thread_list) {
+int __init_thread(pthread_internal_t* thread, bool add_to_thread_list) {
   int error = 0;
 
   // Set the scheduling policy/priority of the thread.
@@ -153,14 +153,17 @@ static int __pthread_start(void* arg) {
 
   __init_alternate_signal_stack(thread);
 
-  if ((thread->internal_flags & PTHREAD_INTERNAL_FLAG_THREAD_INIT_FAILED) != 0) {
-    pthread_exit(NULL);
-  }
-
   void* result = thread->start_routine(thread->start_routine_arg);
   pthread_exit(result);
 
   return 0;
+}
+
+// A dummy start routine for pthread_create failures where we've created a thread but aren't
+// going to run user code on it. We swap out the user's start routine for this and take advantage
+// of the regular thread teardown to free up resources.
+static void* __do_nothing(void* unused __unused) {
+  return NULL;
 }
 
 int pthread_create(pthread_t* thread_out, pthread_attr_t const* attr,
@@ -181,7 +184,6 @@ int pthread_create(pthread_t* thread_out, pthread_attr_t const* attr,
     ErrnoRestorer_fini(&errno_restorer);
     return EAGAIN;
   }
-  thread->allocated_on_heap = true;
 
   if (attr == NULL) {
     pthread_attr_init(&thread->attr);
@@ -247,12 +249,13 @@ int pthread_create(pthread_t* thread_out, pthread_attr_t const* attr,
     return clone_errno;
   }
 
-  int init_errno = _init_thread(thread, true);
+  int init_errno = __init_thread(thread, true);
   if (init_errno != 0) {
-    // Mark the thread detached and let its __pthread_start run to completion.
-    // It'll check this flag and exit immediately, cleaning up its resources.
-    thread->internal_flags |= PTHREAD_INTERNAL_FLAG_THREAD_INIT_FAILED;
+    // Mark the thread detached and replace its start_routine with a no-op.
+    // Letting the thread run is the easiest way to clean up its resources.
     thread->attr.flags |= PTHREAD_ATTR_FLAG_DETACHED;
+    thread->start_routine = __do_nothing;
+    pthread_mutex_unlock(start_mutex);
     return init_errno;
   }
 
