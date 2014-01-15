@@ -58,6 +58,7 @@
 
 #include <resolv.h>
 #include "resolv_static.h"
+#include "resolv_cache.h"
 #include <net/if.h>
 
 /*
