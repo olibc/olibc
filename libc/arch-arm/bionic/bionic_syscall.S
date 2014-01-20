@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#include <asm/unistd.h>
-#include <linux/err.h>
-#include <machine/asm.h>
+#include <private/bionic_asm.h>
 
 ENTRY_PRIVATE(__bionic_syscall_eabi)
     /* Swap ip and r7 */
