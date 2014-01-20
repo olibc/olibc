@@ -4,6 +4,8 @@
 
 ENTRY(vhangup)
     pushl   %ebx
+    .cfi_def_cfa_offset 4
+    .cfi_rel_offset ebx, 0
     mov     8(%esp), %ebx
     movl    $__NR_vhangup, %eax
     int     $0x80
