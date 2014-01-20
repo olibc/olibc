@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,25 +25,60 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef _SYS_DIRENT_H_
-#define _SYS_DIRENT_H_
 
-#include <stdint.h>
-#include <sys/cdefs.h>
+#ifndef _SYS_REG_H_
+#define _SYS_REG_H_
 
-__BEGIN_DECLS
+#if defined(__i386__)
 
-/* this corresponds to the kernel dirent64 */
-struct dirent {
-  uint64_t          d_ino;
-  int64_t           d_off;
-  unsigned short    d_reclen;
-  unsigned char     d_type;
-  char              d_name[256];
-};
+#define EBX 0
+#define ECX 1
+#define EDX 2
+#define ESI 3
+#define EDI 4
+#define EBP 5
+#define EAX 6
+#define DS 7
+#define ES 8
+#define FS 9
+#define GS 10
+#define ORIG_EAX 11
+#define EIP 12
+#define CS 13
+#define EFL 14
+#define UESP 15
+#define SS 16
 
-extern int getdents(unsigned int, struct dirent *, unsigned int);
+#elif defined(__x86_64__)
 
-__END_DECLS
+#define R15 0
+#define R14 1
+#define R13 2
+#define R12 3
+#define RBP 4
+#define RBX 5
+#define R11 6
+#define R10 7
+#define R9 8
+#define R8 9
+#define RAX 10
+#define RCX 11
+#define RDX 12
+#define RSI 13
+#define RDI 14
+#define ORIG_RAX 15
+#define RIP 16
+#define CS 17
+#define EFLAGS 18
+#define RSP 19
+#define SS 20
+#define FS_BASE 21
+#define GS_BASE 22
+#define DS 23
+#define ES 24
+#define FS 25
+#define GS 26
 
-#endif /* _SYS_DIRENT_H_ */
+#endif
+
+#endif /* _SYS_REG_H_ */

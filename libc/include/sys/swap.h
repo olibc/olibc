@@ -33,13 +33,10 @@
 
 __BEGIN_DECLS
 
-
-enum {
-  SWAP_FLAG_PREFER     = 0x8000,
-  SWAP_FLAG_PRIO_MASK  = 0x7fff,
-  SWAP_FLAG_PRIO_SHIFT = 0x0000,
-  SWAP_FLAG_DISCARD    = 0x10000
-};
+#define SWAP_FLAG_DISCARD 0x10000
+#define SWAP_FLAG_PREFER 0x8000
+#define SWAP_FLAG_PRIO_MASK 0x7fff
+#define SWAP_FLAG_PRIO_SHIFT 0
 
 extern int swapon(const char*, int) __nonnull((1));
 extern int swapoff(const char*) __nonnull((1));
