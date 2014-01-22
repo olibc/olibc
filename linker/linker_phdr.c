@@ -638,6 +638,6 @@ bool ElfReader_CheckPhdr(ElfReader* er, Elf_Addr loaded) {
       return true;
     }
   }
-  DL_ERR("\"%s\" loaded phdr %x not in loadable segment", er->name_, loaded);
+  DL_ERR("\"%s\" loaded phdr %p not in loadable segment", er->name_, (void*)loaded);
   return false;
 }

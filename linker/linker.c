@@ -490,8 +490,8 @@ static Elf_Sym *soinfo_gnu_lookup(soinfo *si, unsigned gnu_hash, const char *nam
                 (bitmask_word >> hashbit2) & 1) == 0)){
         return NULL;
     }
-    TRACE_TYPE(LOOKUP, "SEARCH %s in %s@0x%08x %08x %d",
-               name, si->name, si->base, gnu_hash, gnu_hash % si->gnu_nbucket);
+    TRACE_TYPE(LOOKUP, "SEARCH %s in %s@0x%p %08x %zd",
+               name, si->name, (void*)si->base, gnu_hash, gnu_hash % si->gnu_nbucket);
     bucket = si->gnu_bucket[gnu_hash % si->gnu_nbucket];
     if (likely(bucket != 0)) {
         Elf_Word *hasharr = &si->gnu_chain[bucket];
@@ -507,8 +507,8 @@ static Elf_Sym *soinfo_gnu_lookup(soinfo *si, unsigned gnu_hash, const char *nam
                     /* no section == undefined */
                     if(s->st_shndx == 0) continue;
 
-                    TRACE_TYPE(LOOKUP, "FOUND %s in %s (%08x) %d",
-                               name, si->name, s->st_value, s->st_size);
+                    TRACE_TYPE(LOOKUP, "FOUND %s in %s (%p) %zd",
+                               name, si->name, (void*)s->st_value, s->st_size);
                     return s;
                 }
             }
@@ -1041,7 +1041,7 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     reloc,
                     (sym_addr + rela->r_addend),
                     sym_name);
-        *reinterpret_cast<Elf_Addr*>(reloc) = (sym_addr + rela->r_addend);
+        *(Elf_Addr*)(reloc) = (sym_addr + rela->r_addend);
         break;
     case R_AARCH64_GLOB_DAT:
         count_relocation(kRelocAbsolute);
@@ -1050,7 +1050,7 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     reloc,
                     (sym_addr + rela->r_addend),
                     sym_name);
-        *reinterpret_cast<Elf_Addr*>(reloc) = (sym_addr + rela->r_addend);
+        *(Elf_Addr*)(reloc) = (sym_addr + rela->r_addend);
         break;
     case R_AARCH64_ABS64:
         count_relocation(kRelocAbsolute);
@@ -1059,7 +1059,7 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     reloc,
                     (sym_addr + rela->r_addend),
                     sym_name);
-        *reinterpret_cast<Elf_Addr*>(reloc) += (sym_addr + rela->r_addend);
+        *(Elf_Addr*)(reloc) += (sym_addr + rela->r_addend);
         break;
     case R_AARCH64_ABS32:
         count_relocation(kRelocAbsolute);
@@ -1068,16 +1068,16 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     reloc,
                     (sym_addr + rela->r_addend),
                     sym_name);
-        if ((static_cast<Elf_Addr>(INT32_MIN) <=
-          (*reinterpret_cast<Elf_Addr*>(reloc) + (sym_addr + rela->r_addend))) &&
-          ((*reinterpret_cast<Elf_Addr*>(reloc) + (sym_addr + rela->r_addend)) <=
-          static_cast<Elf_Addr>(UINT32_MAX))) {
-            *reinterpret_cast<Elf_Addr*>(reloc) += (sym_addr + rela->r_addend);
+        if (((Elf_Addr)(INT32_MIN) <=
+          (*(Elf_Addr*)(reloc) + (sym_addr + rela->r_addend))) &&
+          ((*(Elf_Addr*)(reloc) + (sym_addr + rela->r_addend)) <=
+          (Elf_Addr)(UINT32_MAX))) {
+            *(Elf_Addr*)(reloc) += (sym_addr + rela->r_addend);
         } else {
             DL_ERR("0x%016lx out of range 0x%016lx to 0x%016lx",
-                    (*reinterpret_cast<Elf_Addr*>(reloc) + (sym_addr + rela->r_addend)),
-                    static_cast<Elf_Addr>(INT32_MIN),
-                    static_cast<Elf_Addr>(UINT32_MAX));
+                    (*(Elf_Addr*)(reloc) + (sym_addr + rela->r_addend)),
+                    (Elf_Addr)(INT32_MIN),
+                    (Elf_Addr)(UINT32_MAX));
             return -1;
         }
         break;
@@ -1088,16 +1088,16 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     reloc,
                     (sym_addr + rela->r_addend),
                     sym_name);
-        if ((static_cast<Elf_Addr>(INT16_MIN) <=
-          (*reinterpret_cast<Elf_Addr*>(reloc) + (sym_addr + rela->r_addend))) &&
-          ((*reinterpret_cast<Elf_Addr*>(reloc) + (sym_addr + rela->r_addend)) <=
-          static_cast<Elf_Addr>(UINT16_MAX))) {
-            *reinterpret_cast<Elf_Addr*>(reloc) += (sym_addr + rela->r_addend);
+        if (((Elf_Addr)(INT16_MIN) <=
+          (*(Elf_Addr*)(reloc) + (sym_addr + rela->r_addend))) &&
+          ((*(Elf_Addr*)(reloc) + (sym_addr + rela->r_addend)) <=
+          (Elf_Addr)(UINT16_MAX))) {
+            *(Elf_Addr*)(reloc) += (sym_addr + rela->r_addend);
         } else {
             DL_ERR("0x%016lx out of range 0x%016lx to 0x%016lx",
-                    (*reinterpret_cast<Elf_Addr*>(reloc) + (sym_addr + rela->r_addend)),
-                    static_cast<Elf_Addr>(INT16_MIN),
-                    static_cast<Elf_Addr>(UINT16_MAX));
+                    (*(Elf_Addr*)(reloc) + (sym_addr + rela->r_addend)),
+                    (Elf_Addr)(INT16_MIN),
+                    (Elf_Addr)(UINT16_MAX));
             return -1;
         }
         break;
@@ -1109,7 +1109,7 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     (sym_addr + rela->r_addend),
                     rela->r_offset,
                     sym_name);
-        *reinterpret_cast<Elf_Addr*>(reloc) += (sym_addr + rela->r_addend) - rela->r_offset;
+        *(Elf_Addr*)(reloc) += (sym_addr + rela->r_addend) - rela->r_offset;
         break;
     case R_AARCH64_PREL32:
         count_relocation(kRelocRelative);
@@ -1118,16 +1118,16 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     reloc,
                     (sym_addr + rela->r_addend),
                     rela->r_offset, sym_name);
-        if ((static_cast<Elf_Addr>(INT32_MIN) <=
-          (*reinterpret_cast<Elf_Addr*>(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset))) &&
-          ((*reinterpret_cast<Elf_Addr*>(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)) <=
-          static_cast<Elf_Addr>(UINT32_MAX))) {
-            *reinterpret_cast<Elf_Addr*>(reloc) += ((sym_addr + rela->r_addend) - rela->r_offset);
+        if (((Elf_Addr)(INT32_MIN) <=
+          (*(Elf_Addr*)(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset))) &&
+          ((*(Elf_Addr*)(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)) <=
+          (Elf_Addr)(UINT32_MAX))) {
+            *(Elf_Addr*)(reloc) += ((sym_addr + rela->r_addend) - rela->r_offset);
         } else {
             DL_ERR("0x%016lx out of range 0x%016lx to 0x%016lx",
-                    (*reinterpret_cast<Elf_Addr*>(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)),
-                    static_cast<Elf_Addr>(INT32_MIN),
-                    static_cast<Elf_Addr>(UINT32_MAX));
+                    (*(Elf_Addr*)(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)),
+                    (Elf_Addr)(INT32_MIN),
+                    (Elf_Addr)(UINT32_MAX));
             return -1;
         }
         break;
@@ -1138,16 +1138,16 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
                     reloc,
                     (sym_addr + rela->r_addend),
                     rela->r_offset, sym_name);
-        if ((static_cast<Elf_Addr>(INT16_MIN) <=
-          (*reinterpret_cast<Elf_Addr*>(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset))) &&
-          ((*reinterpret_cast<Elf_Addr*>(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)) <=
-          static_cast<Elf_Addr>(UINT16_MAX))) {
-            *reinterpret_cast<Elf_Addr*>(reloc) += ((sym_addr + rela->r_addend) - rela->r_offset);
+        if (((Elf_Addr)(INT16_MIN) <=
+          (*(Elf_Addr*)(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset))) &&
+          ((*(Elf_Addr*)(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)) <=
+          (Elf_Addr)(UINT16_MAX))) {
+            *(Elf_Addr*)(reloc) += ((sym_addr + rela->r_addend) - rela->r_offset);
         } else {
             DL_ERR("0x%016lx out of range 0x%016lx to 0x%016lx",
-                    (*reinterpret_cast<Elf_Addr*>(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)),
-                    static_cast<Elf_Addr>(INT16_MIN),
-                    static_cast<Elf_Addr>(UINT16_MAX));
+                    (*(Elf_Addr*)(reloc) + ((sym_addr + rela->r_addend) - rela->r_offset)),
+                    (Elf_Addr)(INT16_MIN),
+                    (Elf_Addr)(UINT16_MAX));
             return -1;
         }
         break;
@@ -1162,7 +1162,7 @@ static int soinfo_relocate_a(soinfo* si, Elf_Rela* rela, unsigned count, soinfo*
         TRACE_TYPE(RELO, "RELO RELATIVE %16lx <- %16lx\n",
                     reloc,
                     (si->base + rela->r_addend));
-        *reinterpret_cast<Elf_Addr*>(reloc) = (si->base + rela->r_addend);
+        *(Elf_Addr*)(reloc) = (si->base + rela->r_addend);
         break;
 
     case R_AARCH64_COPY:
