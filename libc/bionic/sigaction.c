@@ -37,7 +37,7 @@ int __sigaction(int, const struct sigaction*, struct sigaction*);
 
 int sigaction(int signal, const struct sigaction* bionic_new_action, struct sigaction* bionic_old_action) {
 #if __LP64__
-  __kernel_sigaction kernel_new_action;
+  struct __kernel_sigaction kernel_new_action;
   if (bionic_new_action != NULL) {
     kernel_new_action.sa_flags = bionic_new_action->sa_flags;
     kernel_new_action.sa_handler = bionic_new_action->sa_handler;
@@ -50,7 +50,7 @@ int sigaction(int signal, const struct sigaction* bionic_new_action, struct siga
     }
   }
 
-  __kernel_sigaction kernel_old_action;
+  struct __kernel_sigaction kernel_old_action;
   int result = __rt_sigaction(signal,
                               (bionic_new_action != NULL) ? &kernel_new_action : NULL,
                               (bionic_old_action != NULL) ? &kernel_old_action : NULL,
