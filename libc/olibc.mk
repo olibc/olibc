@@ -167,7 +167,7 @@ libc_upstream_freebsd_src_files += \
 
 endif
 
-ifneq ($(TARGET_ARCH),arm)
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),mips x86))
   ifeq ($(SYSVIPC_SUPPORT),true)
     libc_bionic_src_files += \
       sysvipc/semctl.c \

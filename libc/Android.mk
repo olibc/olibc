@@ -474,7 +474,7 @@ libc_common_src_files += \
     bionic/memmove.c  \
     bionic/memrchr.c  \
     bionic/memset.c   \
-    bionic/strchr.cpp \
+    bionic/strchr.c \
     bionic/strnlen.c  \
     string/bcopy.c    \
     string/index.c    \
@@ -489,13 +489,6 @@ libc_common_src_files += \
     string/strncmp.c  \
     string/strncpy.c  \
     string/strrchr.c  \
-    upstream-freebsd/lib/libc/string/wcscat.c \
-    upstream-freebsd/lib/libc/string/wcschr.c \
-    upstream-freebsd/lib/libc/string/wcscmp.c \
-    upstream-freebsd/lib/libc/string/wcscpy.c \
-    upstream-freebsd/lib/libc/string/wcslen.c \
-    upstream-freebsd/lib/libc/string/wcsrchr.c \
-    upstream-freebsd/lib/libc/string/wmemcmp.c \
 
 endif # aarch64
 
@@ -598,6 +591,10 @@ ifeq ($(TARGET_ARCH),arm)
     libc_common_cflags += -DSPARROW_NEON_OPTIMIZATION
   endif
 endif # !arm
+
+ifeq ($(TARGET_ARCH),aarch64)
+  libc_common_cflags += -DHAVE_UNWIND_CONTEXT_STRUCT
+endif # aarch64
 
 ifeq ($(TARGET_ARCH),mips)
   ifneq ($(ARCH_MIPS_HAS_FPU),true)

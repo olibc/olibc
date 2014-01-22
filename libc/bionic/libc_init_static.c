@@ -68,7 +68,7 @@ static void call_array(void(**list)()) {
 }
 
 static void apply_gnu_relro() {
-  Elf32_Phdr* phdr_start = (Elf_Phdr*)(getauxval(AT_PHDR));
+  Elf_Phdr* phdr_start = (Elf_Phdr*)(getauxval(AT_PHDR));
   unsigned long int phdr_ct = getauxval(AT_PHNUM);
 
   Elf_Phdr* phdr;
