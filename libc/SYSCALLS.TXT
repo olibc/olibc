@@ -184,7 +184,7 @@ int     mount(const char*, const char*, const char*, unsigned long, const void*)
 int     umount2(const char*, int)  all
 int     fstat:fstat64(int, struct stat*)    arm,mips,x86
 int     fstat(int, struct stat*)    aarch64,x86_64
-int     ustat(dev_t, struct ustat*) all
+int     ustat(dev_t, struct ustat*) arm,mips,x86,x86_64
 int     __getcwd:getcwd(char* buf, size_t size)  all
 int     fchdir(int)    all
 int     setxattr(const char*, const char*, const void*, size_t, int) all
@@ -200,7 +200,7 @@ int     statfs(const char*, struct statfs*)  aarch64,x86_64
 int     swapon(const char*, int) all
 int     swapoff(const char*) all
 int     quotactl(int, const char *, int id, caddr_t) all
-int     futimesat(int, const char *, const struct timeval[2]) all
+int     futimesat(int, const char *, const struct timeval[2]) arm,mips,x86,x86_64
 
 # time
 int           gettimeofday(struct timeval*, struct timezone*)       all
@@ -307,7 +307,7 @@ long    perf_event_open(struct perf_event_attr* attr_uptr, pid_t pid, int cpu, i
 int     ioperm(unsigned long, unsigned long, int) mips,x86
 int     iopl(int) mips,x86
 int     vhangup(void) all
-int     bdflush (int, long int) all
+int     bdflush (int, long int) arm,mips,x86
 int     profil(unsigned short*, size_t, size_t, unsigned int) mips,x86
 int     sethostname(const char*, size_t) all
 int     pivot_root(const char*, const char*) all
@@ -344,16 +344,16 @@ int     _flush_cache:cacheflush(char* addr, const int nbytes, const int op) mips
 
 # SysV IPC
 int     int ipc(unsigned int call, int first, int second, int third, void* ptr, long fifth) mips,x86 <SYSVIPC_SUPPORT>
-int     semget(key_t key, int nsems, int semflg)  arm <SYSVIPC_SUPPORT>
-int     semop(int semid, struct sembuf* sops, unsigned nsops)  arm <SYSVIPC_SUPPORT>
-int     semtimedop(int semid, struct sembuf* sops, unsigned nsops, struct timespec* timeout) arm <SYSVIPC_SUPPORT>
-int     semctl(int semid, int semnum, int cmd, ...) arm <SYSVIPC_SUPPORT>
+int     semget(key_t key, int nsems, int semflg)  arm,aarch64 <SYSVIPC_SUPPORT>
+int     semop(int semid, struct sembuf* sops, unsigned nsops)  arm,aarch64 <SYSVIPC_SUPPORT>
+int     semtimedop(int semid, struct sembuf* sops, unsigned nsops, struct timespec* timeout) arm,aarch64 <SYSVIPC_SUPPORT>
+int     semctl(int semid, int semnum, int cmd, ...) arm,aarch64 <SYSVIPC_SUPPORT>
 
-void *  shmat(int shmid, const void* shmaddr,int shmflg) arm <SYSVIPC_SUPPORT>
-int     shmdt(const void* shmaddr) arm <SYSVIPC_SUPPORT>
-int     shmctl(int shmid, int cmd, struct shmid_ds* buf) arm <SYSVIPC_SUPPORT>
-int     shmget(key_t key, size_t size, int shmflg) arm <SYSVIPC_SUPPORT>
-int     msgctl(int msqid, int cmd, struct msqid_ds* buf) arm <SYSVIPC_SUPPORT>
-int     msgget(key_t key, int msgflg) arm <SYSVIPC_SUPPORT>
-ssize_t msgrcv(int msqid, void* msgp, size_t msgsz, long int msgtyp, int msgflg) arm <SYSVIPC_SUPPORT>
-int     msgsnd(int msqid, const void* msgp, size_t msgsz, int msgflg) arm <SYSVIPC_SUPPORT>
+void *  shmat(int shmid, const void* shmaddr,int shmflg) arm,aarch64 <SYSVIPC_SUPPORT>
+int     shmdt(const void* shmaddr) arm,aarch64 <SYSVIPC_SUPPORT>
+int     shmctl(int shmid, int cmd, struct shmid_ds* buf) arm,aarch64 <SYSVIPC_SUPPORT>
+int     shmget(key_t key, size_t size, int shmflg) arm,aarch64 <SYSVIPC_SUPPORT>
+int     msgctl(int msqid, int cmd, struct msqid_ds* buf) arm,aarch64 <SYSVIPC_SUPPORT>
+int     msgget(key_t key, int msgflg) arm,aarch64 <SYSVIPC_SUPPORT>
+ssize_t msgrcv(int msqid, void* msgp, size_t msgsz, long int msgtyp, int msgflg) arm,aarch64 <SYSVIPC_SUPPORT>
+int     msgsnd(int msqid, const void* msgp, size_t msgsz, int msgflg) arm,aarch64 <SYSVIPC_SUPPORT>

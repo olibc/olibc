@@ -32,7 +32,6 @@ syscall_src += arch-x86_64/syscalls/accept.S
 syscall_src += arch-x86_64/syscalls/accept4.S
 syscall_src += arch-x86_64/syscalls/acct.S
 syscall_src += arch-x86_64/syscalls/adjtimex.S
-syscall_src += arch-x86_64/syscalls/bdflush.S
 syscall_src += arch-x86_64/syscalls/bind.S
 syscall_src += arch-x86_64/syscalls/capget.S
 syscall_src += arch-x86_64/syscalls/capset.S

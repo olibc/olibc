@@ -31,7 +31,6 @@ syscall_src += arch-aarch64/syscalls/accept.S
 syscall_src += arch-aarch64/syscalls/accept4.S
 syscall_src += arch-aarch64/syscalls/acct.S
 syscall_src += arch-aarch64/syscalls/adjtimex.S
-syscall_src += arch-aarch64/syscalls/bdflush.S
 syscall_src += arch-aarch64/syscalls/bind.S
 syscall_src += arch-aarch64/syscalls/capget.S
 syscall_src += arch-aarch64/syscalls/capset.S
@@ -71,7 +70,6 @@ syscall_src += arch-aarch64/syscalls/fstatfs.S
 syscall_src += arch-aarch64/syscalls/fsync.S
 syscall_src += arch-aarch64/syscalls/ftruncate.S
 syscall_src += arch-aarch64/syscalls/futex.S
-syscall_src += arch-aarch64/syscalls/futimesat.S
 syscall_src += arch-aarch64/syscalls/getdents.S
 syscall_src += arch-aarch64/syscalls/getegid.S
 syscall_src += arch-aarch64/syscalls/geteuid.S
@@ -119,6 +117,18 @@ syscall_src += arch-aarch64/syscalls/mmap.S
 syscall_src += arch-aarch64/syscalls/mount.S
 syscall_src += arch-aarch64/syscalls/mprotect.S
 syscall_src += arch-aarch64/syscalls/mremap.S
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/msgctl.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/msgget.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/msgrcv.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/msgsnd.S
+endif
 syscall_src += arch-aarch64/syscalls/msync.S
 syscall_src += arch-aarch64/syscalls/munlock.S
 syscall_src += arch-aarch64/syscalls/munlockall.S
@@ -155,6 +165,18 @@ syscall_src += arch-aarch64/syscalls/sched_setaffinity.S
 syscall_src += arch-aarch64/syscalls/sched_setparam.S
 syscall_src += arch-aarch64/syscalls/sched_setscheduler.S
 syscall_src += arch-aarch64/syscalls/sched_yield.S
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/semctl.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/semget.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/semop.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/semtimedop.S
+endif
 syscall_src += arch-aarch64/syscalls/sendfile.S
 syscall_src += arch-aarch64/syscalls/sendmmsg.S
 syscall_src += arch-aarch64/syscalls/sendmsg.S
@@ -178,6 +200,18 @@ syscall_src += arch-aarch64/syscalls/setsockopt.S
 syscall_src += arch-aarch64/syscalls/settimeofday.S
 syscall_src += arch-aarch64/syscalls/setuid.S
 syscall_src += arch-aarch64/syscalls/setxattr.S
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/shmat.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/shmctl.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/shmdt.S
+endif
+ifeq ($(SYSVIPC_SUPPORT),true)
+syscall_src += arch-aarch64/syscalls/shmget.S
+endif
 syscall_src += arch-aarch64/syscalls/shutdown.S
 syscall_src += arch-aarch64/syscalls/sigaltstack.S
 syscall_src += arch-aarch64/syscalls/signalfd4.S
@@ -204,7 +238,6 @@ syscall_src += arch-aarch64/syscalls/umount2.S
 syscall_src += arch-aarch64/syscalls/uname.S
 syscall_src += arch-aarch64/syscalls/unlinkat.S
 syscall_src += arch-aarch64/syscalls/unshare.S
-syscall_src += arch-aarch64/syscalls/ustat.S
 syscall_src += arch-aarch64/syscalls/utimensat.S
 syscall_src += arch-aarch64/syscalls/vhangup.S
 syscall_src += arch-aarch64/syscalls/vmsplice.S
