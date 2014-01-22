@@ -11,11 +11,15 @@ choice
 config TARGET_arm
 	bool "ARM"
 
+config TARGET_aarch64
+	bool "ARMv8 (AArch64)"
+
 config TARGET_mips
 	bool "MIPS"
 
 config TARGET_x86
 	bool "x86"
+
 endchoice
 
 
@@ -69,6 +73,13 @@ config ARCH_ARM_HAVE_NEON
 	bool "Have NEON co-processor"
 	default n if DESIRED_TARGET_PRODUCT="mini_armv7a"
 	default y
+endif # TARGET_arm
+
+if TARGET_aarch64
+config TARGET_ARCH
+	string
+	default "aarch64"
+
 endif # TARGET_arm
 
 config TARGET_SUBARCH
