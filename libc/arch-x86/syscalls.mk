@@ -143,6 +143,7 @@ syscall_src += arch-x86/syscalls/pivot_root.S
 syscall_src += arch-x86/syscalls/prctl.S
 syscall_src += arch-x86/syscalls/pread64.S
 syscall_src += arch-x86/syscalls/preadv.S
+syscall_src += arch-x86/syscalls/prlimit64.S
 syscall_src += arch-x86/syscalls/profil.S
 syscall_src += arch-x86/syscalls/pwrite64.S
 syscall_src += arch-x86/syscalls/pwritev.S

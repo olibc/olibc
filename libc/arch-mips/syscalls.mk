@@ -144,6 +144,7 @@ syscall_src += arch-mips/syscalls/pivot_root.S
 syscall_src += arch-mips/syscalls/prctl.S
 syscall_src += arch-mips/syscalls/pread64.S
 syscall_src += arch-mips/syscalls/preadv.S
+syscall_src += arch-mips/syscalls/prlimit64.S
 syscall_src += arch-mips/syscalls/process_vm_readv.S
 syscall_src += arch-mips/syscalls/process_vm_writev.S
 syscall_src += arch-mips/syscalls/profil.S

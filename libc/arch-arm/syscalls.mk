@@ -151,6 +151,7 @@ syscall_src += arch-arm/syscalls/pivot_root.S
 syscall_src += arch-arm/syscalls/prctl.S
 syscall_src += arch-arm/syscalls/pread64.S
 syscall_src += arch-arm/syscalls/preadv.S
+syscall_src += arch-arm/syscalls/prlimit64.S
 syscall_src += arch-arm/syscalls/process_vm_readv.S
 syscall_src += arch-arm/syscalls/process_vm_writev.S
 syscall_src += arch-arm/syscalls/pwrite64.S
