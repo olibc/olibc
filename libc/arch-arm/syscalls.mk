@@ -60,7 +60,6 @@ syscall_src += arch-arm/syscalls/epoll_ctl.S
 syscall_src += arch-arm/syscalls/eventfd.S
 syscall_src += arch-arm/syscalls/execve.S
 syscall_src += arch-arm/syscalls/faccessat.S
-syscall_src += arch-arm/syscalls/fallocate.S
 syscall_src += arch-arm/syscalls/fchdir.S
 syscall_src += arch-arm/syscalls/fchmod.S
 syscall_src += arch-arm/syscalls/fchmodat.S

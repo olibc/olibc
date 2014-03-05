@@ -60,7 +60,6 @@ syscall_src += arch-mips/syscalls/epoll_ctl.S
 syscall_src += arch-mips/syscalls/eventfd.S
 syscall_src += arch-mips/syscalls/execve.S
 syscall_src += arch-mips/syscalls/faccessat.S
-syscall_src += arch-mips/syscalls/fallocate.S
 syscall_src += arch-mips/syscalls/fchdir.S
 syscall_src += arch-mips/syscalls/fchmod.S
 syscall_src += arch-mips/syscalls/fchmodat.S

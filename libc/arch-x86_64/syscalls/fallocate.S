@@ -15,3 +15,6 @@ ENTRY(fallocate)
 1:
     ret
 END(fallocate)
+
+    .globl _C_LABEL(fallocate64)
+    .equ _C_LABEL(fallocate64), _C_LABEL(fallocate)

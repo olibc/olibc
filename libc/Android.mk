@@ -240,6 +240,7 @@ libc_bionic_src_files := \
     bionic/pause.c \
     bionic/pipe.c \
     bionic/poll.c \
+    bionic/posix_fallocate.c \
     bionic/pthread_atfork.c \
     bionic/pthread_attr.c \
     bionic/pthread_cond.c \

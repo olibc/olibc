@@ -41,15 +41,20 @@ __BEGIN_DECLS
 #define O_ASYNC  FASYNC
 #endif
 
-extern int  open(const char*  path, int  mode, ...);
-extern int  openat(int fd, const char*  path, int  mode, ...);
-extern int  fcntl(int   fd, int   command, ...);
-extern int  creat(const char*  path, mode_t  mode);
+extern int creat(const char*, mode_t);
+extern int fallocate64(int, int, off64_t, off64_t);
+extern int fallocate(int, int, off_t, off_t);
+extern int fcntl(int, int, ...);
+extern int openat(int, const char*, int, ...);
+extern int open(const char*, int, ...);
+extern int posix_fallocate64(int, off64_t, off64_t);
+extern int posix_fallocate(int, off_t, off_t);
+extern int unlinkat(int, const char*, int);
+
 extern int sync_file_range(int fd, off64_t offset, off64_t nbytes,
                            unsigned int flags);
 extern int sync_file_range2(int fd, unsigned int flags,
                             off64_t offset, off64_t nbytes);
-extern int  fallocate (int fd, int mode, off_t offset, off_t len);
 extern ssize_t splice (int fd_in, loff_t *off_in,
                        int fd_out, loff_t *off_out,
                        size_t len, unsigned int flags);
