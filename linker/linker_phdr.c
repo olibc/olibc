@@ -258,8 +258,8 @@ bool ElfReader_ReadProgramHeader(ElfReader* er) {
 size_t phdr_table_get_load_size(const Elf_Phdr* phdr_table, size_t phdr_count,
                                 Elf_Addr* out_min_vaddr,
                                 Elf_Addr* out_max_vaddr) {
-    Elf_Addr min_vaddr = 0xFFFFFFFFU;
-    Elf_Addr max_vaddr = 0x00000000U;
+    Elf_Addr min_vaddr = UINTPTR_MAX;
+    Elf_Addr max_vaddr = 0;
 
     bool found_pt_load = false;
     size_t i;
@@ -280,7 +280,7 @@ size_t phdr_table_get_load_size(const Elf_Phdr* phdr_table, size_t phdr_count,
         }
     }
     if (!found_pt_load) {
-        min_vaddr = 0x00000000U;
+        min_vaddr = 0;
     }
 
     min_vaddr = PAGE_START(min_vaddr);
