@@ -222,47 +222,6 @@ libm_common_cflags := \
     -include $(LOCAL_PATH)/freebsd-compat.h \
 
 libm_common_includes := $(LOCAL_PATH)/upstream-freebsd/lib/msun/src/
-TARGET_USE_CUSTOM_SINCOS := false
-
-libm_arm_includes := $(LOCAL_PATH)/arm
-libm_arm_src_files := arm/fenv.c
-ifeq ($(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION),true)
-libm_arm_cflags += -DKRAIT_NEON_OPTIMIZATION -fno-if-conversion
-libm_arm_src_files += \
-    arm/e_pow.S \
-    arm/s_cos.S \
-    arm/s_sin.S
-TARGET_USE_CUSTOM_SINCOS = true
-endif
-ifeq ($(TARGET_USE_SPARROW_BIONIC_OPTIMIZATION),true)
-libm_common_src_files += \
-    arm/e_pow.S
-libm_common_cflags += -DSPARROW_NEON_OPTIMIZATION
-endif
-ifeq ($(TARGET_USE_SCORPION_BIONIC_OPTIMIZATION),true)
-libm_common_src_files += \
-    arm/e_pow.S
-libm_common_cflags += -DSCORPION_NEON_OPTIMIZATION
-endif
-
-libm_arm64_includes := $(LOCAL_PATH)/arm64
-libm_arm64_src_files := arm64/fenv.c
-
-libm_x86_includes := $(LOCAL_PATH)/i386 $(LOCAL_PATH)/i387
-libm_x86_src_files := i387/fenv.c
-
-libm_x86_64_includes := $(LOCAL_PATH)/amd64
-libm_x86_64_src_files := amd64/fenv.c
-
-libm_mips_cflags := -fno-builtin-rintf -fno-builtin-rint
-libm_mips_includes := $(LOCAL_PATH)/mips
-libm_mips_src_files := mips/fenv.c
-
-ifneq ($(TARGET_USE_CUSTOM_SINCOS),true)
-libm_common_src_files += \
-    upstream-freebsd/lib/msun/src/s_cos.c \
-    upstream-freebsd/lib/msun/src/s_sin.c
-endif
 
 #
 # libm.a for target.
@@ -273,10 +232,45 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 ifeq ($(LIBM_USE_ARM_MODE),true)
 LOCAL_ARM_MODE := arm
 endif
-LOCAL_CFLAGS := $(libm_common_cflags) $(libm_$(TARGET_ARCH)_cflags)
-LOCAL_C_INCLUDES += $(libm_common_includes) $(libm_$(TARGET_ARCH)_includes)
-LOCAL_SRC_FILES := $(libm_common_src_files) $(libm_$(TARGET_ARCH)_src_files)
+LOCAL_CFLAGS := $(libm_common_cflags)
+LOCAL_C_INCLUDES += $(libm_common_includes)
+LOCAL_SRC_FILES := $(libm_common_src_files)
 LOCAL_SYSTEM_SHARED_LIBRARIES := libc
+
+# arch-specific settings
+LOCAL_C_INCLUDES_arm := $(LOCAL_PATH)/arm
+LOCAL_SRC_FILES_arm := arm/fenv.c
+
+LOCAL_C_INCLUDES_arm64 := $(LOCAL_PATH)/arm64
+LOCAL_SRC_FILES_arm64 := arm64/fenv.c
+
+LOCAL_C_INCLUDES_x86 := $(LOCAL_PATH)/i386 $(LOCAL_PATH)/i387
+LOCAL_SRC_FILES_x86 := i387/fenv.c
+
+LOCAL_C_INCLUDES_x86_64 := $(LOCAL_PATH)/amd64
+LOCAL_SRC_FILES_x86_64 := amd64/fenv.c
+
+LOCAL_CFLAGS_mips := -fno-builtin-rintf -fno-builtin-rint
+LOCAL_C_INCLUDES_mips := $(LOCAL_PATH)/mips
+LOCAL_SRC_FILES_mips := mips/fenv.c
+
+TARGET_USE_CUSTOM_SINCOS := false
+
+ifeq ($(TARGET_USE_KRAIT_BIONIC_OPTIMIZATION),true)
+LOCAL_CFLAGS_arm += -DKRAIT_NEON_OPTIMIZATION -fno-if-conversion
+LOCAL_SRC_FILES_arm += \
+    arm/e_pow.S \
+    arm/s_cos.S \
+    arm/s_sin.S
+TARGET_USE_CUSTOM_SINCOS = true
+endif
+
+ifneq ($(TARGET_USE_CUSTOM_SINCOS),true)
+LOCAL_SRC_FILES += \
+    upstream-freebsd/lib/msun/src/s_cos.c \
+    upstream-freebsd/lib/msun/src/s_sin.c
+endif
+
 include $(BUILD_STATIC_LIBRARY)
 
 #
