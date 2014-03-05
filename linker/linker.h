@@ -30,12 +30,9 @@
 #define _LINKER_H_
 
 #include <stdbool.h>
-#include <unistd.h>
-#include <sys/types.h>
 #include <elf.h>
-#include <sys/exec_elf.h>
-
 #include <link.h>
+#include <unistd.h>
 
 #include "private/libc_logging.h"
 

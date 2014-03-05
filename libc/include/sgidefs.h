@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,49 +26,9 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _DIRENT_H_
-#define _DIRENT_H_
+#ifndef _SGIDEFS_H_
+#define _SGIDEFS_H_
 
-#include <stdint.h>
-#include <sys/cdefs.h>
+#include <asm/sgidefs.h>
 
-__BEGIN_DECLS
-
-#ifndef DT_UNKNOWN
-#define DT_UNKNOWN 0
-#define DT_FIFO 1
-#define DT_CHR 2
-#define DT_DIR 4
-#define DT_BLK 6
-#define DT_REG 8
-#define DT_LNK 10
-#define DT_SOCK 12
-#define DT_WHT 14
-#endif
-
-struct dirent {
-  uint64_t         d_ino;
-  int64_t          d_off;
-  unsigned short   d_reclen;
-  unsigned char    d_type;
-  char             d_name[256];
-};
-#define d_fileno d_ino
-#define dirent64 dirent
-
-typedef struct DIR DIR;
-
-extern DIR* opendir(const char*);
-extern DIR* fdopendir(int);
-extern struct dirent* readdir(DIR*);
-extern int readdir_r(DIR*, struct dirent*, struct dirent**);
-extern int closedir(DIR*);
-extern void rewinddir(DIR*);
-extern int dirfd(DIR*);
-extern int alphasort(const struct dirent**, const struct dirent**);
-extern int scandir(const char*, struct dirent***, int (*)(const struct dirent*), int (*)(const struct dirent**, const struct dirent**));
-extern int getdents(unsigned int, struct dirent*, unsigned int);
-
-__END_DECLS
-
-#endif /* _DIRENT_H_ */
+#endif /* _SGIDEFS_H_ */
