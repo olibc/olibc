@@ -126,7 +126,6 @@ int         fchmod(int, mode_t)  all
 int         dup(int)  all
 int         pipe2(int*, int) all
 int         dup3(int, int, int)   all
-int         fallocate(int fd, int mode, off_t offset, off_t len) all
 int         getdents:getdents64(unsigned int, struct dirent*, unsigned int)   all
 int         fsync(int)  all
 int         fdatasync(int) all
