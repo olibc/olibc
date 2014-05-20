@@ -1,0 +1,411 @@
+# olibc configuration
+
+mainmenu "olibc C Library Configurations"
+
+choice
+	prompt "Architecture"
+	default TARGET_arm
+	help
+	  The architecture of your target.
+
+config TARGET_arm
+	bool "ARM"
+
+config TARGET_aarch64
+	bool "ARMv8 (AArch64)"
+
+config TARGET_mips
+	bool "MIPS"
+
+config TARGET_x86
+	bool "x86"
+
+endchoice
+
+
+menu "Target Architecture Features and Options"
+
+config TARGET_CPU_SMP
+	bool "SMP Support"
+	default y
+
+if TARGET_arm
+config TARGET_ARCH
+	string
+	default "arm"
+
+choice
+	prompt "CPU Variant"
+        default TARGET_arm_generic
+	help
+	  The architecture of your target.
+
+config TARGET_ARM_GENERIC
+	bool "Generic ARM"
+
+config TARGET_ARM_CORTEX_A8
+	bool "Cortex-A8"
+
+config TARGET_ARM_CORTEX_A9
+	bool "Cortex-A9"
+
+config TARGET_ARM_CORTEX_A15
+	bool "Cortex-A15"
+	select ARCH_ARM_HAVE_NEON
+
+config TARGET_ARM_SCORPION
+	bool "Qualcomm Scorpion"
+	select ARCH_ARM_HAVE_NEON
+
+config TARGET_ARM_SPARROW
+	bool "Qualcomm Sparrow"
+	select ARCH_ARM_HAVE_NEON
+	select TARGET_CPU_SMP
+
+config TARGET_ARM_KRAIT
+	bool "Qualcomm Krait"
+	select ARCH_ARM_HAVE_NEON
+	select TARGET_CPU_SMP
+
+endchoice
+
+config ARCH_ARM_HAVE_NEON
+	bool "Have NEON co-processor"
+	default n if DESIRED_TARGET_PRODUCT="mini_armv7a"
+	default y
+endif # TARGET_arm
+
+if TARGET_aarch64
+config TARGET_ARCH
+	string
+	default "aarch64"
+
+endif # TARGET_arm
+
+config TARGET_SUBARCH
+	string
+	default "neon" if ARCH_ARM_HAVE_NEON
+	default ""
+
+if TARGET_mips
+config TARGET_ARCH
+	string
+	default "mips"
+
+config ARCH_MIPS_HAS_FPU
+	bool "Have FPU"
+endif
+
+if TARGET_x86
+config TARGET_ARCH
+	string
+	default "x86"
+
+config ARCH_X86_HAVE_SSE2
+	bool "Have SSE2"
+
+config ARCH_X86_HAVE_SSSE3
+	bool "Have SSE3"
+	depends on ARCH_X86_HAVE_SSE2
+endif # TARGET_x86
+
+endmenu
+
+
+menu "General Library Settings"
+
+config SINGLE_BINARY_SUPPORT
+	bool "Concrete libc/libm/dynamic-linker into single shared library, olibc.so"
+	default y
+
+config LIBM_USE_ARM_MODE
+	bool "Build libm in ARM mode"
+	default n
+	depends on TARGET_arm
+	help
+	  By default, libm is built in Thumb mode, which reduces about 16KB
+	  compared with ARM mode.
+
+config CUSTOM_MALLOC_ALIGNMENT
+	bool "Customize dlmalloc's alignment"
+	default n
+
+config BOARD_MALLOC_ALIGNMENT
+	int "Controls the minimum alignment for malloc'ed chunks"
+	default 8
+	depends on CUSTOM_MALLOC_ALIGNMENT
+	help
+	  It must be a power of two and at least 8, even on machines for
+	  which smaller alignments would suffice. It may be defined as
+	  larger than this though. Note however that code and data
+	  structures are optimized for the case of 8-byte alignment.
+
+config WCHAR_SUPPORT
+	bool "Wide character support"
+	default n
+
+config CRYPT_IMPL
+	bool "crypt functions"
+	default n
+
+config SHA1_IMPL
+	bool "SHA1 functions"
+	default n
+
+config MD5_IMPL
+	bool "MD5 functions"
+	default n
+
+config LSEARCH_LFIND_IMPL
+	bool "lsearch and lfind functions"
+	default n
+
+config SYSVIPC_SUPPORT
+	bool "SysV IPC support"
+	default y
+
+config MNTENT_SUPPORT
+	bool "File system descriptor file entry support"
+	default n
+	help
+	  Including getmntent, setmntent, addmntent, endmntent, hasmntopt,
+	  getmntent_r functions.
+
+config UTMPX_SUPPORT
+	bool "utmpx based support for tracking login/logouts to/from the system"
+	default n
+
+config SHADOW_PASSWD_FILE_IMPL
+	bool "shadow/passwd/group file entry manipulation functions"
+	default n
+
+config INSQUE_REMQUE_IMPL
+	bool "Doubly-linked list manipulation functions"
+	default n
+
+config A64L_L64A_IMPL
+	bool "a64l/l64a functions"
+	default n
+
+endmenu
+
+menu "String and Stdio Support"
+
+config STRING_STDIO_GLIBC_FULL_COMPATIBLE
+	bool "Enable all glibc-compatibility stdio/string functions"
+	select STPCPY_IMPL
+	select STRCHRNUL_IMPL
+	select MEMPCPY_IMPL
+	select RAWMEMCHR_IMPL
+
+menu "glibc extensions"
+config STPCPY_IMPL
+	bool "stpcpy and stpncpy function"
+	default n
+
+config STRCHRNUL_IMPL
+	bool "strchrnul function"
+	default y
+
+config MEMPCPY_IMPL
+	bool "mempcpy function"
+	default n
+
+config RAWMEMCHR_IMPL
+	bool "rawmemchr function"
+	default n
+
+endmenu
+endmenu
+
+menu "Extensions"
+
+config XATTR_SUPPORT
+	bool "Linux-specific extended attribute system call"
+	default n
+	help
+	  In Linux, some filesystems support extended attributes (abbreviated
+	  xattr) when enabled in the kernel configuration. Any regular file
+	  or directory may have extended attributes consisting of a name and
+	  associated data. The name must be a null-terminated string prefixed by
+	  a namespace identifier and a dot character. Currently, four namespaces
+	  exist: user, trusted, security and system. The user namespace has no
+	  restrictions with regard to naming or contents. The system namespace
+	  is primarily used by the kernel for access control lists. The security
+	  namespace is used by SELinux, for example.
+
+config USE_AT_SECURE
+	bool "Use the AT_SECURE auxv flag to determine secure mode"
+	default n
+	depends on XATTR_SUPPORT
+	help
+	  The Linux kernel provides an AT_SECURE auxv flag to inform userspace
+	  whether or not a security transition has occurred.  This is more
+	  reliable than directly checking the uid/gid against the euid/egid,
+	  because it covers not only setuid/setgid but also file capabilities,
+	  SELinux, and AppArmor security transitions.  It is also a more
+	  efficient test since it does not require any additional system calls.
+
+menu "Android compatibility"
+
+config PROPERTY_SYSTEM_SUPPORT
+	bool "Property system support"
+	default n
+
+config LOGGER_SYSTEM_SUPPORT
+	bool "Logger system support"
+	default n
+
+config DEBUGGERD_SUPPORT
+	bool "Debuggerd system support"
+	default n
+
+endmenu
+
+config EXT_MALLOC_LEAK_CHECK
+	bool "Enable memory allocation checking"
+	default n
+	help
+	  Enable memory allocation checking (including memory leaks,
+	  buffer overwrites, etc.)
+	  Note that all these checks are also controlled by env. settings
+	  that can enable, or disable specific checks. Note also that some of
+	  the checks are available only in emulator and are implemeted in
+	  libc_malloc_qemu_instrumented.so.
+
+config EXT_MALLOC_ANDROID_QEMU_INSTRUMENT
+	bool "Advanced memory instrument for Android QEMU emulator"
+	default n
+	depends on EXT_MALLOC_LEAK_CHECK
+endmenu
+
+
+menu "Development/Debugging options"
+
+config TOOLCHAIN_ANDROID_IDENTIFY
+	bool
+	default "n"
+
+choice
+	prompt "Toolchain"
+
+	config USE_PREBUILT_ANDROID_TOOLCHAIN
+	bool "Use prebuilt toolchain by AOSP"
+	select TOOLCHAIN_ANDROID_IDENTIFY
+
+	config USE_EXTERNAL_TOOLCHAIN
+	bool "Use custom toolchain"
+endchoice
+
+if USE_EXTERNAL_TOOLCHAIN
+config TARGET_TOOLS_PREFIX
+	string "Cross-compiling toolchain prefix"
+	default ""
+	help
+	  The prefix used to execute your cross-compiling toolchain.  For example,
+	  if you execute 'arm-none-eabi-gcc' to compile programs, then enter
+	  'arm-none-eabi-gcc' here
+endif
+
+if TARGET_arm
+choice
+	prompt "Generate olibc toolchain"
+	default OLIBC_NO_BUILD_TOOLCHAIN
+
+	config OLIBC_NO_BUILD_TOOLCHAIN
+		bool "Do not generate toolchain"
+
+	config OLIBC_GCC_WRAPPER
+		bool "GCC wrapper-style toolchain"
+
+	config OLIBC_STANDALONE_TOOLCHAIN
+		bool "Build from source (experimental)"
+		depends on TARGET_arm
+endchoice
+endif
+
+if !OLIBC_NO_BUILD_TOOLCHAIN
+config PREDEFINE_ANDROID_MARCO
+	bool "Predfine __ANDROID__ marco"
+	default n
+
+endif
+
+config DEBUG_BIONIC_LIBC
+	bool "Enable olibc debugging"
+	default n
+
+config ASYNC_UNWIND_TABLE
+	bool "Build with -fasynchronous-unwind-tables"
+	default y
+	help
+	  Generate unwind table which is exact at each instruction boundary,
+	  this option can help debugger get more precise back-trace info,
+	  however it's will make the code size increase about ~2%
+	  ref : https://wiki.linaro.org/KenWerner/Sandbox/libunwind
+
+config DEFAULT_GNU_STYLE_HASH
+	bool "Build olibc with gnu-style hash by default"
+	depends on !TARGET_mips
+	default y
+
+menu "Dynamic linker debugging options"
+
+config LINKER_TRACE_DEBUG
+	bool "Enable linker debug traces"
+	default y
+
+config LINKER_TRACE_LOOKUP
+	bool "Trace linker: ELF symbol lookup"
+	default y
+	depends on LINKER_TRACE_DEBUG
+
+config LINKER_TRACE_RELO
+	bool "Trace linker: ELF relocation"
+	default y
+	depends on LINKER_TRACE_DEBUG
+
+config LINKER_TIMING
+	bool "Dump linker time"
+	default n
+
+config LINKER_STATS
+	bool "Dump linker relocation stats"
+	default n
+
+config LINKER_COUNT_PAGES
+	bool "Dump pages modified by linker"
+	default n
+endmenu
+
+config EXTRA_OLIBC_CFLAGS
+	string "Extra build compile flag"
+	default ""
+
+config EXTRA_OLIBC_CXXFLAGS
+	string "Extra build C++ compile flag"
+	default ""
+
+config EXTRA_OLIBC_LDFLAGS
+	string "Extra build link flag"
+	default ""
+
+config OUT_DIR
+	string "Build output directory"
+	default "out"
+
+endmenu
+
+
+menu "Extra packages"
+
+config EXTRA_CXX_SUPPORT
+	bool "C++ Support for olibc"
+	default n
+
+config EXTRA_STLPORT_SUPPORT
+	bool "STLport: complete C++ library"
+	default y
+	depends on EXTRA_CXX_SUPPORT
+
+endmenu
