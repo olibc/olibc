@@ -1,0 +1,76 @@
+#
+# Automatically generated make config: don't edit
+# olibc C Library Configurations
+#
+TARGET_arm=true
+# TARGET_mips is not set
+# TARGET_x86 is not set
+
+#
+# Target Architecture Features and Options
+#
+TARGET_CPU_SMP=true
+TARGET_ARCH=arm
+TARGET_ARM_GENERIC=true
+# TARGET_ARM_CORTEX_A9 is not set
+# TARGET_ARM_CORTEX_A15 is not set
+# TARGET_ARM_SCORPION is not set
+# TARGET_ARM_SPARROW is not set
+# TARGET_ARM_KRAIT is not set
+ARCH_ARM_HAVE_NEON=true
+TARGET_SUBARCH=neon
+
+#
+# General Library Settings
+#
+SINGLE_BINARY_SUPPORT=true
+# LIBM_USE_ARM_MODE is not set
+# CUSTOM_MALLOC_ALIGNMENT is not set
+WCHAR_SUPPORT=true
+# SHA1_IMPL is not set
+# MD5_IMPL is not set
+SYSVIPC_SUPPORT=true
+
+#
+# Extensions
+#
+# XATTR_SUPPORT is not set
+
+#
+# Android compatibility
+#
+# PROPERTY_SYSTEM_SUPPORT is not set
+# LOGGER_SYSTEM_SUPPORT is not set
+# DEBUGGERD_SUPPORT is not set
+EXT_MALLOC_LEAK_CHECK=true
+EXT_MALLOC_ANDROID_QEMU_INSTRUMENT=true
+
+#
+# Development/Debugging options
+#
+TOOLCHAIN_ANDROID_IDENTIFY=true
+USE_PREBUILT_ANDROID_TOOLCHAIN=true
+# USE_EXTERNAL_TOOLCHAIN is not set
+DEBUG_BIONIC_LIBC=true
+ASYNC_UNWIND_TABLE=true
+DEFAULT_GNU_STYLE_HASH=true
+
+#
+# Dynamic linker debugging options
+#
+LINKER_TRACE_DEBUG=true
+LINKER_TRACE_LOOKUP=true
+LINKER_TRACE_RELO=true
+LINKER_TIMING=true
+LINKER_STATS=true
+LINKER_COUNT_PAGES=true
+EXTRA_OLIBC_CFLAGS=
+EXTRA_OLIBC_CXXFLAGS=
+EXTRA_OLIBC_LDFLAGS=
+OUT_DIR=out-generic
+
+#
+# Extra packages
+#
+EXTRA_CXX_SUPPORT=true
+EXTRA_STLPORT_SUPPORT=true
